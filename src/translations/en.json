@@ -10,6 +10,10 @@
     "policy.insureePolicies.nonHospitalDeduction": "Non Hospital Deduction",
     "policy.insureePolicies.hospitalCeiling": "Hospital Ceiling",
     "policy.insureePolicies.nonHospitalCeiling": "Non Hospital Ceiling",
+    "policy.insureeEligibility.service": "Service Eligibility",
+    "policy.insureeEligibility.service.search": "Search service…",
+    "policy.insureeEligibility.item": "Item Eligibility",
+    "policy.insureeEligibility.item.search": "Search item…",
     "policy.insureeEligibility.remainNbr": "Remain Counts",
     "policy.insureeEligibility.admissionsLeft": "Admissions",
     "policy.insureeEligibility.visitsLeft": "Visits",
@@ -22,5 +26,7 @@
     "policy.insureeEligibility.consultationAmountLeft": "Consultation",
     "policy.insureeEligibility.surgeryAmountLeft": "Surgery",
     "policy.insureeEligibility.deliveryAmountLeft": "Delivery",
-    "policy.insureeEligibility.antenatalAmountLeft": "Antenatal"    
+    "policy.insureeEligibility.antenatalAmountLeft": "Antenatal",
+    "policy.insureeEligibility.minDate":"Min Date",
+    "policy.insureeEligibility.left":"Left"
 }

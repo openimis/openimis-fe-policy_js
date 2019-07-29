@@ -5,10 +5,11 @@ import { ContributionsPage } from "./components/ContributionsPage";
 import InsureeEnquiryDialog from "./components/InsureeEnquiryDialog";
 import messages_en from "./translations/en.json";
 import { FormattedMessage } from "@openimis/fe-core";
-import { insureeEnquiry } from "./reducers/policy";
+import { insureeEnquiry } from "./reducer";
 
 const DEFAULT_CONFIG = {
   "translations": [{key: 'en', messages: messages_en}],
+  "reducers" : [{key: 'policyInsuree', reducer: insureeEnquiry}],  
   "core.Router": [
     { path: "policy/policies", component: PoliciesPage },
     { path: "policy/contributions", component: ContributionsPage },
@@ -26,9 +27,6 @@ const DEFAULT_CONFIG = {
     }    
   ],
   "insuree.EnquiryDialog": [ InsureeEnquiryDialog ],
-  "reducers" : [
-    {key: 'policyInsureeEnquiry', reducer: insureeEnquiry}
-  ],
 }
 
 export const PolicyModule = (cfg) => {
