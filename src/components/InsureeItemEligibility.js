@@ -9,7 +9,7 @@ import Eligibility from "./Eligibility";
 
 const styles = theme => ({
     paper: {
-        margin: theme.spacing(1),
+        margin: theme.spacing(1)/2,
         marginRight: 0,
     },
     header: theme.table.title,
