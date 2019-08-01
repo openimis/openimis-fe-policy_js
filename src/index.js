@@ -37,5 +37,5 @@ const DEFAULT_CONFIG = {
 }
 
 export const PolicyModule = (cfg) => {
-  return{ ...DEFAULT_CONFIG, ...(cfg && cfg['fe-policy'] || {})}; 
+  return{ ...DEFAULT_CONFIG, ...cfg }; 
 }

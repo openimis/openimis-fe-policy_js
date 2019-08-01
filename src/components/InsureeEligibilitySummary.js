@@ -75,8 +75,8 @@ class InsureeEligibilitySummary extends Component {
     }
 
     render() {
-        const { classes, insureeEligibility } = this.props;
-        if (!insureeEligibility) return null;
+        const { classes, insuree, insureeEligibility } = this.props;
+        if (!insuree || !insureeEligibility) return null;
 
         return (
             <Grid container>
