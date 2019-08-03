@@ -1,6 +1,14 @@
 import { graphql } from "@openimis/fe-core";
 
 export function fetchPolicies(chfid) {
+  // let payload = `
+  //   {
+  //     policiesByInsuree(chfId:"${chfid}", familyId:${familyid})
+  //     {
+  //       items{policyId, policyValue, premiumsAmount, balance, productCode, productName, expiryDate, status, dedType, ded1, ded2, ceiling1, ceiling2}
+  //     }
+  //   }
+  // `
   let payload = `
     {
       policiesByInsuree(chfId:"${chfid}")
@@ -10,6 +18,18 @@ export function fetchPolicies(chfid) {
     }
   `
   return graphql(payload, 'POLICY_INSUREE_POLICIES');
+}
+
+export function fetchPolicyBalance(familyId, productCode) {
+  let payload = `
+    {
+      policyBalance(familyId:${familyId}, productCode:"${productCode}")
+      {
+        familyId, productCode, policyValue, premiumsAmount, balance
+      }
+    }
+  `
+  return graphql(payload, 'POLICY_BALANCE', { familyId: familyId, productCode: productCode });
 }
 
 export function fetchEligibility(chfid) {

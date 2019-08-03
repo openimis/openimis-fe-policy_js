@@ -33,7 +33,7 @@ const DEFAULT_CONFIG = {
       route: "/policy/contributions"
     }    
   ],
-  "insuree.EnquiryDialog": [ InsureePoliciesSummary, InsureeEligibilitySummary, InsureeEligibilityEnquiry ],
+  "insuree.EnquiryDialog": [ InsureePoliciesSummary, InsureeEligibilityEnquiry, InsureeEligibilitySummary ],
 }
 
 export const PolicyModule = (cfg) => {

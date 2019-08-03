@@ -9,8 +9,8 @@ import Eligibility from "./Eligibility";
 
 const styles = theme => ({
     paper: {
-        margin: theme.spacing(1)/2,
-        marginLeft : 0,
+        margin: theme.spacing(1) / 2,
+        marginLeft: 0,
     },
     header: theme.table.title,
 });
@@ -18,13 +18,27 @@ const styles = theme => ({
 
 class InsureeServiceEligibility extends Component {
 
+    state = {
+        reset: true
+    }
+
+    componentDidMount() {
+        this.setState({
+            reset: true
+        })
+    }
+
+
     onServiceSelected = i => {
-        this.props.fetchServiceEligibility(i.code);
+        this.setState({
+            reset: false
+        })
+        this.props.fetchServiceEligibility(this.props.insuree.chfId, i.code);
     }
 
     render() {
         const { classes, fetchingServiceEligibility, fetchedServiceEligibility, insureeServiceEligibility, errorServiceEligibility } = this.props;
-
+        const { reset } = this.state;
         return (
             <Paper className={classes.paper}>
                 <Grid container alignItems="center">
@@ -43,7 +57,7 @@ class InsureeServiceEligibility extends Component {
                         {fetchingServiceEligibility && (
                             <ProgressOrError progress={fetchingServiceEligibility} error={errorServiceEligibility} />
                         )}
-                        {fetchedServiceEligibility && (
+                        {!reset && fetchedServiceEligibility && (
                             <Eligibility eligibility={{
                                 "minDate": insureeServiceEligibility.minServiceDate,
                                 "left": insureeServiceEligibility.serviceLeft,

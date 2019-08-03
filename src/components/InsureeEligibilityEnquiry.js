@@ -17,8 +17,8 @@ class InsureeEligibilityEnquiry extends Component {
             <Fragment>
                 {!!insuree && (
                     <Grid container>
-                        <Grid item xs={6}><InsureeServiceEligibility /></Grid>
-                        <Grid item xs={6}><InsureeItemEligibility /></Grid>
+                        <Grid item xs={6}><InsureeServiceEligibility insuree={insuree}/></Grid>
+                        <Grid item xs={6}><InsureeItemEligibility insuree={insuree}/></Grid>
                     </Grid>
                 )}
 

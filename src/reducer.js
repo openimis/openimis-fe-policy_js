@@ -17,7 +17,12 @@ export const insureeEnquiry = (
         fetchingItemEligibility: false,
         fetchedServiceEligibility: false,
         errorItemEligibility: null,
-        insureeItemEligibility: null,                
+        insureeItemEligibility: null,
+        fetchingPolicyBalance: {},
+        fetchedPolicyBalance: {},
+        insureePolicyBalance: {},
+        errorPolicyBalance: {},
+        policyBalanceCount: 0,
     },
     action) => {
     switch (action.type) {
@@ -42,6 +47,50 @@ export const insureeEnquiry = (
                 ...state,
                 fetchingPolicies: false,
                 errorPolicies: formatServerError(action.payload),
+            };
+        case 'POLICY_BALANCE_REQ':
+            var fetching = state.fetchingPolicyBalance;
+            fetching[action.meta.familyId + "|" + action.meta.productCode] = true;
+            var fetched = state.fetchedPolicyBalance;
+            delete (fetched[action.meta.familyId + "|" + action.meta.productCode]);
+            var balance = state.fetchedPolicyBalance;
+            delete (balance[action.meta.familyId + "|" + action.meta.productCode]);
+            var error = state.errorPolicyBalance;
+            delete (error[action.meta.familyId + "|" + action.meta.productCode]);
+            return {
+                ...state,
+                fetchingPolicyBalance: fetching,
+                fetchedPolicyBalance: fetched,
+                insureePolicyBalance: balance,
+                errorPolicyBalance: error,
+            };
+        case 'POLICY_BALANCE_RESP':
+            var fetching = state.fetchingPolicyBalance;
+            delete (fetching[action.meta.familyId + "|" + action.meta.productCode]);
+            var fetched = state.fetchedPolicyBalance;
+            fetched[action.meta.familyId + "|" + action.meta.productCode] = true;
+            var balance = state.fetchedPolicyBalance;
+            balance[action.meta.familyId + "|" + action.meta.productCode] = action.payload.data.policyBalance.balance;
+            var error = state.errorPolicyBalance;
+            error[action.meta.familyId + "|" + action.meta.productCode] = formatGraphQLError(action.payload);
+            return {
+                ...state,
+                fetchingPolicyBalance: fetching,
+                fetchedPolicyBalance: fetched,
+                insureePolicyBalance: balance,
+                errorPolicyBalance: error,
+                policyBalanceCount: state.policyBalanceCount + 1,
+            };
+        case 'POLICY_BALANCE_ERR':
+            var fetching = state.fetchingPolicyBalance;
+            delete (fetching[action.meta.familyId + "|" + action.meta.productCode]);
+            var error = state.errorPolicyBalance;
+            error[action.meta.familyId + "|" + action.meta.productCode] = formatServerError(action.payload);
+            return {
+                ...state,
+                fetchingPolicyBalance: fetching,
+                errorPolicyBalance: error,
+                policyBalanceCount: state.policyBalanceCount + 1,
             };
         case 'POLICY_INSUREE_ELIGIBILITY_REQ':
             return {

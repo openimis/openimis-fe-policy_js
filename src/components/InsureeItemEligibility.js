@@ -9,7 +9,7 @@ import Eligibility from "./Eligibility";
 
 const styles = theme => ({
     paper: {
-        margin: theme.spacing(1)/2,
+        margin: theme.spacing(1) / 2,
         marginRight: 0,
     },
     header: theme.table.title,
@@ -18,13 +18,41 @@ const styles = theme => ({
 
 class InsureeItemEligibility extends Component {
 
+    state = {
+        reset: true
+    }
+
+    componentDidMount() {
+        this.setState({
+            reset: true
+        })
+    }
+
+    componentDidUpdate(prevProps, prevState, snapshot) {
+        if (!prevProps.insuree && !!this.props.insuree
+            || !!prevProps.insuree && this.props.insuree && (
+                prevProps.insuree.chfId == null
+                || prevProps.insuree.chfId !== this.props.insuree.chfId
+            )
+        ) {
+            this.setState({
+                insureeItemEligibility: null,
+                fetchedItemEligibility: false,
+                selected: null
+            })
+        }
+    }
+
     onItemSelected = i => {
-        this.props.fetchItemEligibility(i.code);
+        this.setState({
+            reset: false
+        })
+        this.props.fetchItemEligibility(this.props.insuree.chfId, i.code);
     }
 
     render() {
         const { classes, fetchingItemEligibility, fetchedItemEligibility, insureeItemEligibility, errorItemEligibility } = this.props;
-
+        const { reset } = this.state;
         return (
             <Paper className={classes.paper}>
                 <Grid container alignItems="center">
@@ -43,7 +71,7 @@ class InsureeItemEligibility extends Component {
                         {fetchingItemEligibility && (
                             <ProgressOrError progress={fetchingItemEligibility} error={errorItemEligibility} />
                         )}
-                        {fetchedItemEligibility && (
+                        {!reset && fetchedItemEligibility && (
                             <Eligibility eligibility={{
                                 "minDate": insureeItemEligibility.minItemDate,
                                 "left": insureeItemEligibility.itemLeft,

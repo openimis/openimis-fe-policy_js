@@ -1,7 +1,7 @@
 {
     "policy.menu.policies": "Policies",
     "policy.menu.contributions": "Contributions",
-    "policy.insureePolicies.header": "Policies",
+    "policy.insureePolicies.header": "Family Policies",
     "policy.insureePolicies.productCode": "Code",
     "policy.insureePolicies.productName": "Name",
     "policy.insureePolicies.expiryDate": "Expire Date",
@@ -10,6 +10,7 @@
     "policy.insureePolicies.nonHospitalDeduction": "Non Hospital Deduction",
     "policy.insureePolicies.hospitalCeiling": "Hospital Ceiling",
     "policy.insureePolicies.nonHospitalCeiling": "Non Hospital Ceiling",
+    "policy.insureePolicies.balance": "Balance",
     "policy.insureeEligibility.service": "Service Eligibility",
     "policy.insureeEligibility.service.search": "Search service…",
     "policy.insureeEligibility.item": "Item Eligibility",
