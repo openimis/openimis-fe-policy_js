@@ -37,26 +37,27 @@ class InsureePoliciesSummary extends Component {
     }
 
 
-    balance = (familyId, productCode) => (
+    balance = (familyId, productCode, referenceDate) => (
         <Fragment>
             <ProgressOrError
                 progress={!!this.props.fetchingPolicyBalance &&
-                    this.props.fetchingPolicyBalance[familyId + "|" + productCode]}
+                    this.props.fetchingPolicyBalance[familyId + "|" + referenceDate + "|" + productCode]}
                 error={!!this.props.errorPolicyBalance &&
-                    this.props.errorPolicyBalance[familyId + "|" + productCode]}
+                    this.props.errorPolicyBalance[familyId + "|" + referenceDate + "|" + productCode]}
             />
             {(!this.props.fetchingPolicyBalance ||
-                !this.props.fetchingPolicyBalance[familyId + "|" + productCode]) &&
-                (!this.props.fetchedPolicyBalance || !this.props.fetchedPolicyBalance[familyId + "|" + productCode]) &&
+                !this.props.fetchingPolicyBalance[familyId + "|" + referenceDate + "|" + productCode]) &&
+                (!this.props.fetchedPolicyBalance ||
+                    this.props.fetchedPolicyBalance[familyId + "|" + referenceDate + "|" + productCode] === undefined) && // 0 is a valid value!
                 (
                     <IconButton className={this.props.classes.button}
-                        onClick={e => this.props.fetchPolicyBalance(familyId, productCode)}>
+                        onClick={e => this.props.fetchPolicyBalance(familyId, productCode, referenceDate)}>
                         <CachedIcon />
                     </IconButton>
                 )}
             {!!this.props.fetchedPolicyBalance &&
-                !!this.props.fetchedPolicyBalance[familyId + "|" + productCode] &&
-                this.props.insureePolicyBalance[familyId + "|" + productCode]}
+                this.props.fetchedPolicyBalance[familyId + "|" + referenceDate + "|" + productCode] !== undefined && // 0 is a valid value!
+                this.props.insureePolicyBalance[familyId + "|" + referenceDate + "|" + productCode]}
         </Fragment>
     )
 
@@ -92,7 +93,7 @@ class InsureePoliciesSummary extends Component {
                                         i => i.ded2,
                                         i => i.ceiling1,
                                         i => i.ceiling2,
-                                        i => this.balance(insuree.family.id, i.productCode)
+                                        i => this.balance(insuree.family.id, i.productCode, i.expiryDate)
                                     ]}
                                     items={insureePolicies} />
                             </Paper>

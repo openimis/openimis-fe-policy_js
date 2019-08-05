@@ -50,13 +50,13 @@ export const insureeEnquiry = (
             };
         case 'POLICY_BALANCE_REQ':
             var fetching = state.fetchingPolicyBalance;
-            fetching[action.meta.familyId + "|" + action.meta.productCode] = true;
+            fetching[action.meta.familyId + "|" + action.meta.referenceDate + "|" + action.meta.productCode] = true;
             var fetched = state.fetchedPolicyBalance;
-            delete (fetched[action.meta.familyId + "|" + action.meta.productCode]);
+            delete (fetched[action.meta.familyId + "|" + action.meta.referenceDate + "|" + action.meta.productCode]);
             var balance = state.fetchedPolicyBalance;
-            delete (balance[action.meta.familyId + "|" + action.meta.productCode]);
+            delete (balance[action.meta.familyId + "|" + action.meta.referenceDate + "|" + action.meta.productCode]);
             var error = state.errorPolicyBalance;
-            delete (error[action.meta.familyId + "|" + action.meta.productCode]);
+            delete (error[action.meta.familyId + "|" + action.meta.referenceDate + "|" + action.meta.productCode]);
             return {
                 ...state,
                 fetchingPolicyBalance: fetching,
@@ -66,13 +66,13 @@ export const insureeEnquiry = (
             };
         case 'POLICY_BALANCE_RESP':
             var fetching = state.fetchingPolicyBalance;
-            delete (fetching[action.meta.familyId + "|" + action.meta.productCode]);
+            delete (fetching[action.meta.familyId + "|" + action.meta.referenceDate + "|" + action.meta.productCode]);
             var fetched = state.fetchedPolicyBalance;
-            fetched[action.meta.familyId + "|" + action.meta.productCode] = true;
+            fetched[action.meta.familyId + "|" + action.meta.referenceDate + "|" + action.meta.productCode] = true;
             var balance = state.fetchedPolicyBalance;
-            balance[action.meta.familyId + "|" + action.meta.productCode] = action.payload.data.policyBalance.balance;
+            balance[action.meta.familyId + "|" + action.meta.referenceDate + "|" + action.meta.productCode] = action.payload.data.policyBalance.balance;
             var error = state.errorPolicyBalance;
-            error[action.meta.familyId + "|" + action.meta.productCode] = formatGraphQLError(action.payload);
+            error[action.meta.familyId + "|" + action.meta.referenceDate + "|" + action.meta.productCode] = formatGraphQLError(action.payload);
             return {
                 ...state,
                 fetchingPolicyBalance: fetching,
@@ -83,9 +83,9 @@ export const insureeEnquiry = (
             };
         case 'POLICY_BALANCE_ERR':
             var fetching = state.fetchingPolicyBalance;
-            delete (fetching[action.meta.familyId + "|" + action.meta.productCode]);
+            delete (fetching[action.meta.familyId + "|" + action.meta.referenceDate + "|" + action.meta.productCode]);
             var error = state.errorPolicyBalance;
-            error[action.meta.familyId + "|" + action.meta.productCode] = formatServerError(action.payload);
+            error[action.meta.familyId + "|" + action.meta.referenceDate + "|" + action.meta.productCode] = formatServerError(action.payload);
             return {
                 ...state,
                 fetchingPolicyBalance: fetching,
