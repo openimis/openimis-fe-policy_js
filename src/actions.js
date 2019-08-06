@@ -20,18 +20,6 @@ export function fetchPolicies(chfid) {
   return graphql(payload, 'POLICY_INSUREE_POLICIES');
 }
 
-export function fetchPolicyBalance(familyId, productCode, referenceDate) {
-  let payload = `
-    {
-      policyBalance(familyId:${familyId}, productCode:"${productCode}", referenceDate:"${referenceDate}")
-      {
-        familyId, productCode, policyValue, premiumsAmount, balance
-      }
-    }
-  `
-  return graphql(payload, 'POLICY_BALANCE', { familyId: familyId, productCode: productCode, referenceDate: referenceDate });
-}
-
 export function fetchEligibility(chfid) {
   let payload = `
     {

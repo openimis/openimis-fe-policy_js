@@ -6,7 +6,7 @@ import { withTheme, withStyles } from "@material-ui/core/styles";
 import { Grid, Paper, IconButton } from "@material-ui/core";
 import CachedIcon from "@material-ui/icons/Cached";
 import { ProgressOrError, SmallTable } from "@openimis/fe-core";
-import { fetchPolicies, fetchPolicyBalance } from "../actions";
+import { fetchPolicies } from "../actions";
 
 
 
@@ -36,31 +36,6 @@ class InsureePoliciesSummary extends Component {
         }
     }
 
-
-    balance = (familyId, productCode, referenceDate) => (
-        <Fragment>
-            <ProgressOrError
-                progress={!!this.props.fetchingPolicyBalance &&
-                    this.props.fetchingPolicyBalance[familyId + "|" + referenceDate + "|" + productCode]}
-                error={!!this.props.errorPolicyBalance &&
-                    this.props.errorPolicyBalance[familyId + "|" + referenceDate + "|" + productCode]}
-            />
-            {(!this.props.fetchingPolicyBalance ||
-                !this.props.fetchingPolicyBalance[familyId + "|" + referenceDate + "|" + productCode]) &&
-                (!this.props.fetchedPolicyBalance ||
-                    this.props.fetchedPolicyBalance[familyId + "|" + referenceDate + "|" + productCode] === undefined) && // 0 is a valid value!
-                (
-                    <IconButton className={this.props.classes.button}
-                        onClick={e => this.props.fetchPolicyBalance(familyId, productCode, referenceDate)}>
-                        <CachedIcon />
-                    </IconButton>
-                )}
-            {!!this.props.fetchedPolicyBalance &&
-                this.props.fetchedPolicyBalance[familyId + "|" + referenceDate + "|" + productCode] !== undefined && // 0 is a valid value!
-                this.props.insureePolicyBalance[familyId + "|" + referenceDate + "|" + productCode]}
-        </Fragment>
-    )
-
     render() {
         const { classes, insuree, fetchingPolicies, insureePolicies, errorPolicies } = this.props;
         return (
@@ -78,7 +53,7 @@ class InsureePoliciesSummary extends Component {
                                         "insureePolicies.productName",
                                         "insureePolicies.expiryDate",
                                         "insureePolicies.status",
-                                        "insureePolicies.hostpitalDeduction",
+                                        "insureePolicies.hospitalDeduction",
                                         "insureePolicies.nonHospitalDeduction",
                                         "insureePolicies.hospitalCeiling",
                                         "insureePolicies.nonHospitalCeiling",
@@ -93,7 +68,7 @@ class InsureePoliciesSummary extends Component {
                                         i => i.ded2,
                                         i => i.ceiling1,
                                         i => i.ceiling2,
-                                        i => this.balance(insuree.family.id, i.productCode, i.expiryDate)
+                                        i => i.ceiling1 - (i.ded1 || 0),
                                     ]}
                                     items={insureePolicies} />
                             </Paper>
@@ -112,15 +87,10 @@ const mapStateToProps = state => ({
     fetchedPolicies: state.policyInsuree.fetchedPolicies,
     insureePolicies: state.policyInsuree.insureePolicies,
     errorPolicies: state.policyInsuree.errorPolicies,
-    fetchingPolicyBalance: state.policyInsuree.fetchingPolicyBalance,
-    fetchedPolicyBalance: state.policyInsuree.fetchedPolicyBalance,
-    insureePolicyBalance: state.policyInsuree.insureePolicyBalance,
-    errorPolicyBalance: state.policyInsuree.errorPolicyBalance,
-    policyBalanceCount: state.policyInsuree.policyBalanceCount,
 });
 
 const mapDispatchToProps = dispatch => {
-    return bindActionCreators({ fetchPolicies, fetchPolicyBalance }, dispatch);
+    return bindActionCreators({ fetchPolicies }, dispatch);
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(

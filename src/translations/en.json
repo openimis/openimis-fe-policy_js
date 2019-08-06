@@ -6,7 +6,7 @@
     "policy.insureePolicies.productName": "Name",
     "policy.insureePolicies.expiryDate": "Expire Date",
     "policy.insureePolicies.status": "Status",
-    "policy.insureePolicies.hostpitalDeduction": "Hospital Deduction",
+    "policy.insureePolicies.hospitalDeduction": "Hospital Deduction",
     "policy.insureePolicies.nonHospitalDeduction": "Non Hospital Deduction",
     "policy.insureePolicies.hospitalCeiling": "Hospital Ceiling",
     "policy.insureePolicies.nonHospitalCeiling": "Non Hospital Ceiling",
