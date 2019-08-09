@@ -63,7 +63,7 @@ class InsureeItemEligibility extends Component {
                     </Grid>
                     <Grid item xs={8}>
                         <PublishedComponent
-                            id="medical.ItemSimpleSearcher"
+                            id="medical.ItemSelect"
                             onItemSelected={this.onItemSelected}
                         />
                     </Grid>
@@ -86,10 +86,10 @@ class InsureeItemEligibility extends Component {
 }
 
 const mapStateToProps = state => ({
-    insureeItemEligibility: state.policyInsuree.insureeItemEligibility,
-    fetchingItemEligibility: state.policyInsuree.fetchingItemEligibility,
-    fetchedItemEligibility: state.policyInsuree.fetchedItemEligibility,
-    errorItemEligibility: state.policyInsuree.errorItemEligibility,
+    insureeItemEligibility: state.policy.insureeItemEligibility,
+    fetchingItemEligibility: state.policy.fetchingInsureeItemEligibility,
+    fetchedItemEligibility: state.policy.fetchedInsureeItemEligibility,
+    errorItemEligibility: state.policy.errorInsureeItemEligibility,
 });
 
 const mapDispatchToProps = dispatch => {

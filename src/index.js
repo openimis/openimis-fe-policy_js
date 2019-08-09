@@ -7,11 +7,11 @@ import InsureeEligibilitySummary from "./components/InsureeEligibilitySummary";
 import InsureeEligibilityEnquiry from "./components/InsureeEligibilityEnquiry";
 import messages_en from "./translations/en.json";
 import { FormattedMessage } from "@openimis/fe-core";
-import { insureeEnquiry } from "./reducer";
+import { reducer } from "./reducer";
 
 const DEFAULT_CONFIG = {
   "translations": [{key: 'en', messages: messages_en}],
-  "reducers" : [{key: 'policyInsuree', reducer: insureeEnquiry}],  
+  "reducers" : [{key: 'policy', reducer}],  
   "components": [
     {key: "policy.InsureePoliciesSummary", component: InsureePoliciesSummary },
     {key: "policy.InsureeEligibilitySummary", component: InsureeEligibilitySummary },

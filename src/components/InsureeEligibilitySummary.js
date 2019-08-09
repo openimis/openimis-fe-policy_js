@@ -98,10 +98,10 @@ class InsureeEligibilitySummary extends Component {
 
 const mapStateToProps = state => ({
     insuree: state.insuree.insuree,
-    fetchingEligibility: state.policyInsuree.fetchingEligibility,
-    fetchedEligibility: state.policyInsuree.fetchedEligibility,
-    insureeEligibility: state.policyInsuree.insureeEligibility,
-    errorEligibility: state.policyInsuree.errorEligibility,
+    fetchingEligibility: state.policy.fetchingInsureeEligibility,
+    fetchedEligibility: state.policy.fetchedInsureeEligibility,
+    insureeEligibility: state.policy.insureeEligibility,
+    errorEligibility: state.policy.errorInsureeEligibility,
 });
 
 const mapDispatchToProps = dispatch => {
