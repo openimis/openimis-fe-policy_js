@@ -3,7 +3,7 @@ import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 import { withTheme, withStyles } from "@material-ui/core/styles";
 import { Paper, Grid, Typography } from "@material-ui/core";
-import { FormattedMessage, ProgressOrError, PublishedComponent } from "@openimis/fe-core";
+import { FormattedMessage, ProgressOrError, PublishedComponent, withModulesManager } from "@openimis/fe-core";
 import { fetchItemEligibility } from "../actions";
 import Eligibility from "./Eligibility";
 
@@ -47,7 +47,9 @@ class InsureeItemEligibility extends Component {
         this.setState({
             reset: false
         })
-        this.props.fetchItemEligibility(this.props.insuree.chfId, i.code);
+        this.props.fetchItemEligibility(
+            this.props.insuree.chfId,
+            i.code);
     }
 
     render() {
@@ -64,7 +66,9 @@ class InsureeItemEligibility extends Component {
                     <Grid item xs={8}>
                         <PublishedComponent
                             id="medical.ItemSelect"
-                            onItemSelected={this.onItemSelected}
+                            onChange={this.onItemSelected}
+                            withLabel={false}
+                            withPlaceholder={true}
                         />
                     </Grid>
                     <Grid item xs={12}>
@@ -96,6 +100,6 @@ const mapDispatchToProps = dispatch => {
     return bindActionCreators({ fetchItemEligibility }, dispatch);
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(
+export default withModulesManager(connect(mapStateToProps, mapDispatchToProps)(
     withTheme(withStyles(styles)(InsureeItemEligibility))
-);
+));

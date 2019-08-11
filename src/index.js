@@ -12,10 +12,10 @@ import { reducer } from "./reducer";
 const DEFAULT_CONFIG = {
   "translations": [{key: 'en', messages: messages_en}],
   "reducers" : [{key: 'policy', reducer}],  
-  "components": [
-    {key: "policy.InsureePoliciesSummary", component: InsureePoliciesSummary },
-    {key: "policy.InsureeEligibilitySummary", component: InsureeEligibilitySummary },
-    {key: "policy.InsureeEligibilityEnquiry", component: InsureeEligibilityEnquiry },
+  "refs": [
+    {key: "policy.InsureePoliciesSummary", ref: InsureePoliciesSummary },
+    {key: "policy.InsureeEligibilitySummary", ref: InsureeEligibilitySummary },
+    {key: "policy.InsureeEligibilityEnquiry", ref: InsureeEligibilityEnquiry },
   ],    
   "core.Router": [
     { path: "policy/policies", component: PoliciesPage },
