@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import { withTheme, withStyles } from "@material-ui/core/styles";
 import { FormattedDate } from 'react-intl';
-import { withModulesManager, FieldLabel, SmallTable } from "@openimis/fe-core";
+import { withModulesManager, FieldLabel, ResultTable } from "@openimis/fe-core";
 import ThumbUp from "@material-ui/icons/ThumbUp";
 import ThumbDown from "@material-ui/icons/ThumbDown";
 
@@ -29,7 +29,7 @@ class Eligibility extends Component {
         }
 
         return (
-            <SmallTable
+            <ResultTable
                 items={[eligibility]}
                 itemFormatters={itemFormatters}
             />

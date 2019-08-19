@@ -23,19 +23,17 @@ class InsureeServiceEligibility extends Component {
     }
 
     componentDidMount() {
-        this.setState({
-            reset: true
-        })
+        this.setState({reset: true})
     }
 
 
     onServiceSelected = i => {
-        this.setState({
-            reset: false
-        })
-        this.props.fetchServiceEligibility(
-            this.props.insuree.chfId,
-            i.code);
+        this.setState(
+            { reset: !i },
+            e => !!i && this.props.fetchServiceEligibility(
+                this.props.insuree.chfId,
+                i.code)
+        )
     }
 
     render() {
@@ -51,7 +49,7 @@ class InsureeServiceEligibility extends Component {
                     </Grid>
                     <Grid item xs={8}>
                         <PublishedComponent
-                            id="medical.ServiceSelect"
+                            id="medical.ServicePicker"
                             onChange={this.onServiceSelected}
                             withLabel={false}
                             withPlaceholder={true}

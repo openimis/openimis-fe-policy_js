@@ -16,7 +16,7 @@ const DEFAULT_CONFIG = {
     {key: "policy.InsureePoliciesSummary", ref: InsureePoliciesSummary },
     {key: "policy.InsureeEligibilitySummary", ref: InsureeEligibilitySummary },
     {key: "policy.InsureeEligibilityEnquiry", ref: InsureeEligibilityEnquiry },
-  ],    
+  ],
   "core.Router": [
     { path: "policy/policies", component: PoliciesPage },
     { path: "policy/contributions", component: ContributionsPage },

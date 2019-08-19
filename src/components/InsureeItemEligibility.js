@@ -44,12 +44,12 @@ class InsureeItemEligibility extends Component {
     }
 
     onItemSelected = i => {
-        this.setState({
-            reset: false
-        })
-        this.props.fetchItemEligibility(
-            this.props.insuree.chfId,
-            i.code);
+        this.setState(
+            { reset: !i },
+            e => !!i && this.props.fetchItemEligibility(
+                this.props.insuree.chfId,
+                i.code)
+        )
     }
 
     render() {
@@ -65,7 +65,7 @@ class InsureeItemEligibility extends Component {
                     </Grid>
                     <Grid item xs={8}>
                         <PublishedComponent
-                            id="medical.ItemSelect"
+                            id="medical.ItemPicker"
                             onChange={this.onItemSelected}
                             withLabel={false}
                             withPlaceholder={true}

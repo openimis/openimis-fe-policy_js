@@ -4,7 +4,7 @@ import { bindActionCreators } from "redux";
 import { injectIntl } from 'react-intl';
 import { withTheme, withStyles } from "@material-ui/core/styles";
 import { Grid, Paper } from "@material-ui/core";
-import { SmallTable } from "@openimis/fe-core";
+import { ResultTable } from "@openimis/fe-core";
 import { fetchEligibility } from "../actions";
 
 
@@ -17,7 +17,7 @@ const styles = theme => ({
 });
 
 const counts = insureeEligibility => (
-    <SmallTable
+    <ResultTable
         module="policy"
         header="insureeEligibility.remainNbr"
         headers={[
@@ -41,7 +41,7 @@ const counts = insureeEligibility => (
 );
 
 const amounts = insureeEligibility => (
-    <SmallTable
+    <ResultTable
         module="policy"
         header="insureeEligibility.remainAmounts"
         headers={[
