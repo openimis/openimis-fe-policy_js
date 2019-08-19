@@ -5,7 +5,7 @@ import { injectIntl, FormattedDate } from 'react-intl';
 import { withTheme, withStyles } from "@material-ui/core/styles";
 import { Grid, Paper, IconButton } from "@material-ui/core";
 import CachedIcon from "@material-ui/icons/Cached";
-import { ProgressOrError, ResultTable } from "@openimis/fe-core";
+import { ProgressOrError, Table } from "@openimis/fe-core";
 import { fetchPolicies } from "../actions";
 
 
@@ -45,7 +45,7 @@ class InsureePoliciesSummary extends Component {
                     <Grid container>
                         <Grid item xs={12}>
                             <Paper className={classes.paper}>
-                                <ResultTable
+                                <Table
                                     module="policy"
                                     header="insureePolicies.header"
                                     headers={[
