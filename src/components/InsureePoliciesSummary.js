@@ -47,7 +47,7 @@ class InsureePoliciesSummary extends Component {
                             <Paper className={classes.paper}>
                                 <Table
                                     module="policy"
-                                    header="insureePolicies.header"
+                                    header={<FormattedMessage module="policy" id="insureePolicies.header" />}
                                     headers={[
                                         "insureePolicies.productCode",
                                         "insureePolicies.productName",

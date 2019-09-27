@@ -19,7 +19,7 @@ const styles = theme => ({
 const counts = insureeEligibility => (
     <Table
         module="policy"
-        header="insureeEligibility.remainNbr"
+        header={<FormattedMessage module="policy" id="insureeEligibility.remainNbr" />}
         headers={[
             "insureeEligibility.admissionsLeft",
             "insureeEligibility.visitsLeft",
@@ -43,7 +43,7 @@ const counts = insureeEligibility => (
 const amounts = insureeEligibility => (
     <Table
         module="policy"
-        header="insureeEligibility.remainAmounts"
+        header={<FormattedMessage module="policy" id="insureeEligibility.remainAmounts" />}
         headers={[
             "insureeEligibility.hospitalizationAmountLeft",
             "insureeEligibility.consultationAmountLeft",
