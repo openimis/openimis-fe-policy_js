@@ -1,0 +1,3 @@
+
+export const RIGHT_POLICY=101200
+export const RIGHT_CONTRIBUTION=101300
