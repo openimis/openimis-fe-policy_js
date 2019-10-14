@@ -3,9 +3,8 @@ import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 import { injectIntl, FormattedDate } from 'react-intl';
 import { withTheme, withStyles } from "@material-ui/core/styles";
-import { Grid, Paper, IconButton } from "@material-ui/core";
-import CachedIcon from "@material-ui/icons/Cached";
-import { ProgressOrError, SmallTable } from "@openimis/fe-core";
+import { Grid, Paper } from "@material-ui/core";
+import { ProgressOrError, Table, formatMessage } from "@openimis/fe-core";
 import { fetchPolicies } from "../actions";
 
 
@@ -37,7 +36,7 @@ class InsureePoliciesSummary extends Component {
     }
 
     render() {
-        const { classes, insuree, fetchingPolicies, insureePolicies, errorPolicies } = this.props;
+        const { intl, classes, insuree, fetchingPolicies, insureePolicies, errorPolicies } = this.props;
         return (
             <Fragment>
                 <ProgressOrError progress={fetchingPolicies} error={errorPolicies} />
@@ -45,9 +44,9 @@ class InsureePoliciesSummary extends Component {
                     <Grid container>
                         <Grid item xs={12}>
                             <Paper className={classes.paper}>
-                                <SmallTable
+                                <Table
                                     module="policy"
-                                    header="insureePolicies.header"
+                                    header={formatMessage(intl, "policy","insureePolicies.header")}
                                     headers={[
                                         "insureePolicies.productCode",
                                         "insureePolicies.productName",
@@ -83,10 +82,10 @@ class InsureePoliciesSummary extends Component {
 
 const mapStateToProps = state => ({
     insuree: state.insuree.insuree,
-    fetchingPolicies: state.policyInsuree.fetchingPolicies,
-    fetchedPolicies: state.policyInsuree.fetchedPolicies,
-    insureePolicies: state.policyInsuree.insureePolicies,
-    errorPolicies: state.policyInsuree.errorPolicies,
+    fetchingPolicies: state.policy.fetchingInsureePolicies,
+    fetchedPolicies: state.policy.fetchedInsureePolicies,
+    insureePolicies: state.policy.insureePolicies,
+    errorPolicies: state.policy.errorInsureePolicies,
 });
 
 const mapDispatchToProps = dispatch => {

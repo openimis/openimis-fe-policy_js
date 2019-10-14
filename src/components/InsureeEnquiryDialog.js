@@ -54,14 +54,14 @@ class InsureeEnquiryDialog extends Component {
 
 const mapStateToProps = state => ({
     insuree: state.insuree.insuree,
-    fetchingPolicies: state.policyInsuree.fetchingPolicies,
-    fetchedPolicies: state.policyInsuree.fetchedPolicies,
-    insureePolicies: state.policyInsuree.insureePolicies,
-    errorPolicies: state.policyInsuree.errorPolicies,
-    fetchingEligibility: state.policyInsuree.fetchingEligibility,
-    fetchedEligibility: state.policyInsuree.fetchedEligibility,
-    insureeEligibility: state.policyInsuree.insureeEligibility,
-    errorEligibility: state.policyInsuree.errorEligibility,
+    fetchingPolicies: state.policy.fetchingInsureePolicies,
+    fetchedPolicies: state.policy.fetchedInsureePolicies,
+    insureePolicies: state.policy.insureePolicies,
+    errorPolicies: state.policy.errorInsureePolicies,
+    fetchingEligibility: state.policy.fetchingInsureeEligibility,
+    fetchedEligibility: state.policy.fetchedInsureeEligibility,
+    insureeEligibility: state.policy.insureeInsureeEligibility,
+    errorEligibility: state.policy.errorInsureeEligibility,
 });
 
 const mapDispatchToProps = dispatch => {

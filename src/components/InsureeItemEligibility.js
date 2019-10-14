@@ -3,7 +3,7 @@ import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 import { withTheme, withStyles } from "@material-ui/core/styles";
 import { Paper, Grid, Typography } from "@material-ui/core";
-import { FormattedMessage, ProgressOrError, PublishedComponent } from "@openimis/fe-core";
+import { FormattedMessage, ProgressOrError, PublishedComponent, withModulesManager } from "@openimis/fe-core";
 import { fetchItemEligibility } from "../actions";
 import Eligibility from "./Eligibility";
 
@@ -44,10 +44,12 @@ class InsureeItemEligibility extends Component {
     }
 
     onItemSelected = i => {
-        this.setState({
-            reset: false
-        })
-        this.props.fetchItemEligibility(this.props.insuree.chfId, i.code);
+        this.setState(
+            { reset: !i },
+            e => !!i && this.props.fetchItemEligibility(
+                this.props.insuree.chfId,
+                i.code)
+        )
     }
 
     render() {
@@ -63,8 +65,10 @@ class InsureeItemEligibility extends Component {
                     </Grid>
                     <Grid item xs={8}>
                         <PublishedComponent
-                            id="medical.ItemSimpleSearcher"
-                            onItemSelected={this.onItemSelected}
+                            id="medical.ItemPicker"
+                            onChange={this.onItemSelected}
+                            withLabel={false}
+                            withPlaceholder={true}
                         />
                     </Grid>
                     <Grid item xs={12}>
@@ -86,16 +90,16 @@ class InsureeItemEligibility extends Component {
 }
 
 const mapStateToProps = state => ({
-    insureeItemEligibility: state.policyInsuree.insureeItemEligibility,
-    fetchingItemEligibility: state.policyInsuree.fetchingItemEligibility,
-    fetchedItemEligibility: state.policyInsuree.fetchedItemEligibility,
-    errorItemEligibility: state.policyInsuree.errorItemEligibility,
+    insureeItemEligibility: state.policy.insureeItemEligibility,
+    fetchingItemEligibility: state.policy.fetchingInsureeItemEligibility,
+    fetchedItemEligibility: state.policy.fetchedInsureeItemEligibility,
+    errorItemEligibility: state.policy.errorInsureeItemEligibility,
 });
 
 const mapDispatchToProps = dispatch => {
     return bindActionCreators({ fetchItemEligibility }, dispatch);
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(
+export default withModulesManager(connect(mapStateToProps, mapDispatchToProps)(
     withTheme(withStyles(styles)(InsureeItemEligibility))
-);
+));

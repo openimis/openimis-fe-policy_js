@@ -7,35 +7,41 @@ import InsureeEligibilitySummary from "./components/InsureeEligibilitySummary";
 import InsureeEligibilityEnquiry from "./components/InsureeEligibilityEnquiry";
 import messages_en from "./translations/en.json";
 import { FormattedMessage } from "@openimis/fe-core";
-import { insureeEnquiry } from "./reducer";
+import { reducer } from "./reducer";
+import {
+  RIGHT_POLICY,
+  RIGHT_CONTRIBUTION,
+} from "./constants";
 
 const DEFAULT_CONFIG = {
-  "translations": [{key: 'en', messages: messages_en}],
-  "reducers" : [{key: 'policyInsuree', reducer: insureeEnquiry}],  
-  "components": [
-    {key: "policy.InsureePoliciesSummary", component: InsureePoliciesSummary },
-    {key: "policy.InsureeEligibilitySummary", component: InsureeEligibilitySummary },
-    {key: "policy.InsureeEligibilityEnquiry", component: InsureeEligibilityEnquiry },
-  ],    
+  "translations": [{ key: 'en', messages: messages_en }],
+  "reducers": [{ key: 'policy', reducer }],
+  "refs": [
+    { key: "policy.InsureePoliciesSummary", ref: InsureePoliciesSummary },
+    { key: "policy.InsureeEligibilitySummary", ref: InsureeEligibilitySummary },
+    { key: "policy.InsureeEligibilityEnquiry", ref: InsureeEligibilityEnquiry },
+  ],
   "core.Router": [
     { path: "policy/policies", component: PoliciesPage },
     { path: "policy/contributions", component: ContributionsPage },
   ],
   "insuree.MainMenu": [
     {
-      text: <FormattedMessage module="policy" id="menu.policies"/>,
+      text: <FormattedMessage module="policy" id="menu.policies" />,
       icon: <ListAlt />,
-      route: "/policy/policies"
+      route: "/policy/policies",
+      filter: rights => rights.includes(RIGHT_POLICY)
     },
     {
-      text: <FormattedMessage module="policy" id="menu.contributions"/>,
+      text: <FormattedMessage module="policy" id="menu.contributions" />,
       icon: <MonetizationOn />,
-      route: "/policy/contributions"
-    }    
+      route: "/policy/contributions",
+      filter: rights => rights.includes(RIGHT_CONTRIBUTION)
+    }
   ],
-  "insuree.EnquiryDialog": [ InsureePoliciesSummary, InsureeEligibilityEnquiry, InsureeEligibilitySummary ],
+  "insuree.EnquiryDialog": [InsureePoliciesSummary, InsureeEligibilityEnquiry, InsureeEligibilitySummary],
 }
 
 export const PolicyModule = (cfg) => {
-  return{ ...DEFAULT_CONFIG, ...cfg }; 
+  return { ...DEFAULT_CONFIG, ...cfg };
 }

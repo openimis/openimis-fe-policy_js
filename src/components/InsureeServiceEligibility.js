@@ -3,7 +3,7 @@ import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 import { withTheme, withStyles } from "@material-ui/core/styles";
 import { Paper, Grid, Typography } from "@material-ui/core";
-import { FormattedMessage, ProgressOrError, PublishedComponent } from "@openimis/fe-core";
+import { FormattedMessage, ProgressOrError, PublishedComponent, withModulesManager } from "@openimis/fe-core";
 import { fetchServiceEligibility } from "../actions";
 import Eligibility from "./Eligibility";
 
@@ -23,17 +23,17 @@ class InsureeServiceEligibility extends Component {
     }
 
     componentDidMount() {
-        this.setState({
-            reset: true
-        })
+        this.setState({reset: true})
     }
 
 
     onServiceSelected = i => {
-        this.setState({
-            reset: false
-        })
-        this.props.fetchServiceEligibility(this.props.insuree.chfId, i.code);
+        this.setState(
+            { reset: !i },
+            e => !!i && this.props.fetchServiceEligibility(
+                this.props.insuree.chfId,
+                i.code)
+        )
     }
 
     render() {
@@ -49,8 +49,10 @@ class InsureeServiceEligibility extends Component {
                     </Grid>
                     <Grid item xs={8}>
                         <PublishedComponent
-                            id="medical.ServiceSimpleSearcher"
-                            onServiceSelected={this.onServiceSelected}
+                            id="medical.ServicePicker"
+                            onChange={this.onServiceSelected}
+                            withLabel={false}
+                            withPlaceholder={true}
                         />
                     </Grid>
                     <Grid item xs={12}>
@@ -72,16 +74,16 @@ class InsureeServiceEligibility extends Component {
 }
 
 const mapStateToProps = state => ({
-    insureeServiceEligibility: state.policyInsuree.insureeServiceEligibility,
-    fetchingServiceEligibility: state.policyInsuree.fetchingServiceEligibility,
-    fetchedServiceEligibility: state.policyInsuree.fetchedServiceEligibility,
-    errorServiceEligibility: state.policyInsuree.errorServiceEligibility,
+    insureeServiceEligibility: state.policy.insureeServiceEligibility,
+    fetchingServiceEligibility: state.policy.fetchingInsureeServiceEligibility,
+    fetchedServiceEligibility: state.policy.fetchedInsureeServiceEligibility,
+    errorServiceEligibility: state.policy.errorInsureeServiceEligibility,
 });
 
 const mapDispatchToProps = dispatch => {
     return bindActionCreators({ fetchServiceEligibility }, dispatch);
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(
+export default withModulesManager(connect(mapStateToProps, mapDispatchToProps)(
     withTheme(withStyles(styles)(InsureeServiceEligibility))
-);
+));

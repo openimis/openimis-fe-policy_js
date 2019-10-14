@@ -4,7 +4,7 @@ import { bindActionCreators } from "redux";
 import { injectIntl } from 'react-intl';
 import { withTheme, withStyles } from "@material-ui/core/styles";
 import { Grid, Paper } from "@material-ui/core";
-import { SmallTable } from "@openimis/fe-core";
+import { Table } from "@openimis/fe-core";
 import { fetchEligibility } from "../actions";
 
 
@@ -17,9 +17,9 @@ const styles = theme => ({
 });
 
 const counts = insureeEligibility => (
-    <SmallTable
+    <Table
         module="policy"
-        header="insureeEligibility.remainNbr"
+        header={<FormattedMessage module="policy" id="insureeEligibility.remainNbr" />}
         headers={[
             "insureeEligibility.admissionsLeft",
             "insureeEligibility.visitsLeft",
@@ -41,9 +41,9 @@ const counts = insureeEligibility => (
 );
 
 const amounts = insureeEligibility => (
-    <SmallTable
+    <Table
         module="policy"
-        header="insureeEligibility.remainAmounts"
+        header={<FormattedMessage module="policy" id="insureeEligibility.remainAmounts" />}
         headers={[
             "insureeEligibility.hospitalizationAmountLeft",
             "insureeEligibility.consultationAmountLeft",
@@ -98,10 +98,10 @@ class InsureeEligibilitySummary extends Component {
 
 const mapStateToProps = state => ({
     insuree: state.insuree.insuree,
-    fetchingEligibility: state.policyInsuree.fetchingEligibility,
-    fetchedEligibility: state.policyInsuree.fetchedEligibility,
-    insureeEligibility: state.policyInsuree.insureeEligibility,
-    errorEligibility: state.policyInsuree.errorEligibility,
+    fetchingEligibility: state.policy.fetchingInsureeEligibility,
+    fetchedEligibility: state.policy.fetchedInsureeEligibility,
+    insureeEligibility: state.policy.insureeEligibility,
+    errorEligibility: state.policy.errorInsureeEligibility,
 });
 
 const mapDispatchToProps = dispatch => {

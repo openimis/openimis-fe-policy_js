@@ -34,10 +34,10 @@ export function fetchEligibility(chfid) {
   return graphql(payload, 'POLICY_INSUREE_ELIGIBILITY');
 }
 
-export function fetchItemEligibility(chfid, itemCode) {
+export function fetchItemEligibility(chfid, code) {
   let payload = `
     {
-      policyItemEligibilityByInsuree(chfId:"${chfid}", itemCode:"${itemCode}")
+      policyItemEligibilityByInsuree(chfId:"${chfid}", itemCode:"${code}")
       {
         minDateItem, itemLeft, isItemOk
       }
@@ -46,10 +46,10 @@ export function fetchItemEligibility(chfid, itemCode) {
   return graphql(payload, 'POLICY_INSUREE_ITEM_ELIGIBILITY');
 }
 
-export function fetchServiceEligibility(chfid, serviceCode) {
+export function fetchServiceEligibility(chfid, code) {
   let payload = `
     {
-      policyServiceEligibilityByInsuree(chfId:"${chfid}", serviceCode:"${serviceCode}")
+      policyServiceEligibilityByInsuree(chfId:"${chfid}", serviceCode:"${code}")
       {
         minDateService,serviceLeft, isServiceOk
       }

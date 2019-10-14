@@ -1,118 +1,113 @@
 import { formatServerError, formatGraphQLError } from '@openimis/fe-core';
 
-export const insureeEnquiry = (
+export const reducer = (
     state = {
-        fetchingPolicies: false,
-        fetchedPolicies: false,
-        errorPolicies: null,
-        policies: null,
-        fetchingEligibility: false,
-        fetchedEligibility: false,
-        errorEligibility: null,
+        fetchingInsureePolicies: false,
+        fetchedInsureePolicies: false,
+        errorInsureePolicies: null,
+        insureePolicies: null,
+        fetchingInsureeEligibility: false,
+        fetchedInsureeEligibility: false,
+        errorInsureeEligibility: null,
         insureeEligibility: null,
         fetchingItemEligibility: false,
-        fetchedItemEligibility: false,
-        errorItemEligibility: null,
+        fetchedInsureeItemEligibility: false,
+        errorInsureeItemEligibility: null,
         insureeItemEligibility: null,
-        fetchingItemEligibility: false,
-        fetchedServiceEligibility: false,
-        errorItemEligibility: null,
-        insureeItemEligibility: null,
-        fetchingPolicyBalance: {},
-        fetchedPolicyBalance: {},
-        insureePolicyBalance: {},
-        errorPolicyBalance: {},
-        policyBalanceCount: 0,
+        fetchingInsureeItemEligibility: false,
+        fetchedInsureeServiceEligibility: false,
+        errorInsureeServiceEligibility: null,
+        insureeInsureeServiceEligibility: null,
     },
     action) => {
     switch (action.type) {
         case 'POLICY_INSUREE_POLICIES_REQ':
             return {
                 ...state,
-                fetchingPolicies: true,
-                fetchedPolicies: false,
+                fetchingInsureePolicies: true,
+                fetchedInsureePolicies: false,
                 insureePolicies: null,
-                errorPolicies: null,
+                errorInsureePolicies: null,
             };
         case 'POLICY_INSUREE_POLICIES_RESP':
             return {
                 ...state,
-                fetchingPolicies: false,
-                fetchedPolicies: true,
+                fetchingInsureePolicies: false,
+                fetchedInsureePolicies: true,
                 insureePolicies: action.payload.data.policiesByInsuree.items,
-                errorPolicies: formatGraphQLError(action.payload)
+                errorInsureePolicies: formatGraphQLError(action.payload)
             };
         case 'POLICY_INSUREE_POLICIES_ERR':
             return {
                 ...state,
-                fetchingPolicies: false,
-                errorPolicies: formatServerError(action.payload),
+                fetchingInsureePolicies: false,
+                errorInsureePolicies: formatServerError(action.payload),
             };
         case 'POLICY_INSUREE_ELIGIBILITY_REQ':
             return {
                 ...state,
-                fetchingEligibility: true,
-                fetchedEligibility: false,
+                fetchingInsureeEligibility: true,
+                fetchedInsureeEligibility: false,
                 insureeEligibility: null,
-                errorEligibility: null,
+                errorInsureeEligibility: null,
             };
         case 'POLICY_INSUREE_ELIGIBILITY_RESP':
             return {
                 ...state,
-                fetchingEligibility: false,
-                fetchedEligibility: true,
+                fetchingInsureeEligibility: false,
+                fetchedInsureeEligibility: true,
                 insureeEligibility: action.payload.data.policyEligibilityByInsuree,
-                errorEligibility: formatGraphQLError(action.payload),
+                errorInsureeEligibility: formatGraphQLError(action.payload),
             };
         case 'POLICY_INSUREE_ELIGIBILITY_ERR':
             return {
                 ...state,
-                fetchingEligibility: false,
-                errorEligibility: formatServerError(action.payload),
+                fetchingInsureeEligibility: false,
+                errorInsureeEligibility: formatServerError(action.payload),
             };
         case 'POLICY_INSUREE_ITEM_ELIGIBILITY_REQ':
             return {
                 ...state,
-                fetchingItemEligibility: true,
-                fetchedItemEligibility: false,
+                fetchingInsureeItemEligibility: true,
+                fetchedInsureeItemEligibility: false,
                 insureeItemEligibility: null,
-                errorItemEligibility: null,
+                errorInsureeItemEligibility: null,
             };
         case 'POLICY_INSUREE_ITEM_ELIGIBILITY_RESP':
             return {
                 ...state,
-                fetchingItemEligibility: false,
-                fetchedItemEligibility: true,
+                fetchingInsureeItemEligibility: false,
+                fetchedInsureeItemEligibility: true,
                 insureeItemEligibility: action.payload.data.policyItemEligibilityByInsuree,
-                errorItemEligibility: formatGraphQLError(action.payload),
+                errorInsureeItemEligibility: formatGraphQLError(action.payload),
             };
         case 'POLICY_INSUREE_ITEM_ELIGIBILITY_ERR':
             return {
                 ...state,
-                fetchingItemEligibility: false,
-                errorItemEligibility: formatServerError(action.payload),
+                fetchingInsureeItemEligibility: false,
+                errorInsureeItemEligibility: formatServerError(action.payload),
             };
         case 'POLICY_INSUREE_SERVICE_ELIGIBILITY_REQ':
             return {
                 ...state,
-                fetchingServiceEligibility: true,
-                fetchedServiceEligibility: false,
+                fetchingInsureeServiceEligibility: true,
+                fetchedInsureeServiceEligibility: false,
                 insureeServiceEligibility: null,
-                errorServiceEligibility: null,
+                errorInsureeServiceEligibility: null,
             };
         case 'POLICY_INSUREE_SERVICE_ELIGIBILITY_RESP':
             return {
                 ...state,
-                fetchingServiceEligibility: false,
-                fetchedServiceEligibility: true,
+                fetchingInsureeServiceEligibility: false,
+                fetchedInsureeServiceEligibility: true,
                 insureeServiceEligibility: action.payload.data.policyServiceEligibilityByInsuree,
-                errorServiceEligibility: formatGraphQLError(action.payload),
+                errorInsureeServiceEligibility: formatGraphQLError(action.payload),
             };
         case 'POLICY_INSUREE_SERVICE_ELIGIBILITY_ERR':
             return {
                 ...state,
-                fetchingServiceEligibility: false,
-                errorServiceEligibility: formatServerError(action.payload),
+                fetchingInsureeServiceEligibility: false,
+                errorInsureeServiceEligibility: formatServerError(action.payload),
             };
         default:
             return state;

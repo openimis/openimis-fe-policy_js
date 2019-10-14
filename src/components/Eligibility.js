@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import { withTheme, withStyles } from "@material-ui/core/styles";
 import { FormattedDate } from 'react-intl';
-import { withModulesManager, FieldLabel, SmallTable } from "@openimis/fe-core";
+import { withModulesManager, FieldLabel, Table } from "@openimis/fe-core";
 import ThumbUp from "@material-ui/icons/ThumbUp";
 import ThumbDown from "@material-ui/icons/ThumbDown";
 
@@ -12,24 +12,24 @@ class Eligibility extends Component {
     render() {
         const { modulesManager, eligibility } = this.props;
         let itemFormatters = [];
-        if (!modulesManager.skipControl("policy", "insureeEligibility.minDate")) {
+        if (!modulesManager.hideField("policy", "insureeEligibility.minDate")) {
             itemFormatters.push(
                 i => <FieldLabel module="policy" id="insureeEligibility.minDate" />,
                 i => !!i.minDate ? <FormattedDate value={i.minDate} /> : null
             );
         }
-        if (!modulesManager.skipControl("policy", "insureeEligibility.left")) {
+        if (!modulesManager.hideField("policy", "insureeEligibility.left")) {
             itemFormatters.push(
                 i => <FieldLabel module="policy" id="insureeEligibility.left" />,
                 i => i.left
             );
         }
-        if (!modulesManager.skipControl("policy", "insureeEligibility.isOk")) {
+        if (!modulesManager.hideField("policy", "insureeEligibility.isOk")) {
             itemFormatters.push(i => i.isOk ? <ThumbUp /> : <ThumbDown />);
         }
 
         return (
-            <SmallTable
+            <Table
                 items={[eligibility]}
                 itemFormatters={itemFormatters}
             />
