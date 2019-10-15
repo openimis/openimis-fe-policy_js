@@ -4,7 +4,7 @@ import { bindActionCreators } from "redux";
 import { injectIntl } from 'react-intl';
 import { withTheme, withStyles } from "@material-ui/core/styles";
 import { Grid, Paper } from "@material-ui/core";
-import { Table } from "@openimis/fe-core";
+import { Table, FormattedMessage } from "@openimis/fe-core";
 import { fetchEligibility } from "../actions";
 
 
