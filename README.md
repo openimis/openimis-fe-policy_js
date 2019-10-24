@@ -23,6 +23,7 @@ None
 * `policy.InsureePoliciesSummary`, insuree (family) policies summary (by default contributed to insuree enquiry dialog)
 * `policy.InsureeEligibilitySummary`, querying insuree eligibility to an item and service (by default contributed to insuree enquiry dialog)
 * `policy.InsureeEligibilityEnquiry`, remaining counts and amounts of insuree (by default contributed to insuree enquiry dialog)
+* `policy.InsureePolicyEligibilitySummary`, summary (expiry date and balance) of the last still valid insuree policy
 
 ## Dispatched Redux Actions
 * `POLICY_INSUREE_POLICIES_{REQ|RESP|ERR}`, loading insuree policies summary (GraphQL: `policiesByInsuree`)

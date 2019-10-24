@@ -5,6 +5,7 @@ import { ContributionsPage } from "./components/ContributionsPage";
 import InsureePoliciesSummary from "./components/InsureePoliciesSummary";
 import InsureeEligibilitySummary from "./components/InsureeEligibilitySummary";
 import InsureeEligibilityEnquiry from "./components/InsureeEligibilityEnquiry";
+import InsureePolicyEligibilitySummary from "./components/InsureePolicyEligibilitySummary";
 import messages_en from "./translations/en.json";
 import { FormattedMessage } from "@openimis/fe-core";
 import { reducer } from "./reducer";
@@ -20,6 +21,7 @@ const DEFAULT_CONFIG = {
     { key: "policy.InsureePoliciesSummary", ref: InsureePoliciesSummary },
     { key: "policy.InsureeEligibilitySummary", ref: InsureeEligibilitySummary },
     { key: "policy.InsureeEligibilityEnquiry", ref: InsureeEligibilityEnquiry },
+    { key: "policy.InsureePolicyEligibilitySummary", ref: InsureePolicyEligibilitySummary },
   ],
   "core.Router": [
     { path: "policy/policies", component: PoliciesPage },
