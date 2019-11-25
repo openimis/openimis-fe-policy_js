@@ -13,7 +13,7 @@ export function fetchPolicies(chfid) {
     {
       policiesByInsuree(chfId:"${chfid}")
       {
-        items{productCode, productName, expiryDate, status, dedType, ded1, ded2, ceiling1, ceiling2}
+        items{productCode, productName, expiryDate, status, ded, dedInPatient, dedOutPatient, ceiling, ceilingInPatient, ceilingOutPatient}
       }
     }
   `

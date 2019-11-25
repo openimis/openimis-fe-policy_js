@@ -23,6 +23,12 @@ const styles = theme => ({
 
 class InsureePoliciesSummary extends Component {
 
+    componentDidMount() {
+        if (!!this.props.insuree) {
+            this.props.fetchPolicies(this.props.insuree.chfId, this.props.insuree.family.id);
+        }
+    }
+
     componentDidUpdate(prevProps, prevState, snapshot) {
         if ((!prevProps.insuree && !!this.props.insuree
             || !!prevProps.insuree && this.props.insuree && (
@@ -52,8 +58,10 @@ class InsureePoliciesSummary extends Component {
                                         "insureePolicies.productName",
                                         "insureePolicies.expiryDate",
                                         "insureePolicies.status",
+                                        "insureePolicies.deduction",
                                         "insureePolicies.hospitalDeduction",
                                         "insureePolicies.nonHospitalDeduction",
+                                        "insureePolicies.ceiling",
                                         "insureePolicies.hospitalCeiling",
                                         "insureePolicies.nonHospitalCeiling",
                                         "insureePolicies.balance"
@@ -63,11 +71,13 @@ class InsureePoliciesSummary extends Component {
                                         i => i.productName,
                                         i => <FormattedDate value={i.expiryDate} />,
                                         i => i.status,
-                                        i => i.ded1,
-                                        i => i.ded2,
-                                        i => i.ceiling1,
-                                        i => i.ceiling2,
-                                        i => i.ceiling1 - (i.ded1 || 0),
+                                        i => i.ded,
+                                        i => i.dedInPatient,
+                                        i => i.dedOutPatient,
+                                        i => i.ceiling,
+                                        i => i.ceilingInPatient,
+                                        i => i.ceilingOutPatient,
+                                        i => i.ceiling - (i.ded || 0),
                                     ]}
                                     items={insureePolicies} />
                             </Paper>

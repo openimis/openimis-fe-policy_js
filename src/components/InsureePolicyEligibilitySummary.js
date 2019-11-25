@@ -45,7 +45,7 @@ class InsureePolicyEligibilitySummary extends Component {
                             </Grid>
                             <Grid item xs={6} className={classes.item}>
                                 <AmountInput
-                                    value={(activePolicy.ceiling1 || 0) - (activePolicy.ded1 || 0)}
+                                    value={(activePolicy.ceiling || 0) - (activePolicy.ded || 0)}
                                     module="claim"
                                     label="balance"
                                     readOnly={true}
