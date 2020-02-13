@@ -60,7 +60,7 @@ class InsureePolicyEligibilitySummary extends Component {
 }
 
 const mapStateToProps = state => ({
-    insuree: state.claim.claim.insuree,
+    insuree: !!state.claim.claim ? state.claim.claim.insuree : null,
     fetchingPolicies: state.policy.fetchingInsureePolicies,
     fetchedPolicies: state.policy.fetchedInsureePolicies,
     insureePolicies: state.policy.insureePolicies,
