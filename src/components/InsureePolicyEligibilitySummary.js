@@ -55,51 +55,55 @@ class InsureePolicyEligibilitySummary extends Component {
     render() {
         const { classes, fetchingPolicies, fetchedPolicies, errorPolicies } = this.props;
         const { insureePolicies } = this.state;
-        var activePolicy = !!insureePolicies && insureePolicies.filter(p => p.status === ACTIVE_POLICY_STATUS).pop();
+        var activePolicies = !!insureePolicies && insureePolicies.filter(p => p.status === ACTIVE_POLICY_STATUS);
         return (
             <Fragment>
                 <ProgressOrError progress={fetchingPolicies} error={errorPolicies} />
-                {!!fetchedPolicies && !activePolicy &&
+                {!!fetchedPolicies && !activePolicies.length &&
                     <Grid item className={classes.item}>
                         <FormattedMessage module="policy" id="insureePolicies.noActivePolicy" />
                     </Grid>
                 }
-                {!!fetchedPolicies && !!activePolicy && (
+                {!!fetchedPolicies && !!activePolicies.length && (
                     <Grid item>
                         <Grid container>
-                            <Grid item xs={2} className={classes.item}>
-                                <TextInput
-                                    value={activePolicy.productCode}
-                                    module="policy"
-                                    label="policy.insureePolicies.productCode"
-                                    readOnly={true}
-                                />
-                            </Grid>
-                            <Grid item xs={4} className={classes.item}>
-                                <TextInput
-                                    value={activePolicy.productName}
-                                    module="policy"
-                                    label="policy.insureePolicies.productName"
-                                    readOnly={true}
-                                />
-                            </Grid>
-                            <Grid item xs={3} className={classes.item}>
-                                <PublishedComponent id="core.DatePicker"
-                                    value={activePolicy.expiryDate}
-                                    module="policy"
-                                    label="insureePolicies.expiryDate"
-                                    readOnly={true}
-                                />
-                            </Grid>
-                            <Grid item xs={3} className={classes.item}>
-                                <AmountInput
-                                    value={0}
-                                    module="claim"
-                                    label="balance"
-                                    readOnly={true}
-                                    displayZero={true}
-                                />
-                            </Grid>
+                            {activePolicies.map((activePolicy, i) => (
+                                <Fragment key={`activePolicy-${i}`}>
+                                    <Grid item xs={2} className={classes.item}>
+                                        <TextInput
+                                            value={activePolicy.productCode}
+                                            module="policy"
+                                            label="policy.insureePolicies.productCode"
+                                            readOnly={true}
+                                        />
+                                    </Grid>
+                                    <Grid item xs={4} className={classes.item}>
+                                        <TextInput
+                                            value={activePolicy.productName}
+                                            module="policy"
+                                            label="policy.insureePolicies.productName"
+                                            readOnly={true}
+                                        />
+                                    </Grid>
+                                    <Grid item xs={3} className={classes.item}>
+                                        <PublishedComponent id="core.DatePicker"
+                                            value={activePolicy.expiryDate}
+                                            module="policy"
+                                            label="insureePolicies.expiryDate"
+                                            readOnly={true}
+                                        />
+                                    </Grid>
+                                    <Grid item xs={3} className={classes.item}>
+                                        <AmountInput
+                                            value={0}
+                                            module="claim"
+                                            label="balance"
+                                            readOnly={true}
+                                            displayZero={true}
+                                        />
+                                    </Grid>
+                                </Fragment>
+                            ))}
                         </Grid>
                     </Grid>
                 )}
