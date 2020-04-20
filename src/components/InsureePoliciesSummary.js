@@ -31,7 +31,7 @@ class InsureePoliciesSummary extends Component {
 
     componentDidUpdate(prevProps, prevState, snapshot) {
         if ((!prevProps.insuree && !!this.props.insuree
-            || !!prevProps.insuree && this.props.insuree && (
+            || !!prevProps.insuree && !!this.props.insuree && (
                 prevProps.insuree.chfId == null
                 || prevProps.insuree.chfId !== this.props.insuree.chfId
             )
