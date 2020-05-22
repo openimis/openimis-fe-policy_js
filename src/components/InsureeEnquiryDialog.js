@@ -3,15 +3,12 @@ import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 import { injectIntl } from 'react-intl';
 import { fetchPolicies, fetchEligibility } from "../actions";
-import { withTheme, withStyles } from "@material-ui/core/styles";
 import InsureePoliciesSummary from "./InsureePoliciesSummary";
 import InsureeEligibilitySummary from "./InsureeEligibilitySummary";
 import { ProgressOrError } from "@openimis/fe-core";
 import { Grid } from "@material-ui/core";
 import InsureeServiceEligibility from "./InsureeServiceEligibility";
 import InsureeItemEligibility from "./InsureeItemEligibility";
-
-const styles = theme => ({});
 
 class InsureeEnquiryDialog extends Component {
 
@@ -27,8 +24,7 @@ class InsureeEnquiryDialog extends Component {
         }
     }
     render() {
-        const { classes,
-            insuree,
+        const { insuree,
             fetchingPolicies, insureePolicies, errorPolicies,
             fetchingEligibility, insureeEligibility, errorEligibility,
         } = this.props;
@@ -68,8 +64,4 @@ const mapDispatchToProps = dispatch => {
     return bindActionCreators({ fetchPolicies, fetchEligibility }, dispatch);
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(
-    injectIntl(withTheme(
-        withStyles(styles)(InsureeEnquiryDialog)
-    ))
-);
+export default connect(mapStateToProps, mapDispatchToProps)(injectIntl((InsureeEnquiryDialog)));

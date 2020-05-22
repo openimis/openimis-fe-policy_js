@@ -28,21 +28,6 @@ class InsureeItemEligibility extends Component {
         })
     }
 
-    componentDidUpdate(prevProps, prevState, snapshot) {
-        if (!prevProps.insuree && !!this.props.insuree
-            || !!prevProps.insuree && this.props.insuree && (
-                prevProps.insuree.chfId == null
-                || prevProps.insuree.chfId !== this.props.insuree.chfId
-            )
-        ) {
-            this.setState({
-                insureeItemEligibility: null,
-                fetchedItemEligibility: false,
-                selected: null
-            })
-        }
-    }
-
     onItemSelected = i => {
         this.setState(
             { reset: !i },
