@@ -48,7 +48,7 @@ class InsureePolicyEligibilitySummary extends Component {
             return;
         }
         if (!prevProps.fetchedPolicies && this.props.fetchedPolicies) {
-            this.setState({ insureePolicies: this.props.insureePolicies })
+            this.setState((state, props) => ({ insureePolicies: props.insureePolicies }))
         }
     }
 
