@@ -49,7 +49,7 @@ class InsureeServiceEligibility extends Component {
                     </Grid>
                     <Grid item xs={8}>
                         <PublishedComponent
-                            id="medical.ServicePicker"
+                            pubRef="medical.ServicePicker"
                             onChange={this.onServiceSelected}
                             withLabel={false}
                             withPlaceholder={true}

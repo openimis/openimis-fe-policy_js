@@ -86,7 +86,7 @@ class InsureePolicyEligibilitySummary extends Component {
                                         />
                                     </Grid>
                                     <Grid item xs={3} className={classes.item}>
-                                        <PublishedComponent id="core.DatePicker"
+                                        <PublishedComponent pubRef="core.DatePicker"
                                             value={activePolicy.expiryDate}
                                             module="policy"
                                             label="insureePolicies.expiryDate"
