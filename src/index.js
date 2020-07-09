@@ -6,6 +6,7 @@ import InsureePoliciesSummary from "./components/InsureePoliciesSummary";
 import InsureeEligibilitySummary from "./components/InsureeEligibilitySummary";
 import InsureeEligibilityEnquiry from "./components/InsureeEligibilityEnquiry";
 import InsureePolicyEligibilitySummary from "./components/InsureePolicyEligibilitySummary";
+import FamilyPoliciesOverview from "./components/FamilyPoliciesOverview";
 import messages_en from "./translations/en.json";
 import { FormattedMessage } from "@openimis/fe-core";
 import { reducer } from "./reducer";
@@ -42,6 +43,7 @@ const DEFAULT_CONFIG = {
     }
   ],
   "insuree.EnquiryDialog": [InsureePoliciesSummary, InsureeEligibilityEnquiry, InsureeEligibilitySummary],
+  "insuree.FamilyOverview.panels": [FamilyPoliciesOverview],
 }
 
 export const PolicyModule = (cfg) => {

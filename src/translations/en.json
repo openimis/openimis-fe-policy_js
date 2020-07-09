@@ -32,5 +32,6 @@
     "policy.insureeEligibility.deliveryAmountLeft": "Delivery",
     "policy.insureeEligibility.antenatalAmountLeft": "Antenatal",
     "policy.insureeEligibility.minDate":"Min Date",
-    "policy.insureeEligibility.left":"Left"
+    "policy.insureeEligibility.left":"Left",
+    "policy.FamilyPolicies": "Policies"
 }
