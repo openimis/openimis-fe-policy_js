@@ -2,11 +2,10 @@ import React from "react";
 import { ListAlt, MonetizationOn } from "@material-ui/icons";
 import { PoliciesPage } from "./components/PoliciesPage";
 import { ContributionsPage } from "./components/ContributionsPage";
-import InsureePoliciesSummary from "./components/InsureePoliciesSummary";
+import FamilyOrInsureePoliciesSummary from "./components/FamilyOrInsureePoliciesSummary";
 import InsureeEligibilitySummary from "./components/InsureeEligibilitySummary";
 import InsureeEligibilityEnquiry from "./components/InsureeEligibilityEnquiry";
 import InsureePolicyEligibilitySummary from "./components/InsureePolicyEligibilitySummary";
-import FamilyPoliciesOverview from "./components/FamilyPoliciesOverview";
 import messages_en from "./translations/en.json";
 import { FormattedMessage } from "@openimis/fe-core";
 import { reducer } from "./reducer";
@@ -19,7 +18,7 @@ const DEFAULT_CONFIG = {
   "translations": [{ key: 'en', messages: messages_en }],
   "reducers": [{ key: 'policy', reducer }],
   "refs": [
-    { key: "policy.InsureePoliciesSummary", ref: InsureePoliciesSummary },
+    { key: "policy.FamilyOrInsureePoliciesSummary", ref: FamilyOrInsureePoliciesSummary },
     { key: "policy.InsureeEligibilitySummary", ref: InsureeEligibilitySummary },
     { key: "policy.InsureeEligibilityEnquiry", ref: InsureeEligibilityEnquiry },
     { key: "policy.InsureePolicyEligibilitySummary", ref: InsureePolicyEligibilitySummary },
@@ -42,8 +41,8 @@ const DEFAULT_CONFIG = {
       filter: rights => rights.includes(RIGHT_CONTRIBUTION)
     }
   ],
-  "insuree.EnquiryDialog": [InsureePoliciesSummary, InsureeEligibilityEnquiry, InsureeEligibilitySummary],
-  "insuree.FamilyOverview.panels": [FamilyPoliciesOverview],
+  "insuree.EnquiryDialog": [FamilyOrInsureePoliciesSummary, InsureeEligibilityEnquiry, InsureeEligibilitySummary],
+  "insuree.FamilyOverview.panels": [FamilyOrInsureePoliciesSummary],
 }
 
 export const PolicyModule = (cfg) => {

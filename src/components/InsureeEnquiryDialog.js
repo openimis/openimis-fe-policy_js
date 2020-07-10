@@ -2,8 +2,8 @@ import React, { Component, Fragment } from "react";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 import { injectIntl } from 'react-intl';
-import { fetchPolicies, fetchEligibility } from "../actions";
-import InsureePoliciesSummary from "./InsureePoliciesSummary";
+import { fetchInsureePolicies, fetchEligibility } from "../actions";
+import FamilyOrInsureePoliciesSummary from "./FamilyOrInsureePoliciesSummary";
 import InsureeEligibilitySummary from "./InsureeEligibilitySummary";
 import { ProgressOrError } from "@openimis/fe-core";
 import { Grid } from "@material-ui/core";
@@ -19,20 +19,20 @@ class InsureeEnquiryDialog extends Component {
                 || prevProps.insuree.chfId !== this.props.insuree.chfId
             )
         ) {
-            this.props.fetchPolicies(this.props.insuree.chfId);
+            this.props.fetchInsureePolicies(this.props.insuree.chfId);
             this.props.fetchEligibility(this.props.insuree.chfId);
         }
     }
     render() {
         const { insuree,
-            fetchingPolicies, insureePolicies, errorPolicies,
+            fetchingPolicies, policies, errorPolicies,
             fetchingEligibility, insureeEligibility, errorEligibility,
         } = this.props;
         return (
             <Fragment>
                 <ProgressOrError progress={fetchingPolicies} error={errorPolicies} />
-                {!fetchingPolicies && !!insuree && !!insureePolicies && (
-                    <InsureePoliciesSummary policies={insureePolicies} />
+                {!fetchingPolicies && !!insuree && !!policies && (
+                    <FamilyOrInsureePoliciesSummary policies={policies} />
                 )}
                 {!!insuree && (<Grid container>
                     <Grid item xs={6}><InsureeServiceEligibility /></Grid>
@@ -50,10 +50,10 @@ class InsureeEnquiryDialog extends Component {
 
 const mapStateToProps = state => ({
     insuree: state.insuree.insuree,
-    fetchingPolicies: state.policy.fetchingInsureePolicies,
-    fetchedPolicies: state.policy.fetchedInsureePolicies,
-    insureePolicies: state.policy.insureePolicies,
-    errorPolicies: state.policy.errorInsureePolicies,
+    fetchingPolicies: state.policy.fetchingPolicies,
+    fetchedPolicies: state.policy.fetchedPolicies,
+    policies: state.policy.policies,
+    errorPolicies: state.policy.errorPolicies,
     fetchingEligibility: state.policy.fetchingInsureeEligibility,
     fetchedEligibility: state.policy.fetchedInsureeEligibility,
     insureeEligibility: state.policy.insureeInsureeEligibility,
@@ -61,7 +61,7 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps = dispatch => {
-    return bindActionCreators({ fetchPolicies, fetchEligibility }, dispatch);
+    return bindActionCreators({ fetchInsureePolicies, fetchEligibility }, dispatch);
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(injectIntl((InsureeEnquiryDialog)));

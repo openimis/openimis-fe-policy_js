@@ -2,10 +2,10 @@ import { formatServerError, formatGraphQLError } from '@openimis/fe-core';
 
 export const reducer = (
     state = {
-        fetchingInsureePolicies: false,
-        fetchedInsureePolicies: false,
-        errorInsureePolicies: null,
-        insureePolicies: null,
+        fetchingPolicies: false,
+        fetchedPolicies: false,
+        errorPolicies: null,
+        policies: null,
         fetchingInsureeEligibility: false,
         fetchedInsureeEligibility: false,
         errorInsureeEligibility: null,
@@ -24,24 +24,46 @@ export const reducer = (
         case 'POLICY_INSUREE_POLICIES_REQ':
             return {
                 ...state,
-                fetchingInsureePolicies: true,
-                fetchedInsureePolicies: false,
-                insureePolicies: null,
-                errorInsureePolicies: null,
+                fetchingPolicies: true,
+                fetchedPolicies: false,
+                policies: null,
+                errorPolicies: null,
             };
         case 'POLICY_INSUREE_POLICIES_RESP':
             return {
                 ...state,
-                fetchingInsureePolicies: false,
-                fetchedInsureePolicies: true,
-                insureePolicies: action.payload.data.policiesByInsuree.items,
-                errorInsureePolicies: formatGraphQLError(action.payload)
+                fetchingPolicies: false,
+                fetchedPolicies: true,
+                policies: action.payload.data.policiesByInsuree.items,
+                errorPolicies: formatGraphQLError(action.payload)
             };
         case 'POLICY_INSUREE_POLICIES_ERR':
             return {
                 ...state,
-                fetchingInsureePolicies: false,
-                errorInsureePolicies: formatServerError(action.payload),
+                fetchingPolicies: false,
+                errorPolicies: formatServerError(action.payload),
+            };
+        case 'POLICY_FAMILY_POLICIES_REQ':
+            return {
+                ...state,
+                fetchingPolicies: true,
+                fetchedPolicies: false,
+                policies: null,
+                errorPolicies: null,
+            };
+        case 'POLICY_FAMILY_POLICIES_RESP':
+            return {
+                ...state,
+                fetchingPolicies: false,
+                fetchedPolicies: true,
+                policies: action.payload.data.policiesByFamily.items,
+                errorPolicies: formatGraphQLError(action.payload)
+            };
+        case 'POLICY_FAMILY_POLICIES_ERR':
+            return {
+                ...state,
+                fetchingPolicies: false,
+                errorPolicies: formatServerError(action.payload),
             };
         case 'POLICY_INSUREE_ELIGIBILITY_REQ':
             return {

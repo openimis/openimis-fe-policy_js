@@ -1,23 +1,29 @@
 import { graphql } from "@openimis/fe-core";
 
-export function fetchPolicies(chfid) {
-  // let payload = `
-  //   {
-  //     policiesByInsuree(chfId:"${chfid}", familyId:${familyid})
-  //     {
-  //       items{policyId, policyValue, premiumsAmount, balance, productCode, productName, expiryDate, status, dedType, ded1, ded2, ceiling1, ceiling2}
-  //     }
-  //   }
-  // `
+const POLICY_BY_FAMILY_OR_INSUREE_PROJECTION = "items{productCode, productName, officerCode, officerName, enrollDate, effectiveDate, startDate, expiryDate, status, ded, dedInPatient, dedOutPatient, ceiling, ceilingInPatient, ceilingOutPatient, balance}"
+
+export function fetchInsureePolicies(chfid) {
   let payload = `
     {
       policiesByInsuree(chfId:"${chfid}")
       {
-        items{productCode, productName, expiryDate, status, ded, dedInPatient, dedOutPatient, ceiling, ceilingInPatient, ceilingOutPatient}
+        ${POLICY_BY_FAMILY_OR_INSUREE_PROJECTION}
       }
     }
   `
   return graphql(payload, 'POLICY_INSUREE_POLICIES');
+}
+
+export function fetchFamilyPolicies(familyUuid) {
+    let payload = `  
+    {
+      policiesByFamily(familyUuid:"${familyUuid}")
+      {
+        ${POLICY_BY_FAMILY_OR_INSUREE_PROJECTION}
+      }
+    }
+  `
+  return graphql(payload, 'POLICY_FAMILY_POLICIES');
 }
 
 export function fetchEligibility(chfid) {
