@@ -4,10 +4,8 @@ import { bindActionCreators } from "redux";
 import { injectIntl } from 'react-intl';
 import { withTheme, withStyles } from "@material-ui/core/styles";
 import { Grid } from "@material-ui/core";
-import { ProgressOrError, PublishedComponent, FormattedMessage, AmountInput, TextInput } from "@openimis/fe-core";
+import { withModulesManager, ProgressOrError, PublishedComponent, FormattedMessage, AmountInput, TextInput } from "@openimis/fe-core";
 import { fetchPolicies } from "../actions";
-
-import { ACTIVE_POLICY_STATUS } from "../constants";
 
 const styles = theme => ({
     item: theme.paper.item,
@@ -17,6 +15,11 @@ class InsureePolicyEligibilitySummary extends Component {
 
     state = {
         insureePolicies: []
+    }
+
+    constructor(props) {
+        super(props);
+        this.activePolicyStatus = JSON.parse(props.modulesManager.getConf("fe-policy", "activePolicyStatus", '["2", "A"]'));
     }
 
     componentDidMount() {
@@ -55,7 +58,7 @@ class InsureePolicyEligibilitySummary extends Component {
     render() {
         const { classes, fetchingPolicies, fetchedPolicies, errorPolicies } = this.props;
         const { insureePolicies } = this.state;
-        var activePolicies = !!insureePolicies && insureePolicies.filter(p => p.status === ACTIVE_POLICY_STATUS);
+        var activePolicies = !!insureePolicies && insureePolicies.filter(p => this.activePolicyStatus.includes(p.status));
         return (
             <Fragment>
                 <ProgressOrError progress={fetchingPolicies} error={errorPolicies} />
@@ -95,9 +98,9 @@ class InsureePolicyEligibilitySummary extends Component {
                                     </Grid>
                                     <Grid item xs={3} className={classes.item}>
                                         <AmountInput
-                                            value={0}
-                                            module="claim"
-                                            label="balance"
+                                            value={(activePolicy.ceiling || 0) - (activePolicy.ded || 0)}
+                                            module="policy"
+                                            label="insureePolicies.balance"
                                             readOnly={true}
                                             displayZero={true}
                                         />
@@ -123,8 +126,8 @@ const mapDispatchToProps = dispatch => {
     return bindActionCreators({ fetchPolicies }, dispatch);
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(
+export default withModulesManager(connect(mapStateToProps, mapDispatchToProps)(
     injectIntl(withTheme(
         withStyles(styles)(InsureePolicyEligibilitySummary)
-    ))
+    )))
 );
