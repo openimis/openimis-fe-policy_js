@@ -77,7 +77,7 @@ class InsureePoliciesSummary extends Component {
                                         i => i.ceiling,
                                         i => i.ceilingInPatient,
                                         i => i.ceilingOutPatient,
-                                        i => i.ceiling - (i.ded || 0),
+                                        i => (i.ceiling || 0) - (i.ded || 0),
                                     ]}
                                     items={insureePolicies} />
                             </Paper>
