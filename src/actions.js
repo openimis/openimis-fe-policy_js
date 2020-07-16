@@ -1,6 +1,6 @@
 import { graphql } from "@openimis/fe-core";
 
-const POLICY_BY_FAMILY_OR_INSUREE_PROJECTION = "items{productCode, productName, officerCode, officerName, enrollDate, effectiveDate, startDate, expiryDate, status, ded, dedInPatient, dedOutPatient, ceiling, ceilingInPatient, ceilingOutPatient, balance}"
+const POLICY_BY_FAMILY_OR_INSUREE_PROJECTION = "items{policyUuid, productCode, productName, officerCode, officerName, enrollDate, effectiveDate, startDate, expiryDate, status, policyValue, ded, dedInPatient, dedOutPatient, ceiling, ceilingInPatient, ceilingOutPatient, balance}"
 
 export function fetchInsureePolicies(chfid) {
   let payload = `

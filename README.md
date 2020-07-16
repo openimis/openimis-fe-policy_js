@@ -9,12 +9,11 @@ It is dedicated to be deployed as a module of [openimis-fe_js](https://github.co
 None
 
 ## Other Contributions
-* `core.Router`: registering `policy/policies` and `policy/contributions` routes in openIMIS client-side router
+* `core.Router`: registering `policy/policies` routes in openIMIS client-side router
 * `insuree.MainMenu`:
 
    **Policies** (`menu.policies` translation key), pointing to `/FindPolicy.aspx` legacy openIMIS (via proxy page)
    
-   **Contributions** (`menu.contributions` translation key), pointing to `//FindPremium.aspx` legacy openIMIS (via proxy page)
 * `insuree.EnquiryDialog`: `[FamilyOrInsureePoliciesSummary, InsureeEligibilityEnquiry, InsureeEligibilitySummary]`, adding the (family) policies details, ability to query eligibility on an item and service and remaining counts and amounts to enquiry dialog (of insuree module)
 
 ## Available Contribution Points
