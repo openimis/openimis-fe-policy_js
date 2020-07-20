@@ -112,7 +112,8 @@ class FamilyOrInsureePoliciesSummary extends PagedDataHandler {
     itemIdentifier = (i) => i.policyUuid
 
     render() {
-        const { classes, fetchingPolicies, policies, pageInfo, errorPolicies } = this.props;
+        const { classes, family, fetchingPolicies, policies, pageInfo, errorPolicies } = this.props;
+        if (!family.uuid) return null;
         return (
             <Paper className={classes.paper}>
                 <Table
@@ -147,7 +148,7 @@ const mapStateToProps = state => ({
     policies: state.policy.policies,
     pageInfo: state.policy.policiesPageInfo,
     errorPolicies: state.policy.errorPolicies,
-    family: state.insuree.family,
+    family: state.insuree.family || {},
     insuree: state.insuree.insuree,
 });
 
