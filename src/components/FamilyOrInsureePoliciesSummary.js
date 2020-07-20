@@ -30,21 +30,26 @@ class FamilyOrInsureePoliciesSummary extends PagedDataHandler {
     }
 
     componentDidMount() {
-        this.onChangeRowsPerPage(this.defaultPageSize);
+        if (this.props.family || this.props.insuree) {
+            this.query()
+        }
     }
 
+    insureeChanged = (prevProps) =>
+        (!prevProps.insuree && !!this.props.insuree)
+        || (!!prevProps.insuree && !this.props.insuree)
+        || !!prevProps.insuree && !!this.props.insuree && !!this.props.insuree.chfId && (
+            prevProps.insuree.chfId == null
+            || prevProps.insuree.chfId !== this.props.insuree.chfId
+        )
+    familyChanged = (prevProps) => !prevProps.family && !!this.props.family
+        || !!prevProps.family && !!this.props.family && !!this.props.family.uuid && (
+            prevProps.family.uuid == null
+            || prevProps.family.uuid !== this.props.family.uuid
+        )
+
     componentDidUpdate(prevProps, prevState, snapshot) {
-        if (!prevProps.insuree && !!this.props.insuree
-            || !!prevProps.insuree && !!this.props.insuree && !!this.props.insuree.chfId && (
-                prevProps.insuree.chfId == null
-                || prevProps.insuree.chfId !== this.props.insuree.chfId
-            )) {
-            this.query()
-        } else if (!prevProps.family && !!this.props.family
-            || !!prevProps.family && !!this.props.family && !!this.props.family.uuid && (
-                prevProps.family.uuid == null
-                || prevProps.family.uuid !== this.props.family.uuid
-            )) {
+        if (this.insureeChanged(prevProps) || this.familyChanged(prevProps)) {
             this.query();
         }
     }
@@ -85,13 +90,28 @@ class FamilyOrInsureePoliciesSummary extends PagedDataHandler {
         i => i.balance,
     ]
 
+    header = () => {
+        const { intl, pageInfo } = this.props;
+        if (!!this.props.insuree && !!this.props.insuree.chfId) {
+            return formatMessageWithValues(
+                intl, "policy", "policiesOfInsuree.header",
+                { count: pageInfo.totalCount, chfId: this.props.insuree.chfId }
+            )
+        } else {
+            return formatMessageWithValues(
+                intl, "policy", "policies.header",
+                { count: pageInfo.totalCount }
+            )
+        }
+    }
+
     render() {
-        const { intl, classes, fetchingPolicies, policies, pageInfo, errorPolicies } = this.props;
+        const { classes, fetchingPolicies, policies, pageInfo, errorPolicies } = this.props;
         return (
             <Paper className={classes.paper}>
                 <Table
                     module="policy"
-                    header={formatMessageWithValues(intl, "policy", "policies.header", { count: pageInfo.totalCount })}
+                    header={this.header()}
                     headers={this.headers}
                     itemFormatters={this.itemFormatters}
                     items={policies}
@@ -118,6 +138,8 @@ const mapStateToProps = state => ({
     policies: state.policy.policies,
     pageInfo: state.policy.policiesPageInfo,
     errorPolicies: state.policy.errorPolicies,
+    family: state.insuree.family,
+    insuree: state.insuree.insuree,
 });
 
 const mapDispatchToProps = dispatch => {

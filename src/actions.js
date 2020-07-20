@@ -11,7 +11,7 @@ const POLICY_BY_FAMILY_OR_INSUREE_PROJECTION = [
   "ceiling", "ceilingInPatient", "ceilingOutPatient"
 ]
 
-export function fetchFamilyOrInsureePolicies(mm, filters) {  
+export function fetchFamilyOrInsureePolicies(mm, filters) {
   let qry = "policiesByFamily";
   let RDX = 'POLICY_FAMILY_POLICIES';
   if (filters.filter(f => f.startsWith("chfId")).length !== 0) {
