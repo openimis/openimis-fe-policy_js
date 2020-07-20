@@ -1,29 +1,28 @@
-import { graphql } from "@openimis/fe-core";
+import { graphql, formatPageQueryWithCount } from "@openimis/fe-core";
 
-const POLICY_BY_FAMILY_OR_INSUREE_PROJECTION = "items{policyUuid, productCode, productName, officerCode, officerName, enrollDate, effectiveDate, startDate, expiryDate, status, policyValue, ded, dedInPatient, dedOutPatient, ceiling, ceilingInPatient, ceilingOutPatient, balance}"
+const POLICY_BY_FAMILY_OR_INSUREE_PROJECTION = [
+  "policyUuid",
+  "productCode", "productName",
+  "officerCode", "officerName",
+  "enrollDate", "effectiveDate", "startDate", "expiryDate",
+  "status",
+  "policyValue", "balance",
+  "ded", "dedInPatient", "dedOutPatient",
+  "ceiling", "ceilingInPatient", "ceilingOutPatient"
+]
 
-export function fetchInsureePolicies(chfid) {
-  let payload = `
-    {
-      policiesByInsuree(chfId:"${chfid}")
-      {
-        ${POLICY_BY_FAMILY_OR_INSUREE_PROJECTION}
-      }
-    }
-  `
-  return graphql(payload, 'POLICY_INSUREE_POLICIES');
-}
-
-export function fetchFamilyPolicies(familyUuid) {
-    let payload = `  
-    {
-      policiesByFamily(familyUuid:"${familyUuid}")
-      {
-        ${POLICY_BY_FAMILY_OR_INSUREE_PROJECTION}
-      }
-    }
-  `
-  return graphql(payload, 'POLICY_FAMILY_POLICIES');
+export function fetchFamilyOrInsureePolicies(mm, filters) {  
+  let qry = "policiesByFamily";
+  let RDX = 'POLICY_FAMILY_POLICIES';
+  if (filters.filter(f => f.startsWith("chfId")).length !== 0) {
+    qry = "policiesByInsuree";
+    RDX = 'POLICY_INSUREE_POLICIES'
+  }
+  let payload = formatPageQueryWithCount(qry,
+    filters,
+    POLICY_BY_FAMILY_OR_INSUREE_PROJECTION
+  );
+  return graphql(payload, RDX);
 }
 
 export function fetchEligibility(chfid) {

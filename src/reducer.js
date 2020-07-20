@@ -1,4 +1,4 @@
-import { formatServerError, formatGraphQLError } from '@openimis/fe-core';
+import { parseData, pageInfo, formatServerError, formatGraphQLError } from '@openimis/fe-core';
 
 export const reducer = (
     state = {
@@ -6,6 +6,7 @@ export const reducer = (
         fetchedPolicies: false,
         errorPolicies: null,
         policies: null,
+        policiesPageInfo: { totalCount: 0 },
         fetchingInsureeEligibility: false,
         fetchedInsureeEligibility: false,
         errorInsureeEligibility: null,
@@ -34,7 +35,8 @@ export const reducer = (
                 ...state,
                 fetchingPolicies: false,
                 fetchedPolicies: true,
-                policies: action.payload.data.policiesByInsuree.items,
+                policies: parseData(action.payload.data.policiesByInsuree),
+                policiesPageInfo: pageInfo(action.payload.data.policiesByInsuree),                
                 errorPolicies: formatGraphQLError(action.payload)
             };
         case 'POLICY_INSUREE_POLICIES_ERR':
@@ -56,7 +58,8 @@ export const reducer = (
                 ...state,
                 fetchingPolicies: false,
                 fetchedPolicies: true,
-                policies: action.payload.data.policiesByFamily.items,
+                policies: parseData(action.payload.data.policiesByFamily),
+                policiesPageInfo: pageInfo(action.payload.data.policiesByFamily),    
                 errorPolicies: formatGraphQLError(action.payload)
             };
         case 'POLICY_FAMILY_POLICIES_ERR':

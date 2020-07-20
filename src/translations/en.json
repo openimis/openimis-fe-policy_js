@@ -1,6 +1,6 @@
 {
     "policy.menu.policies": "Policies",
-    "policy.policies.header": "Family Policies",
+    "policy.policies.header": "{count} Policies",
     "policy.policies.productCode": "Product Code",
     "policy.policies.productName": "Name",
     "policy.policies.enrollDate": "Enroll Date",

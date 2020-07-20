@@ -4,8 +4,11 @@ import { bindActionCreators } from "redux";
 import { injectIntl } from 'react-intl';
 import { withTheme, withStyles } from "@material-ui/core/styles";
 import { Grid } from "@material-ui/core";
-import { ProgressOrError, PublishedComponent, FormattedMessage, AmountInput, TextInput } from "@openimis/fe-core";
-import { fetchInsureePolicies } from "../actions";
+import {
+    withModulesManager,
+    ProgressOrError, PublishedComponent, FormattedMessage, AmountInput, TextInput
+} from "@openimis/fe-core";
+import { fetchFamilyOrInsureePolicies } from "../actions";
 
 import { ACTIVE_POLICY_STATUS } from "../constants";
 
@@ -21,7 +24,10 @@ class InsureePolicyEligibilitySummary extends Component {
 
     componentDidMount() {
         if (this.props.insuree) {
-            this.props.fetchInsureePolicies(this.props.insuree.chfId);
+            this.props.fetchFamilyOrInsureePolicies(
+                this.props.modulesManager,
+                [`chfId:"${this.props.insuree.chfId}"`]
+            )
         } else {
             this.setState({ policies: [] })
         }
@@ -42,7 +48,10 @@ class InsureePolicyEligibilitySummary extends Component {
             this.setState(
                 { policies: [] },
                 e => {
-                    this.props.fetchInsureePolicies(this.props.insuree.chfId)
+                    this.props.fetchFamilyOrInsureePolicies(
+                        this.props.modulesManager,
+                        [`chfId:"${this.props.insuree.chfId}"`]
+                    )
                 }
             )
             return;
@@ -120,11 +129,11 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps = dispatch => {
-    return bindActionCreators({ fetchInsureePolicies }, dispatch);
+    return bindActionCreators({ fetchFamilyOrInsureePolicies }, dispatch);
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(
+export default withModulesManager(connect(mapStateToProps, mapDispatchToProps)(
     injectIntl(withTheme(
         withStyles(styles)(InsureePolicyEligibilitySummary)
-    ))
+    )))
 );
