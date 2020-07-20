@@ -39,6 +39,12 @@ export function fetchEligibility(chfid) {
   return graphql(payload, 'POLICY_INSUREE_ELIGIBILITY');
 }
 
+export function selectPolicy(policy) {
+  return dispatch => {
+    dispatch({ type: 'POLICY_POLICY', payload: policy })
+  }
+}
+
 export function fetchItemEligibility(chfid, code) {
   let payload = `
     {

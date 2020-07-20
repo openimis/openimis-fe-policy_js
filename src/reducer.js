@@ -7,6 +7,7 @@ export const reducer = (
         errorPolicies: null,
         policies: null,
         policiesPageInfo: { totalCount: 0 },
+        policy: null,
         fetchingInsureeEligibility: false,
         fetchedInsureeEligibility: false,
         errorInsureeEligibility: null,
@@ -22,12 +23,18 @@ export const reducer = (
     },
     action) => {
     switch (action.type) {
+        case 'POLICY_POLICY':
+            return {
+                ...state,
+                policy: action.payload,
+            };
         case 'POLICY_INSUREE_POLICIES_REQ':
             return {
                 ...state,
                 fetchingPolicies: true,
                 fetchedPolicies: false,
                 policies: null,
+                policy: null,
                 errorPolicies: null,
             };
         case 'POLICY_INSUREE_POLICIES_RESP':
@@ -36,7 +43,7 @@ export const reducer = (
                 fetchingPolicies: false,
                 fetchedPolicies: true,
                 policies: parseData(action.payload.data.policiesByInsuree),
-                policiesPageInfo: pageInfo(action.payload.data.policiesByInsuree),                
+                policiesPageInfo: pageInfo(action.payload.data.policiesByInsuree),
                 errorPolicies: formatGraphQLError(action.payload)
             };
         case 'POLICY_INSUREE_POLICIES_ERR':
@@ -51,6 +58,7 @@ export const reducer = (
                 fetchingPolicies: true,
                 fetchedPolicies: false,
                 policies: null,
+                policy: null,
                 errorPolicies: null,
             };
         case 'POLICY_FAMILY_POLICIES_RESP':
@@ -59,7 +67,7 @@ export const reducer = (
                 fetchingPolicies: false,
                 fetchedPolicies: true,
                 policies: parseData(action.payload.data.policiesByFamily),
-                policiesPageInfo: pageInfo(action.payload.data.policiesByFamily),    
+                policiesPageInfo: pageInfo(action.payload.data.policiesByFamily),
                 errorPolicies: formatGraphQLError(action.payload)
             };
         case 'POLICY_FAMILY_POLICIES_ERR':

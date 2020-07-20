@@ -9,7 +9,7 @@ import {
     formatMessage, formatMessageWithValues,
     formatDateFromISO, withModulesManager
 } from "@openimis/fe-core";
-import { fetchFamilyOrInsureePolicies } from "../actions";
+import { fetchFamilyOrInsureePolicies, selectPolicy } from "../actions";
 
 const styles = theme => ({
     paper: theme.paper.paper,
@@ -62,6 +62,10 @@ class FamilyOrInsureePoliciesSummary extends PagedDataHandler {
         }
     }
 
+    onChangeSelection = (i) => {
+        this.props.selectPolicy(i[0] || null)
+    }
+
     headers = [
         "policies.productCode",
         "policies.productName",
@@ -105,6 +109,8 @@ class FamilyOrInsureePoliciesSummary extends PagedDataHandler {
         }
     }
 
+    itemIdentifier = (i) => i.policyUuid
+
     render() {
         const { classes, fetchingPolicies, policies, pageInfo, errorPolicies } = this.props;
         return (
@@ -114,9 +120,12 @@ class FamilyOrInsureePoliciesSummary extends PagedDataHandler {
                     header={this.header()}
                     headers={this.headers}
                     itemFormatters={this.itemFormatters}
+                    itemIdentifier={this.itemIdentifier}
                     items={policies}
                     fetching={fetchingPolicies}
                     error={errorPolicies}
+                    withSelection={"single"}
+                    onChangeSelection={this.onChangeSelection}
                     withPagination={true}
                     rowsPerPageOptions={this.rowsPerPageOptions}
                     defaultPageSize={this.defaultPageSize}
@@ -143,7 +152,7 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps = dispatch => {
-    return bindActionCreators({ fetch: fetchFamilyOrInsureePolicies }, dispatch);
+    return bindActionCreators({ fetch: fetchFamilyOrInsureePolicies, selectPolicy }, dispatch);
 };
 
 export default withModulesManager(connect(mapStateToProps, mapDispatchToProps)(
