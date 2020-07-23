@@ -10,8 +10,6 @@ import {
 } from "@openimis/fe-core";
 import { fetchFamilyOrInsureePolicies } from "../actions";
 
-import { ACTIVE_POLICY_STATUS } from "../constants";
-
 const styles = theme => ({
     item: theme.paper.item,
 });
@@ -20,6 +18,11 @@ class InsureePolicyEligibilitySummary extends Component {
 
     state = {
         policies: []
+    }
+
+    constructor(props) {
+        super(props);
+        this.activePolicyStatus = JSON.parse(props.modulesManager.getConf("fe-policy", "activePolicyStatus", '["2", "A"]'));
     }
 
     componentDidMount() {
@@ -63,8 +66,8 @@ class InsureePolicyEligibilitySummary extends Component {
 
     render() {
         const { classes, fetchingPolicies, fetchedPolicies, errorPolicies } = this.props;
-        const { policies } = this.state;
-        var activePolicies = !!policies && policies.filter(p => p.status === ACTIVE_POLICY_STATUS);
+        const { insureePolicies } = this.state;
+        var activePolicies = !!insureePolicies && insureePolicies.filter(p => this.activePolicyStatus.includes(p.status));
         return (
             <Fragment>
                 <ProgressOrError progress={fetchingPolicies} error={errorPolicies} />
@@ -104,9 +107,9 @@ class InsureePolicyEligibilitySummary extends Component {
                                     </Grid>
                                     <Grid item xs={3} className={classes.item}>
                                         <AmountInput
-                                            value={activePolicy.balance}
-                                            module="claim"
-                                            label="balance"
+                                            value={(activePolicy.ceiling || 0) - (activePolicy.ded || 0)}
+                                            module="policy"
+                                            label="insureePolicies.balance"
                                             readOnly={true}
                                             displayZero={true}
                                         />
