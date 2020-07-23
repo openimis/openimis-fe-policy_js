@@ -3,11 +3,12 @@ import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 import { injectIntl } from 'react-intl';
 import { withTheme, withStyles } from "@material-ui/core/styles";
-import { Paper } from "@material-ui/core";
+import { Divider, Grid, Paper, Typography, FormControlLabel, Checkbox } from "@material-ui/core";
 import {
     Table, PagedDataHandler,
     formatMessage, formatMessageWithValues,
-    formatDateFromISO, withModulesManager
+    formatDateFromISO, withModulesManager,
+    formatSorter, sort,
 } from "@openimis/fe-core";
 import { fetchFamilyOrInsureePolicies, selectPolicy } from "../actions";
 
@@ -15,9 +16,13 @@ const styles = theme => ({
     paper: theme.paper.paper,
     paperHeader: theme.paper.header,
     paperHeaderAction: theme.paper.action,
+    tableTitle: theme.table.title,
     fab: theme.fab,
     button: {
         margin: theme.spacing(1),
+    },
+    item: {
+        padding: theme.spacing(1)
     },
 });
 
@@ -27,12 +32,16 @@ class FamilyOrInsureePoliciesSummary extends PagedDataHandler {
         super(props);
         this.rowsPerPageOptions = props.modulesManager.getConf("fe-policy", "familyOrInsureePoliciesSummary.rowsPerPageOptions", [5, 10, 20]);
         this.defaultPageSize = props.modulesManager.getConf("fe-policy", "familyOrInsureePoliciesSummary.defaultPageSize", 5);
+        this.showBalance = props.modulesManager.getConf("fe-policy", "familyOrInsureePoliciesSummary.showBalance", false);
     }
 
     componentDidMount() {
-        if (this.props.family || this.props.insuree) {
-            this.query()
-        }
+        this.setState(
+            {
+                onlyActiveOrLastExpired: true,
+                orderBy: "expiryDate"
+            },
+            e => this.query())
     }
 
     insureeChanged = (prevProps) =>
@@ -55,10 +64,16 @@ class FamilyOrInsureePoliciesSummary extends PagedDataHandler {
     }
 
     queryPrms() {
+        let prms = [
+            `orderBy: "${this.state.orderBy}"`,
+            `activeOrLastExpiredOnly: ${!!this.state.onlyActiveOrLastExpired}`
+        ];
         if (!!this.props.insuree && !!this.props.insuree.chfId) {
-            return [`chfId:"${this.props.insuree.chfId}"`];
+            prms.push(`chfId:"${this.props.insuree.chfId}"`)
+            return prms;
         } else if (!!this.props.family && !!this.props.family.uuid) {
-            return [`familyUuid:"${this.props.family.uuid}"`];
+            prms.push(`familyUuid:"${this.props.family.uuid}"`);
+            return prms;
         }
     }
 
@@ -66,33 +81,74 @@ class FamilyOrInsureePoliciesSummary extends PagedDataHandler {
         this.props.selectPolicy(i[0] || null)
     }
 
-    headers = [
-        "policies.productCode",
-        "policies.productName",
-        "policies.expiryDate",
-        "policies.status",
-        "policies.deduction",
-        "policies.hospitalDeduction",
-        "policies.nonHospitalDeduction",
-        "policies.ceiling",
-        "policies.hospitalCeiling",
-        "policies.nonHospitalCeiling",
-        "policies.balance"
+    toggleCheckbox = (key) => {
+        this.setState(
+            (state, props) => ({
+                [key]: !state[key]
+            }),
+            e => this.query())
+    }
+
+    headers = () => {
+        let h = [
+            "policies.productCode",
+            "policies.productName",
+            "policies.expiryDate",
+            "policies.status",
+            "policies.deduction",
+            "policies.hospitalDeduction",
+            "policies.nonHospitalDeduction",
+            "policies.ceiling",
+            "policies.hospitalCeiling",
+            "policies.nonHospitalCeiling"
+        ];
+        if (this.showBalance) {
+            h.push("policies.balance");
+        }
+        return h
+    }
+
+    sorter = (attr, asc = true) => [
+        () => this.setState((state, props) => ({ orderBy: sort(state.orderBy, attr, asc) }), e => this.query()),
+        () => formatSorter(this.state.orderBy, attr, asc)
     ]
 
-    itemFormatters = [
-        i => i.productCode,
-        i => i.productName,
-        i => formatDateFromISO(this.props.modulesManager, this.props.intl, i.expiryDate),
-        i => formatMessage(this.props.intl, "policy", `policies.status.${i.status}`),
-        i => i.ded,
-        i => i.dedInPatient,
-        i => i.dedOutPatient,
-        i => i.ceiling,
-        i => i.ceilingInPatient,
-        i => i.ceilingOutPatient,
-        i => i.balance,
-    ]
+    headerActions = () => {
+        let a = [
+            this.sorter("productCode"),
+            this.sorter("productName"),
+            this.sorter("expiryDate"),
+            this.sorter("status"),
+            this.sorter("deduction"),
+            this.sorter("hospitalDeduction"),
+            this.sorter("nonHospitalDeduction"),
+            this.sorter("ceiling"),
+            this.sorter("hospitalCeiling"),
+            this.sorter("nonHospitalCeiling"),
+        ]
+        if (this.showBalance) {
+            a.push(this.sorter("balance"));
+        }
+        return a;
+    };
+
+    itemFormatters = () => {
+        let f = [
+            i => i.productCode,
+            i => i.productName,
+            i => formatDateFromISO(this.props.modulesManager, this.props.intl, i.expiryDate),
+            i => formatMessage(this.props.intl, "policy", `policies.status.${i.status}`),
+            i => i.ded,
+            i => i.dedInPatient,
+            i => i.dedOutPatient,
+            i => i.ceiling,
+            i => i.ceilingInPatient,
+            i => i.ceilingOutPatient,
+        ]
+        if (this.showBalance) {
+            i.push(i => i.balance)
+        } return f;
+    }
 
     header = () => {
         const { intl, pageInfo } = this.props;
@@ -112,15 +168,39 @@ class FamilyOrInsureePoliciesSummary extends PagedDataHandler {
     itemIdentifier = (i) => i.policyUuid
 
     render() {
-        const { classes, family, fetchingPolicies, policies, pageInfo, errorPolicies } = this.props;
+        const { intl, classes, family, fetchingPolicies, policies, pageInfo, errorPolicies } = this.props;
         if (!family.uuid) return null;
         return (
             <Paper className={classes.paper}>
+                <Grid container className={classes.tableTitle}>
+                    <Grid item className={classes.item} xs={8}>
+                        <Typography>
+                            {this.header()}
+                        </Typography>
+                    </Grid>
+                    <Grid item xs={4}>
+                        <Grid container direction="row" justify="flex-end">
+                            <Grid item className={classes.item}>
+                                <FormControlLabel
+                                    control={
+                                        <Checkbox
+                                            color="primary"
+                                            checked={!!this.state.onlyActiveOrLastExpired}
+                                            onChange={e => this.toggleCheckbox("onlyActiveOrLastExpired")}
+                                        />
+                                    }
+                                    label={formatMessage(intl, "policy", "policies.onlyActiveOrLastExpired")}
+                                />
+                            </Grid>
+                        </Grid>
+                    </Grid>
+                </Grid>
+                <Divider />
                 <Table
                     module="policy"
-                    header={this.header()}
-                    headers={this.headers}
-                    itemFormatters={this.itemFormatters}
+                    headers={this.headers()}
+                    headerActions={this.headerActions()}
+                    itemFormatters={this.itemFormatters()}
                     itemIdentifier={this.itemIdentifier}
                     items={policies}
                     fetching={fetchingPolicies}
