@@ -168,8 +168,10 @@ class FamilyOrInsureePoliciesSummary extends PagedDataHandler {
     itemIdentifier = (i) => i.policyUuid
 
     render() {
-        const { intl, classes, family, fetchingPolicies, policies, pageInfo, errorPolicies } = this.props;
-        if (!family.uuid) return null;
+        const { intl, classes, fetchingPolicies, policies, pageInfo, errorPolicies, family, insuree } = this.props;
+        if ((!family || !family.uuid) && (!insuree || !insuree.uuid)) {
+            return null;
+        }
         return (
             <Paper className={classes.paper}>
                 <Grid container className={classes.tableTitle}>
