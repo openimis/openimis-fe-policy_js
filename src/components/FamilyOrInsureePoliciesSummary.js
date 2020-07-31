@@ -47,14 +47,19 @@ class FamilyOrInsureePoliciesSummary extends PagedDataHandler {
     insureeChanged = (prevProps) =>
         (!prevProps.insuree && !!this.props.insuree)
         || (!!prevProps.insuree && !this.props.insuree)
-        || !!prevProps.insuree && !!this.props.insuree && !!this.props.insuree.chfId && (
-            prevProps.insuree.chfId == null
-            || prevProps.insuree.chfId !== this.props.insuree.chfId
+        || (!!prevProps.insuree && !!this.props.insuree && !!this.props.insuree.chfId &&
+            (
+                prevProps.insuree.chfId == null
+                || prevProps.insuree.chfId !== this.props.insuree.chfId
+            )
         )
-    familyChanged = (prevProps) => !prevProps.family && !!this.props.family
-        || !!prevProps.family && !!this.props.family && !!this.props.family.uuid && (
-            prevProps.family.uuid == null
-            || prevProps.family.uuid !== this.props.family.uuid
+    familyChanged = (prevProps) => (!prevProps.family && !!this.props.family)
+        || (!!prevProps.family && !this.props.family)
+        || (!!prevProps.family && !!this.props.family && !!this.props.family.uuid &&
+            (
+                prevProps.family.uuid == null
+                || prevProps.family.uuid !== this.props.family.uuid
+            )
         )
 
     componentDidUpdate(prevProps, prevState, snapshot) {
@@ -168,7 +173,7 @@ class FamilyOrInsureePoliciesSummary extends PagedDataHandler {
     itemIdentifier = (i) => i.policyUuid
 
     render() {
-        const { intl, classes, fetchingPolicies, policies, pageInfo, errorPolicies, family, insuree } = this.props;
+        const { intl, classes, fetchingPolicies, fetchedPolicies, policies, pageInfo, errorPolicies, family, insuree, reset } = this.props;
         if ((!family || !family.uuid) && (!insuree || !insuree.uuid)) {
             return null;
         }

@@ -28,6 +28,15 @@ export const reducer = (
                 ...state,
                 policy: action.payload,
             };
+        case 'INSUREE_FAMILY_OVERVIEW_REQ':
+            return {
+                ...state,
+                fetchingPolicies: false,
+                fetchedPolicies: false,
+                policies: null,
+                policy: null,
+                errorPolicies: null,
+            }
         case 'POLICY_INSUREE_POLICIES_REQ':
             return {
                 ...state,
