@@ -187,7 +187,7 @@ class FamilyOrInsureePoliciesSummary extends PagedDataHandler {
                     </Grid>
                     <Grid item xs={4}>
                         <Grid container direction="row" justify="flex-end">
-                            <Grid item>
+                            <Grid item className={classes.paperHeaderAction}>
                                 <FormControlLabel
                                     control={
                                         <Checkbox
