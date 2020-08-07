@@ -179,15 +179,15 @@ class FamilyOrInsureePoliciesSummary extends PagedDataHandler {
         }
         return (
             <Paper className={classes.paper}>
-                <Grid container className={classes.tableTitle}>
-                    <Grid item className={classes.item} xs={8}>
-                        <Typography>
+                <Grid container  alignItems="center" direction="row" className={classes.paperHeader}>
+                    <Grid item xs={8}>
+                        <Typography className={classes.tableTitle}>
                             {this.header()}
                         </Typography>
                     </Grid>
                     <Grid item xs={4}>
                         <Grid container direction="row" justify="flex-end">
-                            <Grid item className={classes.item}>
+                            <Grid item>
                                 <FormControlLabel
                                     control={
                                         <Checkbox
