@@ -66,8 +66,8 @@ class InsureePolicyEligibilitySummary extends Component {
 
     render() {
         const { classes, fetchingPolicies, fetchedPolicies, errorPolicies } = this.props;
-        const { insureePolicies } = this.state;
-        var activePolicies = !!insureePolicies && insureePolicies.filter(p => this.activePolicyStatus.includes(p.status));
+        const { policies } = this.state;
+        var activePolicies = !!policies && policies.filter(p => this.activePolicyStatus.includes(p.status));
         return (
             <Fragment>
                 <ProgressOrError progress={fetchingPolicies} error={errorPolicies} />
@@ -109,7 +109,7 @@ class InsureePolicyEligibilitySummary extends Component {
                                         <AmountInput
                                             value={(activePolicy.ceiling || 0) - (activePolicy.ded || 0)}
                                             module="policy"
-                                            label="insureePolicies.balance"
+                                            label="policies.balance"
                                             readOnly={true}
                                             displayZero={true}
                                         />
