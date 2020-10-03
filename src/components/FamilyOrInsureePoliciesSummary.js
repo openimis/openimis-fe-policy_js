@@ -168,8 +168,8 @@ class FamilyOrInsureePoliciesSummary extends PagedDataHandler {
         if (this.showBalance) {
             f.push(i => i.balance)
         }
-        f.push(i => withTooltip(<IconButton onClick={this.deletePolicy}><DeleteIcon /></IconButton>, formatMessage(this.props.intl, "insuree", "familyDeletePolicy.tooltip")))
-        f.push(i =>withTooltip(<IconButton onClick={this.renewPolicy}><RenewIcon /></IconButton>, formatMessage(this.props.intl, "insuree", "familyRenewPolicy.tooltip")))
+        f.push(i => withTooltip(<IconButton onClick={this.deletePolicy}><DeleteIcon /></IconButton>, formatMessage(this.props.intl, "policy", "familyDeletePolicy.tooltip")))
+        f.push(i =>withTooltip(<IconButton onClick={this.renewPolicy}><RenewIcon /></IconButton>, formatMessage(this.props.intl, "policy", "familyRenewPolicy.tooltip")))
 
         return f;
     }
@@ -200,7 +200,7 @@ class FamilyOrInsureePoliciesSummary extends PagedDataHandler {
         let actions = !!readOnly ? [] : [
             {
                 button: <IconButton onClick={this.addNewPolicy}><AddIcon /></IconButton>,
-                tooltip: formatMessage(intl, "insuree", "familyAddPolicy.tooltip")
+                tooltip: formatMessage(intl, "policy", "familyAddPolicy.tooltip")
             }
         ];
 
