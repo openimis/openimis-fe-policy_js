@@ -3,12 +3,17 @@ import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 import { injectIntl } from 'react-intl';
 import { withTheme, withStyles } from "@material-ui/core/styles";
-import { Divider, Grid, Paper, Typography, FormControlLabel, Checkbox } from "@material-ui/core";
+import { Divider, Grid, Paper, Typography, FormControlLabel, Checkbox, IconButton } from "@material-ui/core";
+import {
+    Add as AddIcon,
+    Autorenew as RenewIcon,
+    Delete as DeleteIcon,
+} from '@material-ui/icons';
 import {
     Table, PagedDataHandler,
     formatMessage, formatMessageWithValues,
     formatDateFromISO, withModulesManager,
-    formatSorter, sort,
+    formatSorter, sort, withTooltip
 } from "@openimis/fe-core";
 import { fetchFamilyOrInsureePolicies, selectPolicy } from "../actions";
 
@@ -43,6 +48,15 @@ class FamilyOrInsureePoliciesSummary extends PagedDataHandler {
             },
             e => this.query())
     }
+
+    addNewPolicy = () => alert("Will be implemented along Policy module migration!")
+    deletePolicy = () => alert("Will be implemented along Policy module migration!")
+    renewPolicy = () => alert("Will be implemented along Policy module migration!")
+
+    onDoubleClick = (i, newTab = false) => {
+        alert("Will be implemented along Policy module migration!")
+    }
+
 
     insureeChanged = (prevProps) =>
         (!prevProps.insuree && !!this.props.insuree)
@@ -110,6 +124,7 @@ class FamilyOrInsureePoliciesSummary extends PagedDataHandler {
         if (this.showBalance) {
             h.push("policies.balance");
         }
+        h.push("","")
         return h
     }
 
@@ -151,8 +166,12 @@ class FamilyOrInsureePoliciesSummary extends PagedDataHandler {
             i => i.ceilingOutPatient,
         ]
         if (this.showBalance) {
-            i.push(i => i.balance)
-        } return f;
+            f.push(i => i.balance)
+        }
+        f.push(i => withTooltip(<IconButton onClick={this.deletePolicy}><DeleteIcon /></IconButton>, formatMessage(this.props.intl, "insuree", "familyDeletePolicy.tooltip")))
+        f.push(i =>withTooltip(<IconButton onClick={this.renewPolicy}><RenewIcon /></IconButton>, formatMessage(this.props.intl, "insuree", "familyRenewPolicy.tooltip")))
+
+        return f;
     }
 
     header = () => {
@@ -173,10 +192,18 @@ class FamilyOrInsureePoliciesSummary extends PagedDataHandler {
     itemIdentifier = (i) => i.policyUuid
 
     render() {
-        const { intl, classes, fetchingPolicies, fetchedPolicies, policies, pageInfo, errorPolicies, family, insuree, reset } = this.props;
+        const { intl, classes, fetchingPolicies, fetchedPolicies, policies, pageInfo, errorPolicies, family, insuree, reset, readOnly } = this.props;
         if ((!family || !family.uuid) && (!insuree || !insuree.uuid)) {
             return null;
         }
+
+        let actions = !!readOnly ? [] : [
+            {
+                button: <IconButton onClick={this.addNewPolicy}><AddIcon /></IconButton>,
+                tooltip: formatMessage(intl, "insuree", "familyAddPolicy.tooltip")
+            }
+        ];
+
         return (
             <Paper className={classes.paper}>
                 <Grid container  alignItems="center" direction="row" className={classes.paperHeader}>
@@ -199,6 +226,13 @@ class FamilyOrInsureePoliciesSummary extends PagedDataHandler {
                                     label={formatMessage(intl, "policy", "policies.onlyActiveOrLastExpired")}
                                 />
                             </Grid>
+                            {actions.map((a, idx) => {
+                                return (
+                                    <Grid item key={`form-action-${idx}`} className={classes.paperHeaderAction}>
+                                        {withTooltip(a.button, a.tooltip)}
+                                    </Grid>
+                                )
+                            })}
                         </Grid>
                     </Grid>
                 </Grid>
@@ -214,6 +248,7 @@ class FamilyOrInsureePoliciesSummary extends PagedDataHandler {
                     error={errorPolicies}
                     withSelection={"single"}
                     onChangeSelection={this.onChangeSelection}
+                    onDoubleClick={this.onDoubleClick}
                     withPagination={true}
                     rowsPerPageOptions={this.rowsPerPageOptions}
                     defaultPageSize={this.defaultPageSize}
