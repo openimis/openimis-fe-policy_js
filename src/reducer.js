@@ -1,11 +1,13 @@
-import { formatServerError, formatGraphQLError } from '@openimis/fe-core';
+import { parseData, pageInfo, formatServerError, formatGraphQLError } from '@openimis/fe-core';
 
 export const reducer = (
     state = {
-        fetchingInsureePolicies: false,
-        fetchedInsureePolicies: false,
-        errorInsureePolicies: null,
-        insureePolicies: null,
+        fetchingPolicies: false,
+        fetchedPolicies: false,
+        errorPolicies: null,
+        policies: null,
+        policiesPageInfo: { totalCount: 0 },
+        policy: null,
         fetchingInsureeEligibility: false,
         fetchedInsureeEligibility: false,
         errorInsureeEligibility: null,
@@ -21,27 +23,67 @@ export const reducer = (
     },
     action) => {
     switch (action.type) {
+        case 'POLICY_POLICY':
+            return {
+                ...state,
+                policy: action.payload,
+            };
+        case 'INSUREE_FAMILY_OVERVIEW_REQ':
+            return {
+                ...state,
+                fetchingPolicies: false,
+                fetchedPolicies: false,
+                policies: null,
+                policy: null,
+                errorPolicies: null,
+            }
         case 'POLICY_INSUREE_POLICIES_REQ':
             return {
                 ...state,
-                fetchingInsureePolicies: true,
-                fetchedInsureePolicies: false,
-                insureePolicies: null,
-                errorInsureePolicies: null,
+                fetchingPolicies: true,
+                fetchedPolicies: false,
+                policies: null,
+                policy: null,
+                errorPolicies: null,
             };
         case 'POLICY_INSUREE_POLICIES_RESP':
             return {
                 ...state,
-                fetchingInsureePolicies: false,
-                fetchedInsureePolicies: true,
-                insureePolicies: action.payload.data.policiesByInsuree.items,
-                errorInsureePolicies: formatGraphQLError(action.payload)
+                fetchingPolicies: false,
+                fetchedPolicies: true,
+                policies: parseData(action.payload.data.policiesByInsuree),
+                policiesPageInfo: pageInfo(action.payload.data.policiesByInsuree),
+                errorPolicies: formatGraphQLError(action.payload)
             };
         case 'POLICY_INSUREE_POLICIES_ERR':
             return {
                 ...state,
-                fetchingInsureePolicies: false,
-                errorInsureePolicies: formatServerError(action.payload),
+                fetchingPolicies: false,
+                errorPolicies: formatServerError(action.payload),
+            };
+        case 'POLICY_FAMILY_POLICIES_REQ':
+            return {
+                ...state,
+                fetchingPolicies: true,
+                fetchedPolicies: false,
+                policies: null,
+                policy: null,
+                errorPolicies: null,
+            };
+        case 'POLICY_FAMILY_POLICIES_RESP':
+            return {
+                ...state,
+                fetchingPolicies: false,
+                fetchedPolicies: true,
+                policies: parseData(action.payload.data.policiesByFamily),
+                policiesPageInfo: pageInfo(action.payload.data.policiesByFamily),
+                errorPolicies: formatGraphQLError(action.payload)
+            };
+        case 'POLICY_FAMILY_POLICIES_ERR':
+            return {
+                ...state,
+                fetchingPolicies: false,
+                errorPolicies: formatServerError(action.payload),
             };
         case 'POLICY_INSUREE_ELIGIBILITY_REQ':
             return {

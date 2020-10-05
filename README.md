@@ -9,25 +9,24 @@ It is dedicated to be deployed as a module of [openimis-fe_js](https://github.co
 None
 
 ## Other Contributions
-* `core.Router`: registering `policy/policies` and `policy/contributions` routes in openIMIS client-side router
+* `core.Router`: registering `policy/policies` routes in openIMIS client-side router
 * `insuree.MainMenu`:
 
    **Policies** (`menu.policies` translation key), pointing to `/FindPolicy.aspx` legacy openIMIS (via proxy page)
    
-   **Contributions** (`menu.contributions` translation key), pointing to `//FindPremium.aspx` legacy openIMIS (via proxy page)
-* `insuree.EnquiryDialog`: `[InsureePoliciesSummary, InsureeEligibilityEnquiry, InsureeEligibilitySummary]`, adding the (family) policies details, ability to query eligibility on an item and service and remaining counts and amounts to enquiry dialog (of insuree module)
+* `insuree.EnquiryDialog`: `[FamilyOrInsureePoliciesSummary, InsureeEligibilityEnquiry, InsureeEligibilitySummary]`, adding the (family) policies details, ability to query eligibility on an item and service and remaining counts and amounts to enquiry dialog (of insuree module)
 
 ## Available Contribution Points
 None
 
 ## Published Components
-* `policy.InsureePoliciesSummary`, insuree (family) policies summary (by default contributed to insuree enquiry dialog)
+* `policy.FamilyOrInsureePoliciesSummary`, insuree (family) policies summary (by default contributed to insuree enquiry dialog)
 * `policy.InsureeEligibilitySummary`, querying insuree eligibility to an item and service (by default contributed to insuree enquiry dialog)
 * `policy.InsureeEligibilityEnquiry`, remaining counts and amounts of insuree (by default contributed to insuree enquiry dialog)
 * `policy.InsureePolicyEligibilitySummary`, summary (expiry date and balance) of the last still valid insuree policy
 
 ## Dispatched Redux Actions
-* `POLICY_INSUREE_POLICIES_{REQ|RESP|ERR}`, loading insuree policies summary (GraphQL: `policiesByInsuree`)
+* `POLICY_INSUREE_POLICIES_{REQ|RESP|ERR}`, loading insuree policies summary (GraphQL: `policiesByFamilyOrInsuree`)
 * `POLICY_INSUREE_ITEM_ELIGIBILITY_{REQ|RESP|ERR}`, query insuree eligibility for an item (GraphQL: `policyItemEligibilityByInsuree`)
 * `POLICY_INSUREE_SERVICE_ELIGIBILITY_{REQ|RESP|ERR}`, query insuree eligibility for a service (GraphQL: 
 `policyServiceEligibilityByInsuree`)

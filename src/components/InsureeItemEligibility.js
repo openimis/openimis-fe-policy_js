@@ -8,11 +8,13 @@ import { fetchItemEligibility } from "../actions";
 import Eligibility from "./Eligibility";
 
 const styles = theme => ({
-    paper: {
+    item: {
         margin: theme.spacing(1) / 2,
-        marginRight: 0,
     },
-    header: theme.table.title,
+    header: {
+        padding: 10,
+        fontWeight: 500,
+    }
 });
 
 
@@ -41,7 +43,7 @@ class InsureeItemEligibility extends Component {
         const { classes, fetchingItemEligibility, fetchedItemEligibility, insureeItemEligibility, errorItemEligibility } = this.props;
         const { reset } = this.state;
         return (
-            <Paper className={classes.paper}>
+            <div className={classes.item}>
                 <Grid container alignItems="center">
                     <Grid item xs={4}>
                         <Typography className={classes.header}>
@@ -69,7 +71,7 @@ class InsureeItemEligibility extends Component {
                         )}
                     </Grid>
                 </Grid>
-            </Paper>
+            </div>
         )
     }
 }
