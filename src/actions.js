@@ -1,4 +1,4 @@
-import { graphql, formatPageQueryWithCount } from "@openimis/fe-core";
+import { graphql, formatPageQuery, formatPageQueryWithCount } from "@openimis/fe-core";
 
 const POLICY_BY_FAMILY_OR_INSUREE_PROJECTION = [
   "policyUuid",
@@ -10,6 +10,14 @@ const POLICY_BY_FAMILY_OR_INSUREE_PROJECTION = [
   "ded", "dedInPatient", "dedOutPatient",
   "ceiling", "ceilingInPatient", "ceilingOutPatient"
 ]
+
+export function fetchPolicyOfficers(mm) {
+  const payload = formatPageQuery("policyOfficers",
+    null,
+    mm.getRef("policy.PolicyOfficerPicker.projection")
+  );
+  return graphql(payload, 'POLICY_POLICY_OFFICERS');
+}
 
 export function fetchFamilyOrInsureePolicies(mm, filters) {
   let qry = "policiesByFamily";
@@ -67,4 +75,20 @@ export function fetchServiceEligibility(chfid, code) {
     }
   `
   return graphql(payload, 'POLICY_INSUREE_SERVICE_ELIGIBILITY');
+}
+
+export function fetchPolicySummaries(mm, filters) {
+  let projections = ["uuid",
+    `product{${mm.getRef("product.ProductPicker.projection")}}`,
+    `officer{${mm.getRef("policy.PolicyOfficerPicker.projection")}}`,
+    `family{${mm.getRef("insuree.FamilyPicker.projection")}}`,
+    "enrollDate", "effectiveDate", "startDate", "expiryDate",
+    "stage", "status",
+    "value", "balance",
+    "validityFrom", "validityTo"]
+  const payload = formatPageQueryWithCount("policies",
+    filters,
+    projections
+  );
+  return graphql(payload, 'POLICY_POLICIES');
 }

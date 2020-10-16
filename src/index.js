@@ -1,6 +1,9 @@
 import React from "react";
 import { ListAlt } from "@material-ui/icons";
-import { PoliciesPage } from "./pages/PoliciesPage";
+import PolicyOfficerPicker from "./pickers/PolicyOfficerPicker";
+import PolicyStagePicker from "./pickers/PolicyStagePicker";
+import PolicyStatusPicker from "./pickers/PolicyStatusPicker";
+import PoliciesPage from "./pages/PoliciesPage";
 import FamilyOrInsureePoliciesSummary from "./components/FamilyOrInsureePoliciesSummary";
 import InsureeEligibilitySummary from "./components/InsureeEligibilitySummary";
 import InsureeEligibilityEnquiry from "./components/InsureeEligibilityEnquiry";
@@ -16,6 +19,12 @@ const DEFAULT_CONFIG = {
   "translations": [{ key: 'en', messages: messages_en }],
   "reducers": [{ key: 'policy', reducer }],
   "refs": [
+    { key: "policy.PolicyOfficerPicker", ref: PolicyOfficerPicker },
+    { key: "policy.PolicyOfficerPicker.projection", ref: ["id", "uuid", "code", "lastName", "otherNames"] },
+    { key: "policy.PolicyStatusPicker", ref: PolicyStatusPicker },
+    { key: "policy.PolicyStatusPicker.projection", ref: null },
+    { key: "policy.PolicyStagePicker", ref: PolicyStagePicker },
+    { key: "policy.PolicyStagePicker.projection", ref: null },
     { key: "policy.FamilyOrInsureePoliciesSummary", ref: FamilyOrInsureePoliciesSummary },
     { key: "policy.InsureeEligibilitySummary", ref: InsureeEligibilitySummary },
     { key: "policy.InsureeEligibilityEnquiry", ref: InsureeEligibilityEnquiry },

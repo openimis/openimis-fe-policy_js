@@ -20,6 +20,9 @@ export const reducer = (
         fetchedInsureeServiceEligibility: false,
         errorInsureeServiceEligibility: null,
         insureeInsureeServiceEligibility: null,
+        fetchedPolicyOfficers: false,
+        errorPolicyOfficers: null,
+        policyOfficers: null,
     },
     action) => {
     switch (action.type) {
@@ -150,6 +153,51 @@ export const reducer = (
                 ...state,
                 fetchingInsureeServiceEligibility: false,
                 errorInsureeServiceEligibility: formatServerError(action.payload),
+            };
+        case 'POLICY_POLICY_OFFICERS_REQ':
+            return {
+                ...state,
+                fetchingPolicyOfficers: true,
+                fetchedPolicyOfficers: false,
+                policyOfficers: null,
+                errorPolicyOfficers: null,
+            };
+        case 'POLICY_POLICY_OFFICERS_RESP':
+            return {
+                ...state,
+                fetchingPolicyOfficers: false,
+                fetchedPolicyOfficers: true,
+                policyOfficers: parseData(action.payload.data.policyOfficers),
+                errorPolicyOfficers: formatGraphQLError(action.payload)
+            };
+        case 'POLICY_POLICY_OFFICERS_ERR':
+            return {
+                ...state,
+                fetchingPolicyOfficers: false,
+                errorPolicyOfficers: formatServerError(action.payload)
+            };
+        case 'POLICY_POLICIES_REQ':
+            return {
+                ...state,
+                fetchingPolicies: true,
+                fetchedPolicies: false,
+                policies: [],
+                errorPolicies: null,
+            };
+        case 'POLICY_POLICIES_RESP':
+            return {
+                ...state,
+                fetchingPolicies: false,
+                fetchedPolicies: true,
+                policies: parseData(action.payload.data.policies),
+                policiesPageInfo: pageInfo(action.payload.data.policies),
+                errorPolicies: formatGraphQLError(action.payload)
+            };
+        case 'POLICY_POLICIES_ERR':
+            return {
+                ...state,
+                fetching: false,
+                error: formatServerError(action.payload)
             };
         default:
             return state;

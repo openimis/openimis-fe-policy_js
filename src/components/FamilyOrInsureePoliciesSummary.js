@@ -16,6 +16,7 @@ import {
     formatSorter, sort, withTooltip
 } from "@openimis/fe-core";
 import { fetchFamilyOrInsureePolicies, selectPolicy } from "../actions";
+import { RIGHT_POLICY_ADD } from "../constants";
 
 const styles = theme => ({
     paper: theme.paper.paper,
@@ -124,7 +125,7 @@ class FamilyOrInsureePoliciesSummary extends PagedDataHandler {
         if (this.showBalance) {
             h.push("policies.balance");
         }
-        h.push("","")
+        h.push("", "")
         return h
     }
 
@@ -169,7 +170,7 @@ class FamilyOrInsureePoliciesSummary extends PagedDataHandler {
             f.push(i => i.balance)
         }
         f.push(i => withTooltip(<IconButton onClick={this.deletePolicy}><DeleteIcon /></IconButton>, formatMessage(this.props.intl, "policy", "familyDeletePolicy.tooltip")))
-        f.push(i =>withTooltip(<IconButton onClick={this.renewPolicy}><RenewIcon /></IconButton>, formatMessage(this.props.intl, "policy", "familyRenewPolicy.tooltip")))
+        f.push(i => withTooltip(<IconButton onClick={this.renewPolicy}><RenewIcon /></IconButton>, formatMessage(this.props.intl, "policy", "familyRenewPolicy.tooltip")))
 
         return f;
     }
@@ -192,12 +193,12 @@ class FamilyOrInsureePoliciesSummary extends PagedDataHandler {
     itemIdentifier = (i) => i.policyUuid
 
     render() {
-        const { intl, classes, fetchingPolicies, fetchedPolicies, policies, pageInfo, errorPolicies, family, insuree, reset, readOnly } = this.props;
+        const { intl, classes, rights, fetchingPolicies, fetchedPolicies, policies, pageInfo, errorPolicies, family, insuree, reset, readOnly } = this.props;
         if ((!family || !family.uuid) && (!insuree || !insuree.uuid)) {
             return null;
         }
 
-        let actions = !!readOnly ? [] : [
+        let actions = !!readOnly || !rights.includes(RIGHT_POLICY_ADD) ? [] : [
             {
                 button: <IconButton onClick={this.addNewPolicy}><AddIcon /></IconButton>,
                 tooltip: formatMessage(intl, "policy", "familyAddPolicy.tooltip")
@@ -206,7 +207,7 @@ class FamilyOrInsureePoliciesSummary extends PagedDataHandler {
 
         return (
             <Paper className={classes.paper}>
-                <Grid container  alignItems="center" direction="row" className={classes.paperHeader}>
+                <Grid container alignItems="center" direction="row" className={classes.paperHeader}>
                     <Grid item xs={8}>
                         <Typography className={classes.tableTitle}>
                             {this.header()}
@@ -265,6 +266,7 @@ class FamilyOrInsureePoliciesSummary extends PagedDataHandler {
 
 
 const mapStateToProps = state => ({
+    rights: !!state.core && !!state.core.user && !!state.core.user.i_user ? state.core.user.i_user.rights : [],
     fetchingPolicies: state.policy.fetchingPolicies,
     fetchedPolicies: state.policy.fetchedPolicies,
     policies: state.policy.policies,
