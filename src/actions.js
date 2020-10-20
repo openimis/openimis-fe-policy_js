@@ -84,11 +84,28 @@ export function fetchPolicySummaries(mm, filters) {
     `family{${mm.getRef("insuree.FamilyPicker.projection")}}`,
     "enrollDate", "effectiveDate", "startDate", "expiryDate",
     "stage", "status",
-    "value", "balance",
+    "value", "sumPremiums",
     "validityFrom", "validityTo"]
   const payload = formatPageQueryWithCount("policies",
     filters,
     projections
   );
   return graphql(payload, 'POLICY_POLICIES');
+}
+
+export function fetchPolicyFull(mm, policy_uuid) {
+  let projections = ["uuid",
+    `product{${mm.getRef("product.ProductPicker.projection")}}`,
+    `officer{${mm.getRef("policy.PolicyOfficerPicker.projection")}}`,
+    `family{${mm.getRef("insuree.FamilyPicker.projection")}}`,
+    "enrollDate", "effectiveDate", "startDate", "expiryDate",
+    "stage", "status",
+    "value", "sumPremiums",
+    "claimDedRems{edges { node {dedG dedIp dedOp remG remIp remOp} } }",
+    "validityFrom", "validityTo"]
+  const payload = formatPageQuery("policies",
+    [`uuid: "${policy_uuid}"`],
+    projections
+  );
+  return graphql(payload, 'POLICY_POLICY');
 }

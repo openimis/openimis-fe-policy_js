@@ -7,18 +7,16 @@ import PolicySearcher from "../components/PolicySearcher";
 
 const styles = theme => ({
     page: theme.page,
-    fab: theme.fab
 });
 
 class PoliciesPage extends Component {
 
-    onDoubleClick = (i, newTab = false) => {
-        //historyPush(this.props.modulesManager, this.props.history, "policy.route.policy", [i.uuid], newTab)
-        alert('Not yet implemented')
+    onDoubleClick = (p, newTab = false) => {
+        historyPush(this.props.modulesManager, this.props.history, "policy.route.policy", [p.uuid], newTab)
     }
 
     render() {
-        const { intl, classes, rights } = this.props;
+        const { classes } = this.props;
         return (
             <div className={classes.page}>
                 <PolicySearcher

@@ -12,6 +12,7 @@ import {
     Searcher, PublishedComponent, AmountInput,
 } from "@openimis/fe-core";
 import { fetchPolicySummaries } from "../actions";
+import { policyBalance } from "../utils/utils";
 
 import PolicyFilter from "./PolicyFilter";
 
@@ -76,12 +77,12 @@ class PolicySearcher extends Component {
     sorts = (filters) => {
         var results = [
             ['enrollDate', false],
-            ['family__head_insuree__lastName', true],
+            [this.props.modulesManager.getRef("insuree.FamilyPicker.sort"), true],
             ['effectiveDate', false],
             ['startDate', false],
             ['expiryDate', false],
-            ['product__code', true],
-            ['officer__code', true],
+            [this.props.modulesManager.getRef("product.ProductPicker.sort"), true],
+            [this.props.modulesManager.getRef("policy.PolicyOfficerPicker.sort"), true],
             ['stage', true],
             ['status', true],
             ['value', false],
@@ -95,16 +96,16 @@ class PolicySearcher extends Component {
     itemFormatters = (filters) => {
         var formatters = [
             policy => formatDateFromISO(this.props.modulesManager, this.props.intl, policy.enrollDate),
-            policy => <PublishedComponent pubRef="insuree.FamilyPicker" value={policy.family}  readOnly={true} withLabel={false}/>,
+            policy => <PublishedComponent pubRef="insuree.FamilyPicker" value={policy.family} readOnly={true} withLabel={false} />,
             policy => formatDateFromISO(this.props.modulesManager, this.props.intl, policy.effectiveDate),
             policy => formatDateFromISO(this.props.modulesManager, this.props.intl, policy.startDate),
             policy => formatDateFromISO(this.props.modulesManager, this.props.intl, policy.expiryDate),
-            policy => <PublishedComponent pubRef="product.ProductPicker" value={policy.product} readOnly={true} withLabel={false}/>,
-            policy => <PublishedComponent pubRef="policy.PolicyOfficerPicker" value={policy.officer} readOnly={true} withLabel={false}/>,
-            policy => <PublishedComponent pubRef="policy.PolicyStagePicker" value={policy.stage} readOnly={true} withLabel={false}/>,
-            policy => <PublishedComponent pubRef="policy.PolicyStatusPicker" value={policy.status} readOnly={true} withLabel={false}/>,
+            policy => <PublishedComponent pubRef="product.ProductPicker" value={policy.product} readOnly={true} withLabel={false} />,
+            policy => <PublishedComponent pubRef="policy.PolicyOfficerPicker" value={policy.officer} readOnly={true} withLabel={false} />,
+            policy => <PublishedComponent pubRef="policy.PolicyStagePicker" value={policy.stage} readOnly={true} withLabel={false} />,
+            policy => <PublishedComponent pubRef="policy.PolicyStatusPicker" value={policy.status} readOnly={true} withLabel={false} />,
             policy => <AmountInput value={policy.value} readOnly={true} />,
-            policy => <AmountInput value={policy.balance} readOnly={true} />,
+            policy => <AmountInput value={policyBalance(policy)} readOnly={true} />,
             policy => formatDateFromISO(
                 this.props.modulesManager,
                 this.props.intl,

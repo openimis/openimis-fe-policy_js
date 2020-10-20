@@ -8,7 +8,7 @@ class PolicyStatusPicker extends Component {
     render() {
         return <ConstantBasedPicker
             module="policy"
-            label="policyStatus"
+            label="PolicyStatus"
             constants={POLICY_STATUS}
             {...this.props}
         />

@@ -1,4 +1,5 @@
 import { parseData, pageInfo, formatServerError, formatGraphQLError } from '@openimis/fe-core';
+import { policyBalance, policySumDedRems } from "./utils/utils";
 
 export const reducer = (
     state = {
@@ -8,6 +9,9 @@ export const reducer = (
         policies: null,
         policiesPageInfo: { totalCount: 0 },
         policy: null,
+        fetchingPolicy: null,
+        errorPolicy: null,
+        fetchedPolicy: false,
         fetchingInsureeEligibility: false,
         fetchedInsureeEligibility: false,
         errorInsureeEligibility: null,
@@ -198,6 +202,31 @@ export const reducer = (
                 ...state,
                 fetching: false,
                 error: formatServerError(action.payload)
+            };
+        case 'POLICY_POLICY_REQ':
+            return {
+                ...state,
+                fetchingPolicy: true,
+                fetchedPolicy: false,
+                policy: null,
+                errorPolicy: null,
+            };
+        case 'POLICY_POLICY_RESP':
+            let policy = parseData(action.payload.data.policies)[0];
+            policy.balance = policyBalance(policy);
+            policy = policySumDedRems(policy);
+            return {
+                ...state,
+                fetchingPolicy: false,
+                fetchedPolicy: true,
+                policy,
+                errorPolicy: formatGraphQLError(action.payload)
+            };
+        case 'POLICY_POLICY_ERR':
+            return {
+                ...state,
+                fetchingPolicy: false,
+                errorPolicy: formatServerError(action.payload)
             };
         default:
             return state;

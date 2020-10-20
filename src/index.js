@@ -4,6 +4,8 @@ import PolicyOfficerPicker from "./pickers/PolicyOfficerPicker";
 import PolicyStagePicker from "./pickers/PolicyStagePicker";
 import PolicyStatusPicker from "./pickers/PolicyStatusPicker";
 import PoliciesPage from "./pages/PoliciesPage";
+import PolicyPage from "./pages/PolicyPage";
+import PolicyValuesPanel from "./components/PolicyValuesPanel";
 import FamilyOrInsureePoliciesSummary from "./components/FamilyOrInsureePoliciesSummary";
 import InsureeEligibilitySummary from "./components/InsureeEligibilitySummary";
 import InsureeEligibilityEnquiry from "./components/InsureeEligibilityEnquiry";
@@ -14,6 +16,7 @@ import { reducer } from "./reducer";
 import { RIGHT_POLICY } from "./constants";
 
 const ROUTE_POLICY_POLICIES = "policy/policies";
+const ROUTE_POLICY_POLICY = "policy/policy";
 
 const DEFAULT_CONFIG = {
   "translations": [{ key: 'en', messages: messages_en }],
@@ -21,6 +24,7 @@ const DEFAULT_CONFIG = {
   "refs": [
     { key: "policy.PolicyOfficerPicker", ref: PolicyOfficerPicker },
     { key: "policy.PolicyOfficerPicker.projection", ref: ["id", "uuid", "code", "lastName", "otherNames"] },
+    { key: "policy.PolicyOfficerPicker.sort", ref: 'officer__code' },
     { key: "policy.PolicyStatusPicker", ref: PolicyStatusPicker },
     { key: "policy.PolicyStatusPicker.projection", ref: null },
     { key: "policy.PolicyStagePicker", ref: PolicyStagePicker },
@@ -29,10 +33,14 @@ const DEFAULT_CONFIG = {
     { key: "policy.InsureeEligibilitySummary", ref: InsureeEligibilitySummary },
     { key: "policy.InsureeEligibilityEnquiry", ref: InsureeEligibilityEnquiry },
     { key: "policy.InsureePolicyEligibilitySummary", ref: InsureePolicyEligibilitySummary },
+    { key: "policy.route.policies", ref: ROUTE_POLICY_POLICIES },
+    { key: "policy.route.policy", ref: ROUTE_POLICY_POLICY },
   ],
   "core.Router": [
     { path: ROUTE_POLICY_POLICIES, component: PoliciesPage },
+    { path: ROUTE_POLICY_POLICY + "/:policy_uuid?/:family_uuid?", component: PolicyPage },
   ],
+  "policy.Policy.panels": [PolicyValuesPanel],
   "insuree.MainMenu": [
     {
       text: <FormattedMessage module="policy" id="menu.policies" />,
@@ -42,7 +50,7 @@ const DEFAULT_CONFIG = {
     },
   ],
   "insuree.EnquiryDialog": [FamilyOrInsureePoliciesSummary, InsureeEligibilityEnquiry, InsureeEligibilitySummary],
-  "insuree.FamilyOverview.panels": [FamilyOrInsureePoliciesSummary],
+  "insuree.FamilyOverview.panels": [FamilyOrInsureePoliciesSummary],  
 }
 
 export const PolicyModule = (cfg) => {

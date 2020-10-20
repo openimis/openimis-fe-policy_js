@@ -13,7 +13,8 @@ import {
     Table, PagedDataHandler,
     formatMessage, formatMessageWithValues,
     formatDateFromISO, withModulesManager,
-    formatSorter, sort, withTooltip
+    formatSorter, sort, withTooltip,
+    historyPush, withHistory
 } from "@openimis/fe-core";
 import { fetchFamilyOrInsureePolicies, selectPolicy } from "../actions";
 import { RIGHT_POLICY_ADD } from "../constants";
@@ -55,7 +56,7 @@ class FamilyOrInsureePoliciesSummary extends PagedDataHandler {
     renewPolicy = () => alert("Will be implemented along Policy module migration!")
 
     onDoubleClick = (i, newTab = false) => {
-        alert("Will be implemented along Policy module migration!")
+        historyPush(this.props.modulesManager, this.props.history, "policy.route.policy", [i.policyUuid, this.props.family.uuid])
     }
 
 
@@ -280,8 +281,8 @@ const mapDispatchToProps = dispatch => {
     return bindActionCreators({ fetch: fetchFamilyOrInsureePolicies, selectPolicy }, dispatch);
 };
 
-export default withModulesManager(connect(mapStateToProps, mapDispatchToProps)(
+export default withHistory(withModulesManager(connect(mapStateToProps, mapDispatchToProps)(
     injectIntl(withTheme(
         withStyles(styles)(FamilyOrInsureePoliciesSummary)
-    )))
+    ))))
 );

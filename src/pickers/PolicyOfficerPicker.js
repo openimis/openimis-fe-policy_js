@@ -52,7 +52,7 @@ class PolicyOfficerPicker extends Component {
                     <AutoSuggestion
                         module="policy"
                         items={policyOfficers}
-                        label={!!withLabel && (label || formatMessage(intl, "policy", "PolicyOfficer.label"))}
+                        label={!!withLabel && (label || formatMessage(intl, "policy", "PolicyOfficerPicker.label"))}
                         getSuggestions={this.policyOfficers}
                         getSuggestionValue={this.formatSuggestion}
                         onSuggestionSelected={this.onSuggestionSelected}
@@ -62,7 +62,7 @@ class PolicyOfficerPicker extends Component {
                         required={required}
                         selectThreshold={this.selectThreshold}
                         withNull={withNull}
-                        nullLabel={nullLabel || formatMessage(intl, "policy", "policy.PolicyOfficer.null")}
+                        nullLabel={nullLabel || formatMessage(intl, "policy", "policy.PolicyOfficerPicker.null")}
                     />
                 )}
             </Fragment>
