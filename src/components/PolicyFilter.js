@@ -85,6 +85,20 @@ class PolicyFilter extends Component {
                 filter: !v ? null : `${i === 0 ? "regionId" : "districtId"}: ${decodeId(v.id)}`
             }
         ];
+        if (!v && i === 0) {
+            filters.push({
+                id: `location_1`,
+                value: null,
+                filter: null
+            })
+        }
+        if (!!v && i === 1) {
+            filters.push({
+                id: `location_0`,
+                value: v.parent,
+                filter: `regionId : ${decodeId(v.parent.id)}`
+            })
+        }
         this.props.onChangeFilters(filters);
     }
 
