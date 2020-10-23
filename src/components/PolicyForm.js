@@ -8,10 +8,9 @@ import {
     ProgressOrError, Form, Contributions,
 } from "@openimis/fe-core";
 import PolicyMasterPanel from "./PolicyMasterPanel";
-import PolicyValuesPanel from "./PolicyValuesPanel";
 import { fetchPolicyFull } from "../actions";
 import { policyLabel } from "../utils/utils";
-import { RIGHT_POLICY } from "../constants";
+import { RIGHT_POLICY, RIGHT_POLICY_EDIT } from "../constants";
 
 const styles = theme => ({
     page: theme.page,
@@ -31,12 +30,15 @@ class PolicyForm extends Component {
     _newPolicy() {
         let policy = {};
         policy.jsonExt = {};
+        if (!!this.props.family && this.props.family.uuid === this.props.family_uuid) {
+            policy.family = this.props.family;
+        }
         return policy;
     }
 
     componentDidMount() {
         document.title = formatMessageWithValues(this.props.intl, "policy", "Policy.title", { label: "" })
-        if (!!this.props.policy_uuid) {
+        if (!!this.props.policy_uuid && this.props.policy_uuid !== "_NEW") {
             this.setState(
                 (state, props) => ({ policy_uuid: props.policy_uuid }),
                 e => this.props.fetchPolicyFull(
@@ -69,7 +71,7 @@ class PolicyForm extends Component {
     }
 
     back = e => {
-        const { modulesManager, history, family_uuid, policy_uuid } = this.props;
+        const { modulesManager, history, family_uuid } = this.props;
         if (family_uuid) {
             historyPush(modulesManager,
                 history,
@@ -84,14 +86,22 @@ class PolicyForm extends Component {
         }
     }
 
+    onEditedChanged = p => {
+        this.setState(state => ({ policy: { ...state.policy, ...p } }))
+    }
+
     render() {
-        const { classes, rights,
-            policy_uuid,
+        const { rights,
+            policy_uuid, family_uuid,
             fetchingPolicy, fetchedPolicy, errorPolicy,
-            readOnly = true,
+            readOnly
         } = this.props;
         const { policy } = this.state;
         if (!rights.includes(RIGHT_POLICY)) return null;
+        let ro = !!readOnly ||
+            !rights.includes(RIGHT_POLICY_EDIT) ||
+            (!!policy.status && policy.status !== 1) || //STATUS 1 = idle
+            !!policy.validityTo
         return (
             <Fragment>
                 <ProgressOrError progress={fetchingPolicy} error={errorPolicy} />
@@ -109,10 +119,11 @@ class PolicyForm extends Component {
                             edited={this.state.policy}
                             reset={this.state.reset}
                             back={this.back}
-                            readOnly={readOnly || !!policy.validityTo}
+                            readOnly={ro}
                             headPanelContributionsKey={POLICY_HEAD_PANEL_CONTRIBUTION_KEY}
-                            family_uuid={policy.family.uuid}
+                            family_uuid={!!policy.family ? policy.family.uuid : null}
                             Panels={[PolicyMasterPanel]}
+                            onEditedChanged={this.onEditedChanged}
                         />
                     )}
 
@@ -128,6 +139,7 @@ const mapStateToProps = state => ({
     errorPolicy: state.policy.errorPolicy,
     fetchedPolicy: state.policy.fetchedPolicy,
     policy: state.policy.policy,
+    family: state.insuree.family,
 })
 
 export default injectIntl(withModulesManager(withHistory(connect(mapStateToProps, { fetchPolicyFull })(withTheme(withStyles(styles)(PolicyForm))))));

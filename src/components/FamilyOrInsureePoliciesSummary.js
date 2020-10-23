@@ -51,7 +51,7 @@ class FamilyOrInsureePoliciesSummary extends PagedDataHandler {
             e => this.query())
     }
 
-    addNewPolicy = () => alert("Will be implemented along Policy module migration!")
+    addNewPolicy = () => historyPush(this.props.modulesManager, this.props.history, "policy.route.policy", ["_NEW_", this.props.family.uuid])
     deletePolicy = () => alert("Will be implemented along Policy module migration!")
     renewPolicy = () => alert("Will be implemented along Policy module migration!")
 

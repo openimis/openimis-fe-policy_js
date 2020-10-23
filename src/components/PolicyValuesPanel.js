@@ -1,7 +1,8 @@
 import React, { Component } from "react";
+import { connect } from "react-redux";
 import { withTheme, withStyles } from "@material-ui/core/styles";
 import { Paper, Grid, Typography, Divider } from "@material-ui/core";
-import { FormattedMessage, Contributions, AmountInput } from "@openimis/fe-core";
+import { FormattedMessage, Contributions, AmountInput, ProgressOrError } from "@openimis/fe-core";
 
 const styles = theme => ({
     paper: theme.paper.paper,
@@ -24,7 +25,8 @@ class PolicyValuesPanel extends Component {
             classes,
             title = "Policy.values.title",
             readOnly = true,
-            edited
+            edited,
+            fetchingPolicyValues, errorPolicyValues
         } = this.props;
         return (
             <Grid item xs={12}>
@@ -40,12 +42,15 @@ class PolicyValuesPanel extends Component {
                     <Grid container className={classes.item}>
                         <Grid container alignItems="center" justify="center">
                             <Grid item xs={3} className={classes.item}>
-                                <AmountInput
-                                    module="policy"
-                                    label="Policy.value"
-                                    value={edited.value}
-                                    readOnly={readOnly}
-                                />
+                                <ProgressOrError progress={fetchingPolicyValues} error={errorPolicyValues} />
+                                {!fetchingPolicyValues && (
+                                    <AmountInput
+                                        module="policy"
+                                        label="Policy.value"
+                                        value={edited.value}
+                                        readOnly={readOnly}
+                                    />
+                                )}
                             </Grid>
                             <Grid item xs={3} className={classes.item}>
                                 <AmountInput
@@ -129,5 +134,11 @@ class PolicyValuesPanel extends Component {
         )
     }
 }
+const mapStateToProps = state => ({
+    fetchingPolicyValues: state.policy.fetchingPolicyValues,
+    fetchedPolicyValues: state.policy.fetchedPolicyValues,
+    errorPolicyValues: state.policy.errorPolicyValues,
+    policyValues: state.policy.policyValues,
+})
 
-export default withTheme(withStyles(styles)(PolicyValuesPanel));
+export default withTheme(withStyles(styles)(connect(mapStateToProps)(PolicyValuesPanel)));

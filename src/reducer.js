@@ -27,6 +27,10 @@ export const reducer = (
         fetchedPolicyOfficers: false,
         errorPolicyOfficers: null,
         policyOfficers: null,
+        fetchingPolicyValues: false,
+        fetchedPolicyValues: false,
+        errorPolicyValues: null,
+        policyValues: null,
     },
     action) => {
     switch (action.type) {
@@ -228,6 +232,27 @@ export const reducer = (
                 fetchingPolicy: false,
                 errorPolicy: formatServerError(action.payload)
             };
+        case 'POLICY_APPLY_PRODUCT_REQ':
+            return {
+                ...state,
+                fetchingPolicyValues: true,
+                fetchedPolicyValues: false,
+                errorPolicyValues: null,
+                policyValues: null,
+            };
+        case 'POLICY_APPLY_PRODUCT_RESP':
+            return {
+                ...state,
+                fetchingPolicyValues: false,
+                fetchedPolicyValues: true,
+                policyValues: action.payload.data.policyValues,
+            };
+        case 'POLICY_APPLY_PRODUCT_ERR':
+            return {
+                ...state,
+                fetchingPolicyValues: false,
+                errorPolicyValues: formatServerError(action.payload),
+            }
         default:
             return state;
     }

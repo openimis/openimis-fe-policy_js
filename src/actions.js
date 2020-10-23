@@ -1,4 +1,5 @@
-import { graphql, formatPageQuery, formatPageQueryWithCount } from "@openimis/fe-core";
+import { graphql, formatQuery, formatPageQuery, formatPageQueryWithCount } from "@openimis/fe-core";
+import { decodeId } from "@openimis/fe-core";
 
 const POLICY_BY_FAMILY_OR_INSUREE_PROJECTION = [
   "policyUuid",
@@ -108,4 +109,19 @@ export function fetchPolicyFull(mm, policy_uuid) {
     projections
   );
   return graphql(payload, 'POLICY_POLICY');
+}
+
+export function applyProduct(policy) {
+  let params = [
+    `stage: "N"`,
+    `enrollDate: "${policy.enrollDate}T00:00:00"`, 
+    `productId: ${decodeId(policy.product.id)}`,
+    `familyId: ${decodeId(policy.family.id)}`
+  ]
+  let projections = ["startDate", "expiryDate", "value"]
+  const payload = formatQuery("policyValues",
+    params,
+    projections
+  );
+  return graphql(payload, 'POLICY_APPLY_PRODUCT');
 }
