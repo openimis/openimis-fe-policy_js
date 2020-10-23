@@ -1,4 +1,8 @@
-import { parseData, pageInfo, formatServerError, formatGraphQLError } from '@openimis/fe-core';
+import {
+    parseData, pageInfo,
+    dispatchMutationReq, dispatchMutationResp, dispatchMutationErr,
+    formatServerError, formatGraphQLError
+} from '@openimis/fe-core';
 import { policyBalance, policySumDedRems } from "./utils/utils";
 
 export const reducer = (
@@ -31,6 +35,8 @@ export const reducer = (
         fetchedPolicyValues: false,
         errorPolicyValues: null,
         policyValues: null,
+        submittingMutation: false,
+        mutation: {},
     },
     action) => {
     switch (action.type) {
@@ -253,6 +259,14 @@ export const reducer = (
                 fetchingPolicyValues: false,
                 errorPolicyValues: formatServerError(action.payload),
             }
+        case 'POLICY_MUTATION_REQ':
+            return dispatchMutationReq(state, action)
+        case 'POLICY_MUTATION_ERR':
+            return dispatchMutationErr(state, action);
+        case 'POLICY_CREATE_POLICY_RESP':
+            return dispatchMutationResp(state, "createPolicy", action);
+        case 'POLICY_UPDATE_POLICY_RESP':
+            return dispatchMutationResp(state, "updatePolicy", action);
         default:
             return state;
     }

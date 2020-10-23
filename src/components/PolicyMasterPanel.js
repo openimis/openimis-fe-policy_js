@@ -75,7 +75,7 @@ class PolicyMasterPanel extends FormPanel {
             familyRegion = familyDistrict
             familyDistrict = loc
             loc = loc.parent
-        }
+        }        
         return products.filter(p => !p.location || p.location.id === familyRegion.id || p.location.id === familyDistrict.id)
     }
 
@@ -142,8 +142,7 @@ class PolicyMasterPanel extends FormPanel {
                                         value={!!edited ? edited[date] : null}
                                         module="policy"
                                         label={`Policy.${date}`}
-                                        readOnly={true}
-                                        required={false}
+                                        readOnly={true}                                        
                                     />
                                 </Grid>
                             ))}
@@ -156,6 +155,7 @@ class PolicyMasterPanel extends FormPanel {
                                     nullLabel={formatMessage(intl, "product", "Product.none")}
                                     onChange={this._onProductChange}
                                     filter={this._filterProducts}
+                                    required={true}
                                 />
                             </Grid>
                             <Grid item xs={3} className={classes.item}>
@@ -166,6 +166,7 @@ class PolicyMasterPanel extends FormPanel {
                                     withNull={true}
                                     nullLabel={formatMessage(intl, "policy", "PolicyOfficer.none")}
                                     onChange={v => this.updateAttribute('officer', v)}
+                                    required={true}
                                 />
                             </Grid>
                             <Grid item xs={3} className={classes.item}>

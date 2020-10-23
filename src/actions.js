@@ -1,4 +1,10 @@
-import { graphql, formatQuery, formatPageQuery, formatPageQueryWithCount } from "@openimis/fe-core";
+import {
+  graphql,
+  formatQuery, formatPageQuery, formatPageQueryWithCount,
+  formatMutation,
+} from "@openimis/fe-core";
+import _ from "lodash";
+import _uuid from "lodash-uuid";
 import { decodeId } from "@openimis/fe-core";
 
 const POLICY_BY_FAMILY_OR_INSUREE_PROJECTION = [
@@ -82,7 +88,7 @@ export function fetchPolicySummaries(mm, filters) {
   let projections = ["uuid",
     `product{${mm.getRef("product.ProductPicker.projection")}}`,
     `officer{${mm.getRef("policy.PolicyOfficerPicker.projection")}}`,
-    `family{${mm.getRef("insuree.FamilyPicker.projection")}}`,
+    `family{${mm.getRef("insuree.FamilyPicker.projection").concat([`location{${mm.getRef("location.Location.FlatProjection")}}`])}}`,
     "enrollDate", "effectiveDate", "startDate", "expiryDate",
     "stage", "status",
     "value", "sumPremiums",
@@ -98,7 +104,7 @@ export function fetchPolicyFull(mm, policy_uuid) {
   let projections = ["uuid",
     `product{${mm.getRef("product.ProductPicker.projection")}}`,
     `officer{${mm.getRef("policy.PolicyOfficerPicker.projection")}}`,
-    `family{${mm.getRef("insuree.FamilyPicker.projection")}}`,
+    `family{${mm.getRef("insuree.FamilyPicker.projection").concat([`location{${mm.getRef("location.Location.FlatProjection")}}`])}}`,
     "enrollDate", "effectiveDate", "startDate", "expiryDate",
     "stage", "status",
     "value", "sumPremiums",
@@ -124,4 +130,46 @@ export function applyProduct(policy) {
     projections
   );
   return graphql(payload, 'POLICY_APPLY_PRODUCT');
+}
+
+function formatPolicyGQL(mm, policy) {
+  return `
+  ${policy.uuid !== undefined && policy.uuid !== null ? `uuid: "${policy.uuid}"` : ''}
+  enrollDate: "${policy.enrollDate}"
+  startDate: "${policy.startDate}"
+  expiryDate: "${policy.expiryDate}"
+  value: "${_.round(policy.value, 2).toFixed(2)}"
+  productId: ${decodeId(policy.product.id)}
+  familyId: ${decodeId(policy.family.id)}
+  officerId: ${decodeId(policy.officer.id)}
+`
+}
+
+export function createPolicy(mm, policy, clientMutationLabel) {
+  let mutation = formatMutation("createPolicy", formatPolicyGQL(mm, policy), clientMutationLabel);
+  var requestedDateTime = new Date();
+  return graphql(
+    mutation.payload,
+    ['POLICY_MUTATION_REQ', 'POLICY_CREATE_POLICY_RESP', 'POLICY_MUTATION_ERR'],
+    {
+      clientMutationId: mutation.clientMutationId,
+      clientMutationLabel,
+      requestedDateTime
+    }
+  )
+}
+
+export function updatePolicy(mm, policy, clientMutationLabel) {
+  let mutation = formatMutation("updatePolicy", formatPolicyGQL(mm, policy), clientMutationLabel);
+  var requestedDateTime = new Date();
+  policy.clientMutationId = mutation.clientMutationId;
+  return graphql(
+    mutation.payload,
+    ['POLICY_MUTATION_REQ', 'POLICY_UPDATE_POLICY_RESP', 'POLICY_MUTATION_ERR'],
+    {
+      clientMutationId: mutation.clientMutationId,
+      clientMutationLabel,
+      requestedDateTime
+    }
+  )
 }

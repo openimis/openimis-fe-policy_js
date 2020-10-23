@@ -101,5 +101,7 @@
     "policy.Policy.enrollDate": "Enrolment Date",
     "policy.Policy.effectiveDate": "Effective Date",
     "policy.Policy.startDate": "Start Date",
-    "policy.Policy.expiryDate": "Expiry Date"
+    "policy.Policy.expiryDate": "Expiry Date",
+    "policy.CreatePolicy.mutationLabel": "Create Policy {policy}",
+    "policy.UpdatePolicy.mutationLabel": "Update Policy {policy}"
 }

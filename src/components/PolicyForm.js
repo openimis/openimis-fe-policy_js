@@ -3,9 +3,9 @@ import { connect } from "react-redux";
 import { injectIntl } from 'react-intl';
 import { withTheme, withStyles } from "@material-ui/core/styles";
 import {
-    historyPush, withModulesManager, withHistory,
+    historyPush, withModulesManager, withHistory, journalize,
     formatMessageWithValues,
-    ProgressOrError, Form, Contributions,
+    ProgressOrError, Form,
 } from "@openimis/fe-core";
 import PolicyMasterPanel from "./PolicyMasterPanel";
 import { fetchPolicyFull } from "../actions";
@@ -67,6 +67,9 @@ class PolicyForm extends Component {
                 this.props.intl, "policy", "Policy.title",
                 { label: policyLabel(this.props.modulesManager, this.state.policy) })
             this.setState({ policy: this._newPolicy(), newPolicy: true, lockNew: false, policy_uuid: null });
+        } else if (prevProps.submittingMutation && !this.props.submittingMutation) {
+            this.props.journalize(this.props.mutation);
+            this.setState({ reset: this.state.reset + 1 });
         }
     }
 
@@ -90,15 +93,33 @@ class PolicyForm extends Component {
         this.setState(state => ({ policy: { ...state.policy, ...p } }))
     }
 
+    canSave = () => {
+        if (!this.state.policy.family) return false;
+        if (!this.state.policy.product) return false;
+        if (!this.state.policy.enrollDate) return false;
+        if (!this.state.policy.startDate) return false;
+        if (!this.state.policy.expiryDate) return false;
+        if (!this.state.policy.value) return false;
+        if (!this.state.policy.officer) return false;
+        return true;
+    }
+
+    _save = (policy) => {
+        this.setState(
+            { lockNew: !policy.uuid }, // avoid duplicates
+            e => this.props.save(policy))
+    }
+
     render() {
         const { rights,
-            policy_uuid, family_uuid,
+            policy_uuid,
             fetchingPolicy, fetchedPolicy, errorPolicy,
-            readOnly
+            readOnly,
         } = this.props;
-        const { policy } = this.state;
+        const { policy, lockNew } = this.state;
         if (!rights.includes(RIGHT_POLICY)) return null;
-        let ro = !!readOnly ||
+        let ro = lockNew ||
+            !!readOnly ||
             !rights.includes(RIGHT_POLICY_EDIT) ||
             (!!policy.status && policy.status !== 1) || //STATUS 1 = idle
             !!policy.validityTo
@@ -119,6 +140,8 @@ class PolicyForm extends Component {
                             edited={this.state.policy}
                             reset={this.state.reset}
                             back={this.back}
+                            save={this._save}
+                            canSave={this.canSave}
                             readOnly={ro}
                             headPanelContributionsKey={POLICY_HEAD_PANEL_CONTRIBUTION_KEY}
                             family_uuid={!!policy.family ? policy.family.uuid : null}
@@ -140,6 +163,8 @@ const mapStateToProps = state => ({
     fetchedPolicy: state.policy.fetchedPolicy,
     policy: state.policy.policy,
     family: state.insuree.family,
+    submittingMutation: state.policy.submittingMutation,
+    mutation: state.policy.mutation,
 })
 
-export default injectIntl(withModulesManager(withHistory(connect(mapStateToProps, { fetchPolicyFull })(withTheme(withStyles(styles)(PolicyForm))))));
+export default injectIntl(withModulesManager(withHistory(connect(mapStateToProps, { fetchPolicyFull, journalize })(withTheme(withStyles(styles)(PolicyForm))))));
