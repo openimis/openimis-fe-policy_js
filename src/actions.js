@@ -134,7 +134,7 @@ export function applyProduct(policy) {
 
 function formatPolicyGQL(mm, policy) {
   return `
-  ${policy.uuid !== undefined && policy.uuid !== null ? `uuid: "${policy.uuid}"` : ''}
+  ${policy.uuid !== undefined && policy.uuid !== null ? `policyUuid: "${policy.uuid}"` : ''}
   enrollDate: "${policy.enrollDate}"
   startDate: "${policy.startDate}"
   expiryDate: "${policy.expiryDate}"
@@ -166,6 +166,20 @@ export function updatePolicy(mm, policy, clientMutationLabel) {
   return graphql(
     mutation.payload,
     ['POLICY_MUTATION_REQ', 'POLICY_UPDATE_POLICY_RESP', 'POLICY_MUTATION_ERR'],
+    {
+      clientMutationId: mutation.clientMutationId,
+      clientMutationLabel,
+      requestedDateTime
+    }
+  )
+}
+
+export function deletePolicy(mm, policy, clientMutationLabel) {
+  let mutation = formatMutation("deletePolicies", `uuids: ["${policy.policyUuid}"]`, clientMutationLabel);
+  var requestedDateTime = new Date();
+  return graphql(
+    mutation.payload,
+    ['POLICY_MUTATION_REQ', 'POLICY_DELETE_POLICIES_RESP', 'POLICY_MUTATION_ERR'],
     {
       clientMutationId: mutation.clientMutationId,
       clientMutationLabel,

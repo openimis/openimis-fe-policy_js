@@ -14,9 +14,10 @@ import {
     formatMessage, formatMessageWithValues,
     formatDateFromISO, withModulesManager,
     formatSorter, sort, withTooltip,
-    historyPush, withHistory
+    historyPush, withHistory, coreConfirm,
 } from "@openimis/fe-core";
-import { fetchFamilyOrInsureePolicies, selectPolicy } from "../actions";
+import { fetchFamilyOrInsureePolicies, selectPolicy, deletePolicy } from "../actions";
+import { policyLabel } from "../utils/utils";
 import { RIGHT_POLICY_ADD } from "../constants";
 
 const styles = theme => ({
@@ -40,6 +41,7 @@ class FamilyOrInsureePoliciesSummary extends PagedDataHandler {
         this.rowsPerPageOptions = props.modulesManager.getConf("fe-policy", "familyOrInsureePoliciesSummary.rowsPerPageOptions", [5, 10, 20]);
         this.defaultPageSize = props.modulesManager.getConf("fe-policy", "familyOrInsureePoliciesSummary.defaultPageSize", 5);
         this.showBalance = props.modulesManager.getConf("fe-policy", "familyOrInsureePoliciesSummary.showBalance", false);
+        this.setState({ confirmedAction: null })
     }
 
     componentDidMount() {
@@ -51,8 +53,36 @@ class FamilyOrInsureePoliciesSummary extends PagedDataHandler {
             e => this.query())
     }
 
+    componentDidUpdate(prevProps, prevState, snapshot) {
+        if (this.insureeChanged(prevProps) || this.familyChanged(prevProps)) {
+            this.query();
+        } else if (!prevProps.confirmed && this.props.confirmed) {
+            this.state.confirmedAction();
+        }
+    }
+
     addNewPolicy = () => historyPush(this.props.modulesManager, this.props.history, "policy.route.policy", ["_NEW_", this.props.family.uuid])
-    deletePolicy = () => alert("Will be implemented along Policy module migration!")
+
+    confirmDelete = (policy) => {
+        let confirmedAction = () => this.props.deletePolicy(this.props.modulesManager, policy, formatMessageWithValues(
+            this.props.intl,
+            "policy",
+            "DeletePolicy.mutationLabel",
+            { policy: policyLabel(this.props.modulesManager, policy) }
+        ))
+        let confirm = e => this.props.coreConfirm(
+            formatMessageWithValues(this.props.intl, "policy", "deletePolicyDialog.title", { label: policyLabel(policy) }),
+            formatMessageWithValues(this.props.intl, "policy", "deletePolicyDialog.message",
+                {
+                    label: policyLabel(policy),
+                }),
+        );
+        this.setState(
+            { confirmedAction },
+            confirm
+        )
+    }
+
     renewPolicy = () => alert("Will be implemented along Policy module migration!")
 
     onDoubleClick = (i, newTab = false) => {
@@ -77,12 +107,6 @@ class FamilyOrInsureePoliciesSummary extends PagedDataHandler {
                 || prevProps.family.uuid !== this.props.family.uuid
             )
         )
-
-    componentDidUpdate(prevProps, prevState, snapshot) {
-        if (this.insureeChanged(prevProps) || this.familyChanged(prevProps)) {
-            this.query();
-        }
-    }
 
     queryPrms() {
         let prms = [
@@ -154,6 +178,8 @@ class FamilyOrInsureePoliciesSummary extends PagedDataHandler {
         return a;
     };
 
+    canRenew = (policy) => policy.status === 4 || policy.status === 8
+
     itemFormatters = () => {
         let f = [
             i => i.productCode,
@@ -170,8 +196,8 @@ class FamilyOrInsureePoliciesSummary extends PagedDataHandler {
         if (this.showBalance) {
             f.push(i => i.balance)
         }
-        f.push(i => withTooltip(<IconButton onClick={this.deletePolicy}><DeleteIcon /></IconButton>, formatMessage(this.props.intl, "policy", "familyDeletePolicy.tooltip")))
-        f.push(i => withTooltip(<IconButton onClick={this.renewPolicy}><RenewIcon /></IconButton>, formatMessage(this.props.intl, "policy", "familyRenewPolicy.tooltip")))
+        f.push(i => withTooltip(<IconButton onClick={e => this.confirmDelete(i)}><DeleteIcon /></IconButton>, formatMessage(this.props.intl, "policy", "familyDeletePolicy.tooltip")))
+        f.push(i => this.canRenew(i) ? withTooltip(<IconButton onClick={this.renewPolicy}><RenewIcon /></IconButton>, formatMessage(this.props.intl, "policy", "familyRenewPolicy.tooltip")) : null)
 
         return f;
     }
@@ -275,10 +301,11 @@ const mapStateToProps = state => ({
     errorPolicies: state.policy.errorPolicies,
     family: state.insuree.family || {},
     insuree: state.insuree.insuree,
+    confirmed: state.core.confirmed,
 });
 
 const mapDispatchToProps = dispatch => {
-    return bindActionCreators({ fetch: fetchFamilyOrInsureePolicies, selectPolicy }, dispatch);
+    return bindActionCreators({ fetch: fetchFamilyOrInsureePolicies, selectPolicy, deletePolicy, coreConfirm }, dispatch);
 };
 
 export default withHistory(withModulesManager(connect(mapStateToProps, mapDispatchToProps)(
