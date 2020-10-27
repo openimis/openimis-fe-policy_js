@@ -14,7 +14,7 @@ import messages_en from "./translations/en.json";
 import { FormattedMessage } from "@openimis/fe-core";
 import { reducer } from "./reducer";
 import { RIGHT_POLICY } from "./constants";
-
+import { policyMutation } from "./utils/utils";
 const ROUTE_POLICY_POLICIES = "policy/policies";
 const ROUTE_POLICY_POLICY = "policy/policy";
 
@@ -51,6 +51,7 @@ const DEFAULT_CONFIG = {
   ],
   "insuree.EnquiryDialog": [FamilyOrInsureePoliciesSummary, InsureeEligibilityEnquiry, InsureeEligibilitySummary],
   "insuree.FamilyOverview.panels": [FamilyOrInsureePoliciesSummary],  
+  "insuree.FamilyOverview.mutations": [policyMutation]
 }
 
 export const PolicyModule = (cfg) => {

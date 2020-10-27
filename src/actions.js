@@ -177,6 +177,7 @@ export function updatePolicy(mm, policy, clientMutationLabel) {
 export function deletePolicy(mm, policy, clientMutationLabel) {
   let mutation = formatMutation("deletePolicies", `uuids: ["${policy.policyUuid}"]`, clientMutationLabel);
   var requestedDateTime = new Date();
+  policy.clientMutationId = mutation.clientMutationId;
   return graphql(
     mutation.payload,
     ['POLICY_MUTATION_REQ', 'POLICY_DELETE_POLICIES_RESP', 'POLICY_MUTATION_ERR'],

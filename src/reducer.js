@@ -267,6 +267,8 @@ export const reducer = (
             return dispatchMutationResp(state, "createPolicy", action);
         case 'POLICY_UPDATE_POLICY_RESP':
             return dispatchMutationResp(state, "updatePolicy", action);
+        case 'POLICY_DELETE_POLICIES_RESP':
+            return dispatchMutationResp(state, "deletePolicies", action);
         default:
             return state;
     }
