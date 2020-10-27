@@ -37,5 +37,5 @@ export function policySumDedRems(policy) {
 }
 
 export function policyMutation(state) {
-    return !!state && !!state.policy && !_.isEmpty(state.policy.mutation)
+    return !!state.policy && !!state.policy.policies && !!state.policy.policies.filter(p => !!p.clientMutationId).length    
 }
