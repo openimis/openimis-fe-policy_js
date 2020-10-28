@@ -86,7 +86,7 @@ class FamilyOrInsureePoliciesSummary extends PagedDataHandler {
         )
     }
 
-    renewPolicy = () => alert("Will be implemented along Policy module migration!")
+    renewPolicy = (i) => historyPush(this.props.modulesManager, this.props.history, "policy.route.policy", [i.policyUuid, this.props.family.uuid, true])
 
     onDoubleClick = (i, newTab = false) => {
         historyPush(this.props.modulesManager, this.props.history, "policy.route.policy", [i.policyUuid, this.props.family.uuid])
@@ -183,7 +183,7 @@ class FamilyOrInsureePoliciesSummary extends PagedDataHandler {
 
     rowLocked = (policy) => !!policy.clientMutationId
     canDelete = (policy) => !policy.clientMutationId && !this.props.readOnly && this.props.rights.includes(RIGHT_POLICY_DELETE)
-    canRenew = (policy) => !policy.clientMutationId && (policy.status === 4 || policy.status === 8)
+    canRenew = (policy) => !policy.clientMutationId && !this.props.readOnly && this.props.rights.includes(RIGHT_POLICY_ADD) //&& (policy.status === ??)
 
     itemFormatters = () => {
         let f = [
@@ -205,8 +205,10 @@ class FamilyOrInsureePoliciesSummary extends PagedDataHandler {
             withTooltip(<IconButton onClick={e => this.confirmDelete(i)}><DeleteIcon /></IconButton>, formatMessage(this.props.intl, "policy", "familyDeletePolicy.tooltip")) :
             null
         )
-        f.push(i => this.canRenew(i) ? withTooltip(<IconButton onClick={this.renewPolicy}><RenewIcon /></IconButton>, formatMessage(this.props.intl, "policy", "familyRenewPolicy.tooltip")) : null)
-
+        f.push(i => this.canRenew(i) ?
+            withTooltip(<IconButton onClick={e => this.renewPolicy(i)}><RenewIcon /></IconButton>, formatMessage(this.props.intl, "policy", "familyRenewPolicy.tooltip")) :
+            null
+        )
         return f;
     }
 

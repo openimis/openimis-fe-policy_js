@@ -38,7 +38,7 @@ const DEFAULT_CONFIG = {
   ],
   "core.Router": [
     { path: ROUTE_POLICY_POLICIES, component: PoliciesPage },
-    { path: ROUTE_POLICY_POLICY + "/:policy_uuid?/:family_uuid?", component: PolicyPage },
+    { path: ROUTE_POLICY_POLICY + "/:policy_uuid?/:family_uuid?/:renew?", component: PolicyPage },
   ],
   "policy.Policy.panels": [PolicyValuesPanel],
   "insuree.MainMenu": [

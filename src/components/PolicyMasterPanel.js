@@ -9,7 +9,7 @@ import {
     FormattedMessage, FormPanel, Contributions, PublishedComponent, ProgressOrError
 } from "@openimis/fe-core";
 
-import { applyProduct } from "../actions";
+import { fetchPolicyValues } from "../actions";
 
 const styles = theme => ({
     paper: theme.paper.paper,
@@ -22,28 +22,6 @@ const POLICY_POLICY_PANELS_CONTRIBUTION_KEY = "policy.Policy.panels"
 
 class PolicyMasterPanel extends FormPanel {
 
-    state = {
-        product: null,
-        enrollDate: null,
-    }
-
-    componentDidMount() {
-        this.setState((state, props) => ({
-            product: this.props.edited.product,
-            enrollDate: props.edited.enrollDate,
-        }));
-    }
-
-    componentDidUpdate(prevProps, prevState, snapshot) {
-        if (!prevProps.fetchedPolicyValues && this.props.fetchedPolicyValues) {
-            this.updateAttributes({
-                ... this.props.policyValues,
-                product: this.state.product || this.props.edited.product,
-                enrollDate: !!this.state.enrollDate ? this.state.enrollDate : this.props.edited.enrollDate,
-            });
-        }
-    }
-
     _onProductChange = product => {
         this.setState(
             { product },
@@ -53,7 +31,7 @@ class PolicyMasterPanel extends FormPanel {
                     expiryDate: null,
                     value: null
                 }) :
-                this.props.applyProduct({ ... this.props.edited, product })
+                this.props.fetchPolicyValues({ ... this.props.edited, product })
         )
     }
 
@@ -61,13 +39,13 @@ class PolicyMasterPanel extends FormPanel {
         this.setState(
             { enrollDate },
             e => !!this.props.edited.product ?
-                this.props.applyProduct({ ... this.props.edited, enrollDate }) :
+                this.props.fetchPolicyValues({ ... this.props.edited, enrollDate }) :
                 this.updateAttribute('enrollDate', enrollDate)
         )
     }
 
     _filterProducts = products => {
-        if (!products || !this.props.edited || !this.props.edited.family ) return products;
+        if (!products || !this.props.edited || !this.props.edited.family) return products;
         let loc = this.props.edited.family.location
         let familyRegion = null;
         let familyDistrict = null;
@@ -75,13 +53,13 @@ class PolicyMasterPanel extends FormPanel {
             familyRegion = familyDistrict
             familyDistrict = loc
             loc = loc.parent
-        }        
+        }
         return products.filter(p => !p.location || p.location.id === familyRegion.id || p.location.id === familyDistrict.id)
     }
 
     render() {
         const {
-            intl, classes, edited, readOnly, fetchingPolicyValues, fetchedPolicyValues, errorPolicyValues,
+            intl, classes, edited, readOnly, fetchingPolicyValues, errorPolicyValues,
             title = "Policy.details.title"
         } = this.props;
         let actions = [{
@@ -114,7 +92,7 @@ class PolicyMasterPanel extends FormPanel {
                         <Grid container className={classes.item}>
                             <Grid item xs={3} className={classes.item}>
                                 <PublishedComponent pubRef="core.DatePicker"
-                                    value={this.state.enrollDate}
+                                    value={!!edited ? edited.enrollDate : null}
                                     module="policy"
                                     label="Policy.enrollDate"
                                     readOnly={readOnly}
@@ -142,7 +120,7 @@ class PolicyMasterPanel extends FormPanel {
                                         value={!!edited ? edited[date] : null}
                                         module="policy"
                                         label={`Policy.${date}`}
-                                        readOnly={true}                                        
+                                        readOnly={true}
                                     />
                                 </Grid>
                             ))}
@@ -191,10 +169,8 @@ class PolicyMasterPanel extends FormPanel {
 
 const mapStateToProps = state => ({
     fetchingPolicyValues: state.policy.fetchingPolicyValues,
-    fetchedPolicyValues: state.policy.fetchedPolicyValues,
     errorPolicyValues: state.policy.errorPolicyValues,
-    policyValues: state.policy.policyValues,
 })
 
 
-export default injectIntl(withTheme(withStyles(styles)(connect(mapStateToProps, { applyProduct })(PolicyMasterPanel))));
+export default injectIntl(withTheme(withStyles(styles)(connect(mapStateToProps, { fetchPolicyValues })(PolicyMasterPanel))));

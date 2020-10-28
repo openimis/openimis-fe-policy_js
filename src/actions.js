@@ -117,19 +117,22 @@ export function fetchPolicyFull(mm, policy_uuid) {
   return graphql(payload, 'POLICY_POLICY');
 }
 
-export function applyProduct(policy) {
+export function fetchPolicyValues(policy) {
   let params = [
-    `stage: "N"`,
-    `enrollDate: "${policy.enrollDate}T00:00:00"`, 
+    `stage: "${policy.stage}"`,
+    `enrollDate: "${policy.enrollDate}T00:00:00"`,
     `productId: ${decodeId(policy.product.id)}`,
     `familyId: ${decodeId(policy.family.id)}`
   ]
+  if (!!policy.prevPolicy) {
+    params.push(`prevUuid: "${policy.prevPolicy.uuid}"`)
+  }
   let projections = ["startDate", "expiryDate", "value"]
   const payload = formatQuery("policyValues",
     params,
     projections
   );
-  return graphql(payload, 'POLICY_APPLY_PRODUCT');
+  return graphql(payload, 'POLICY_FETCH_POLICY_VALUES');
 }
 
 function formatPolicyGQL(mm, policy) {
@@ -166,6 +169,20 @@ export function updatePolicy(mm, policy, clientMutationLabel) {
   return graphql(
     mutation.payload,
     ['POLICY_MUTATION_REQ', 'POLICY_UPDATE_POLICY_RESP', 'POLICY_MUTATION_ERR'],
+    {
+      clientMutationId: mutation.clientMutationId,
+      clientMutationLabel,
+      requestedDateTime
+    }
+  )
+}
+
+export function renewPolicy(mm, policy, clientMutationLabel) {
+  let mutation = formatMutation("renewPolicy", formatPolicyGQL(mm, policy), clientMutationLabel);
+  var requestedDateTime = new Date();
+  return graphql(
+    mutation.payload,
+    ['POLICY_MUTATION_REQ', 'POLICY_RENEW_POLICY_RESP', 'POLICY_MUTATION_ERR'],
     {
       clientMutationId: mutation.clientMutationId,
       clientMutationLabel,

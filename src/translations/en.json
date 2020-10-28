@@ -104,6 +104,7 @@
     "policy.Policy.expiryDate": "Expiry Date",
     "policy.CreatePolicy.mutationLabel": "Create Policy {policy}",
     "policy.UpdatePolicy.mutationLabel": "Update Policy {policy}",
+    "policy.RenewPolicy.mutationLabel": "Renew Policy {policy}",
     "policy.DeletePolicy.mutationLabel": "Delete Policy {policy}",
     "policy.deletePolicyDialog.title": "Delete policy - {label}?",
     "policy.deletePolicyDialog.message": "Are you sure you want to delete policy {label}? Related contributions will be deleted (but not payments)."

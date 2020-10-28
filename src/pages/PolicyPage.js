@@ -6,7 +6,8 @@ import { withTheme, withStyles } from "@material-ui/core/styles";
 import { historyPush, withModulesManager, withHistory, formatMessageWithValues } from "@openimis/fe-core";
 import PolicyForm from "../components/PolicyForm";
 import { policyLabel } from "../utils/utils";
-import { createPolicy, updatePolicy } from "../actions";
+import { createPolicy, renewPolicy, updatePolicy } from "../actions";
+import { POLICY_STAGE_NEW, POLICY_STAGE_RENEW } from "../constants";
 
 const styles = theme => ({
     page: theme.page,
@@ -15,7 +16,7 @@ const styles = theme => ({
 class PolicyPage extends Component {
 
     save = (policy) => {
-        if (!policy.uuid) {
+        if (!policy.uuid && policy.stage === POLICY_STAGE_NEW) {
             this.props.createPolicy(
                 this.props.modulesManager,
                 policy,
@@ -23,6 +24,17 @@ class PolicyPage extends Component {
                     this.props.intl,
                     "policy",
                     "CreatePolicy.mutationLabel",
+                    { policy: policyLabel(this.props.modulesManager, policy) }
+                )
+            );
+        } else if (!policy.uuid && policy.stage === POLICY_STAGE_RENEW) {
+            this.props.renewPolicy(
+                this.props.modulesManager,
+                policy,
+                formatMessageWithValues(
+                    this.props.intl,
+                    "policy",
+                    "RenewPolicy.mutationLabel",
                     { policy: policyLabel(this.props.modulesManager, policy) }
                 )
             );
@@ -42,7 +54,7 @@ class PolicyPage extends Component {
     }
 
     render() {
-        const { classes, policy_uuid, family_uuid } = this.props;
+        const { classes, policy_uuid, family_uuid, renew } = this.props;
         return (
             <div className={classes.page}>
                 <PolicyForm
@@ -50,6 +62,7 @@ class PolicyPage extends Component {
                     family_uuid={family_uuid}
                     back={e => historyPush(modulesManager, history, "policy.route.policies")}
                     save={this.save}
+                    renew={renew}
                 />
             </div>
         )
@@ -61,11 +74,12 @@ const mapStateToProps = (state, props) => ({
     rights: !!state.core && !!state.core.user && !!state.core.user.i_user ? state.core.user.i_user.rights : [],
     policy_uuid: props.match.params.policy_uuid,
     family_uuid: props.match.params.family_uuid,
+    renew: props.match.params.renew
 })
 
 
 const mapDispatchToProps = dispatch => {
-    return bindActionCreators({ createPolicy, updatePolicy }, dispatch);
+    return bindActionCreators({ createPolicy, renewPolicy, updatePolicy }, dispatch);
 };
 
 

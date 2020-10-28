@@ -238,7 +238,7 @@ export const reducer = (
                 fetchingPolicy: false,
                 errorPolicy: formatServerError(action.payload)
             };
-        case 'POLICY_APPLY_PRODUCT_REQ':
+        case 'POLICY_FETCH_POLICY_VALUES_REQ':
             return {
                 ...state,
                 fetchingPolicyValues: true,
@@ -246,14 +246,14 @@ export const reducer = (
                 errorPolicyValues: null,
                 policyValues: null,
             };
-        case 'POLICY_APPLY_PRODUCT_RESP':
+        case 'POLICY_FETCH_POLICY_VALUES_RESP':
             return {
                 ...state,
                 fetchingPolicyValues: false,
                 fetchedPolicyValues: true,
                 policyValues: action.payload.data.policyValues,
             };
-        case 'POLICY_APPLY_PRODUCT_ERR':
+        case 'POLICY_FETCH_POLICY_VALUES_ERR':
             return {
                 ...state,
                 fetchingPolicyValues: false,
@@ -267,6 +267,8 @@ export const reducer = (
             return dispatchMutationResp(state, "createPolicy", action);
         case 'POLICY_UPDATE_POLICY_RESP':
             return dispatchMutationResp(state, "updatePolicy", action);
+        case 'POLICY_RENEW_POLICY_RESP':
+            return dispatchMutationResp(state, "renewPolicy", action);
         case 'POLICY_DELETE_POLICIES_RESP':
             return dispatchMutationResp(state, "deletePolicies", action);
         default:

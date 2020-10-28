@@ -1,5 +1,12 @@
-export const POLICY_STATUS = [1, 16, 2, 4, 8]
-export const POLICY_STAGE = ['N', 'R']
+export const POLICY_STATUS_IDLE = 1;
+export const POLICY_STATUS_READY = 16;
+export const POLICY_STATUS_ACTIVE = 2;
+export const POLICY_STATUS_SUSPENDED = 4;
+export const POLICY_STATUS_EXPIRED = 8;
+export const POLICY_STATUS = [POLICY_STATUS_IDLE, POLICY_STATUS_READY, POLICY_STATUS_ACTIVE, POLICY_STATUS_SUSPENDED, POLICY_STATUS_EXPIRED]
+export const POLICY_STAGE_NEW = 'N';
+export const POLICY_STAGE_RENEW = 'R';
+export const POLICY_STAGE = [POLICY_STAGE_NEW, POLICY_STAGE_RENEW]
 
 export const RIGHT_POLICY = 101201 // supposed to be 101200 ... but in practice
 export const RIGHT_POLICY_SEARCH = 101201
