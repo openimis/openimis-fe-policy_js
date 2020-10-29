@@ -3,12 +3,16 @@ import { connect } from "react-redux";
 import { withTheme, withStyles } from "@material-ui/core/styles";
 import { injectIntl } from 'react-intl';
 import { Paper, Grid, Typography, Divider, IconButton } from "@material-ui/core";
-import SuspendIcon from "@material-ui/icons/Pause";
 import {
-    formatMessage, withTooltip,
+    Autorenew as RenewIcon,
+    Delete as DeleteIcon,
+    Pause as SuspendIcon,
+} from '@material-ui/icons';
+import {
+    formatMessage, withTooltip, withModulesManager, historyPush,
     FormattedMessage, FormPanel, Contributions, PublishedComponent, ProgressOrError
 } from "@openimis/fe-core";
-
+import { policyLabel, canDeletePolicy, canSuspendPolicy, canRenewPolicy } from "../utils/utils";
 import { fetchPolicyValues } from "../actions";
 
 const styles = theme => ({
@@ -23,25 +27,15 @@ const POLICY_POLICY_PANELS_CONTRIBUTION_KEY = "policy.Policy.panels"
 class PolicyMasterPanel extends FormPanel {
 
     _onProductChange = product => {
-        this.setState(
-            { product },
-            e => !product ?
-                this.updateAttributes({
-                    startDate: null,
-                    expiryDate: null,
-                    value: null
-                }) :
-                this.props.fetchPolicyValues({ ... this.props.edited, product })
-        )
-    }
+        !product ?
+            this.updateAttributes({
+                product: null,
+                startDate: null,
+                expiryDate: null,
+                value: null
+            }) :
+            this.updateAttribute('product', product)
 
-    _onEnrollDateChange = enrollDate => {
-        this.setState(
-            { enrollDate },
-            e => !!this.props.edited.product ?
-                this.props.fetchPolicyValues({ ... this.props.edited, enrollDate }) :
-                this.updateAttribute('enrollDate', enrollDate)
-        )
     }
 
     _filterProducts = products => {
@@ -57,15 +51,80 @@ class PolicyMasterPanel extends FormPanel {
         return products.filter(p => !p.location || p.location.id === familyRegion.id || p.location.id === familyDistrict.id)
     }
 
+    renewPolicy = () => historyPush(this.props.modulesManager, this.props.history, "policy.route.policy", [this.props.edited.uuid, this.props.edited.family.uuid, true])
+
+    confirmSuspend = () => {
+        let policy = this.props.edited;
+        let confirmedAction = () => this.props.suspendPolicy(this.props.modulesManager, policy, formatMessageWithValues(
+            this.props.intl,
+            "policy",
+            "SuspendPolicy.mutationLabel",
+            { policy: policyLabel(this.props.modulesManager, policy) }
+        ))
+        let confirm = e => this.props.coreConfirm(
+            formatMessageWithValues(this.props.intl, "policy", "suspendPolicyDialog.title", { label: policyLabel(this.props.modulesManager, policy) }),
+            formatMessageWithValues(this.props.intl, "policy", "suspendPolicyDialog.message",
+                {
+                    label: policyLabel(this.props.modulesManager, policy),
+                }),
+        );
+        this.setState(
+            { confirmedAction },
+            confirm
+        )
+    }
+
+    confirmDelete = () => {
+        let policy = this.props.edited;
+        let confirmedAction = () => this.props.deletePolicy(this.props.modulesManager, policy, formatMessageWithValues(
+            this.props.intl,
+            "policy",
+            "DeletePolicy.mutationLabel",
+            { policy: policyLabel(this.props.modulesManager, policy) }
+        ))
+        let confirm = e => this.props.coreConfirm(
+            formatMessageWithValues(this.props.intl, "policy", "deletePolicyDialog.title", { label: policyLabel(this.props.modulesManager, policy) }),
+            formatMessageWithValues(this.props.intl, "policy", "deletePolicyDialog.message",
+                {
+                    label: policyLabel(this.props.modulesManager, policy),
+                }),
+        );
+        this.setState(
+            { confirmedAction },
+            confirm
+        )
+    }
+
+    canDelete = (policy) => canDeletePolicy(this.props.rights, policy)
+    canSuspend = (policy) => canSuspendPolicy(this.props.rights, policy)
+    canRenew = (policy) => !this.props.renew && canRenewPolicy(this.props.rights, policy)
+
     render() {
         const {
             intl, classes, edited, readOnly, fetchingPolicyValues, errorPolicyValues,
             title = "Policy.details.title"
         } = this.props;
-        let actions = [{
-            button: <IconButton onClick={e => alert("Not implemented yet")}><SuspendIcon /></IconButton>,
-            tooltip: formatMessage(intl, "policy", "action.suspend.tooltip"),
-        }];
+        let actions = [];
+        if (this.canRenew(edited)) {
+            actions.push({
+                button: <IconButton onClick={e => this.renewPolicy()}><RenewIcon /></IconButton>,
+                tooltip: formatMessage(this.props.intl, "policy", "action.RenewPolicy.tooltip"),
+            })
+        }
+        if (this.canSuspend(edited)) {
+            actions.push({
+                button: <IconButton onClick={e => this.confirmSuspend()}><SuspendIcon /></IconButton>,
+                tooltip: formatMessage(this.props.intl, "policy", "action.SuspendPolicy.tooltip"),
+            })
+        }
+        if (this.canDelete(edited)) {
+            actions.push({
+                button: <IconButton onClick={e => this.confirmDelete()}><DeleteIcon /></IconButton>,
+                tooltip: formatMessage(this.props.intl, "policy", "action.DeletePolicy.tooltip"),
+            })
+        }
+
+
         return (
             <Grid container>
                 <Grid item xs={12}>
@@ -97,7 +156,7 @@ class PolicyMasterPanel extends FormPanel {
                                     label="Policy.enrollDate"
                                     readOnly={readOnly}
                                     required={true}
-                                    onChange={v => this._onEnrollDateChange(v)}
+                                    onChange={v => this.updateAttribute('enrollDate', v)}
                                 />
                             </Grid>
                             <Grid item xs={3} className={classes.item}>
@@ -168,9 +227,10 @@ class PolicyMasterPanel extends FormPanel {
 }
 
 const mapStateToProps = state => ({
+    rights: !!state.core && !!state.core.user && !!state.core.user.i_user ? state.core.user.i_user.rights : [],
     fetchingPolicyValues: state.policy.fetchingPolicyValues,
     errorPolicyValues: state.policy.errorPolicyValues,
 })
 
 
-export default injectIntl(withTheme(withStyles(styles)(connect(mapStateToProps, { fetchPolicyValues })(PolicyMasterPanel))));
+export default withModulesManager(injectIntl(withTheme(withStyles(styles)(connect(mapStateToProps, { fetchPolicyValues })(PolicyMasterPanel)))));

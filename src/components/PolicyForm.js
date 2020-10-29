@@ -63,6 +63,13 @@ class PolicyForm extends Component {
                     this.props.policy_uuid
                 )
             )
+        } else if (!!this.props.renew) {
+            this.setState(
+                (state, props) => ({
+                    renew: this.props.renew,
+                    policy: this._renewPolicy(state.policy)
+                })
+            )
         }
     }
 
@@ -84,6 +91,10 @@ class PolicyForm extends Component {
                 { policy, policy_uuid: policy.uuid, lockNew: false, newPolicy: !this.props.renew, renew: false },
                 e => { if (policy.stage === POLICY_STAGE_RENEW) { this.props.fetchPolicyValues(policy) } }
             );
+        } else if (!_.isEqual(prevState.policy.product, this.state.policy.product) || !_.isEqual(prevState.policy.enrollDate, this.state.policy.enrollDate)) {
+            if (!!this.state.policy.product) {
+                this.props.fetchPolicyValues(this.state.policy)
+            }
         } else if (!!prevProps.fetchingPolicyValues && !this.props.fetchingPolicyValues && !!this.props.fetchedPolicyValues) {
             this.setState(state => ({ policy: { ...state.policy, ...this.props.policyValues } }))
         } else if (prevProps.policy_uuid && !this.props.policy_uuid) {
@@ -94,6 +105,14 @@ class PolicyForm extends Component {
         } else if (prevProps.submittingMutation && !this.props.submittingMutation) {
             this.props.journalize(this.props.mutation);
             this.setState({ reset: this.state.reset + 1 });
+        } else if (!prevProps.renew && !!this.props.renew) {
+            this.setState(
+                (state, props) => ({
+                    renew: this.props.renew,
+                    policy: this._renewPolicy(state.policy)
+                }),
+                e => this.props.fetchPolicyValues(this.state.policy)
+            )
         }
     }
 
@@ -138,12 +157,14 @@ class PolicyForm extends Component {
         const { rights,
             policy_uuid,
             fetchingPolicy, fetchedPolicy, errorPolicy,
-            readOnly,
+            readOnly, renew,
         } = this.props;
         const { policy, lockNew } = this.state;
         if (!rights.includes(RIGHT_POLICY)) return null;
-        let ro = lockNew ||
-            !!readOnly ||
+
+        let ro = policy.clientMutationId ||
+            lockNew ||
+            (!!readOnly && !renew) ||
             !rights.includes(RIGHT_POLICY_EDIT) ||
             (!!policy.status && policy.status !== POLICY_STATUS_IDLE) ||
             !!policy.validityTo
@@ -171,6 +192,7 @@ class PolicyForm extends Component {
                             family_uuid={!!policy.family ? policy.family.uuid : null}
                             Panels={[PolicyMasterPanel]}
                             onEditedChanged={this.onEditedChanged}
+                            forcedDirty={!ro && (!!this.props.renew || !policy_uuid)}
                         />
                     )}
 

@@ -180,9 +180,25 @@ export function updatePolicy(mm, policy, clientMutationLabel) {
 export function renewPolicy(mm, policy, clientMutationLabel) {
   let mutation = formatMutation("renewPolicy", formatPolicyGQL(mm, policy), clientMutationLabel);
   var requestedDateTime = new Date();
+  policy.clientMutationId = mutation.clientMutationId;
   return graphql(
     mutation.payload,
     ['POLICY_MUTATION_REQ', 'POLICY_RENEW_POLICY_RESP', 'POLICY_MUTATION_ERR'],
+    {
+      clientMutationId: mutation.clientMutationId,
+      clientMutationLabel,
+      requestedDateTime
+    }
+  )
+}
+
+export function suspendPolicy(mm, policy, clientMutationLabel) {
+  let mutation = formatMutation("suspendPolicies", `uuids: ["${policy.policyUuid}"]`, clientMutationLabel);
+  var requestedDateTime = new Date();
+  policy.clientMutationId = mutation.clientMutationId;
+  return graphql(
+    mutation.payload,
+    ['POLICY_MUTATION_REQ', 'POLICY_SUSPEND_POLICIES_RESP', 'POLICY_MUTATION_ERR'],
     {
       clientMutationId: mutation.clientMutationId,
       clientMutationLabel,

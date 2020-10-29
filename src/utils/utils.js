@@ -1,4 +1,5 @@
 import _ from "lodash";
+import { RIGHT_POLICY_DELETE, RIGHT_POLICY_SUSPEND, RIGHT_POLICY_RENEW, POLICY_STATUS_ACTIVE } from "../constants";
 
 export function policyLabel(mm, policy) {
     if (!policy) return "";
@@ -34,6 +35,16 @@ export function policySumDedRems(policy) {
         policy.sumClaimRemOp = Math.round(sumClaimRemOp * 100) / 100
     }
     return policy
+}
+
+export function canDeletePolicy(rights, policy){
+    return !policy.validityTo && !policy.clientMutationId && rights.includes(RIGHT_POLICY_DELETE)
+}
+export function canRenewPolicy(rights, policy){
+    return !policy.validityTo && !policy.clientMutationId && rights.includes(RIGHT_POLICY_RENEW) //&& (policy.status === ??)
+}
+export function canSuspendPolicy(rights, policy){
+    return !policy.validityTo && !policy.clientMutationId && rights.includes(RIGHT_POLICY_SUSPEND) && policy.status === POLICY_STATUS_ACTIVE
 }
 
 export function policyMutation(state) {

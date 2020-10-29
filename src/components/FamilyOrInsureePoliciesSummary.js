@@ -8,6 +8,7 @@ import {
     Add as AddIcon,
     Autorenew as RenewIcon,
     Delete as DeleteIcon,
+    Pause as SuspendIcon,
 } from '@material-ui/icons';
 import {
     Table, PagedDataHandler,
@@ -16,9 +17,9 @@ import {
     formatSorter, sort, withTooltip,
     historyPush, withHistory, coreConfirm, journalize,
 } from "@openimis/fe-core";
-import { fetchFamilyOrInsureePolicies, selectPolicy, deletePolicy } from "../actions";
-import { policyLabel } from "../utils/utils";
-import { RIGHT_POLICY_ADD, RIGHT_POLICY_DELETE } from "../constants";
+import { fetchFamilyOrInsureePolicies, selectPolicy, deletePolicy, suspendPolicy } from "../actions";
+import { policyLabel, canDeletePolicy, canSuspendPolicy, canRenewPolicy } from "../utils/utils";
+import { RIGHT_POLICY_ADD } from "../constants";
 
 const styles = theme => ({
     paper: theme.paper.paper,
@@ -66,18 +67,21 @@ class FamilyOrInsureePoliciesSummary extends PagedDataHandler {
 
     addNewPolicy = () => historyPush(this.props.modulesManager, this.props.history, "policy.route.policy", ["_NEW_", this.props.family.uuid])
 
-    confirmDelete = (policy) => {
-        let confirmedAction = () => this.props.deletePolicy(this.props.modulesManager, policy, formatMessageWithValues(
+    renewPolicy = (i) => historyPush(this.props.modulesManager, this.props.history, "policy.route.policy", [i.policyUuid, this.props.family.uuid, true])
+
+    confirmSuspend = (policy) => {
+        policy.family = this.props.family
+        let confirmedAction = () => this.props.suspendPolicy(this.props.modulesManager, policy, formatMessageWithValues(
             this.props.intl,
             "policy",
-            "DeletePolicy.mutationLabel",
+            "SuspendPolicy.mutationLabel",
             { policy: policyLabel(this.props.modulesManager, policy) }
         ))
         let confirm = e => this.props.coreConfirm(
-            formatMessageWithValues(this.props.intl, "policy", "deletePolicyDialog.title", { label: policyLabel(policy) }),
-            formatMessageWithValues(this.props.intl, "policy", "deletePolicyDialog.message",
+            formatMessageWithValues(this.props.intl, "policy", "suspendPolicyDialog.title", { label: policyLabel(this.props.modulesManager, policy) }),
+            formatMessageWithValues(this.props.intl, "policy", "suspendPolicyDialog.message",
                 {
-                    label: policyLabel(policy),
+                    label: policyLabel(this.props.modulesManager, policy),
                 }),
         );
         this.setState(
@@ -86,7 +90,25 @@ class FamilyOrInsureePoliciesSummary extends PagedDataHandler {
         )
     }
 
-    renewPolicy = (i) => historyPush(this.props.modulesManager, this.props.history, "policy.route.policy", [i.policyUuid, this.props.family.uuid, true])
+    confirmDelete = (policy) => {
+        let confirmedAction = () => this.props.deletePolicy(this.props.modulesManager, policy, formatMessageWithValues(
+            this.props.intl,
+            "policy",
+            "DeletePolicy.mutationLabel",
+            { policy: policyLabel(this.props.modulesManager, policy) }
+        ))
+        let confirm = e => this.props.coreConfirm(
+            formatMessageWithValues(this.props.intl, "policy", "deletePolicyDialog.title", { label: policyLabel(this.props.modulesManager, policy) }),
+            formatMessageWithValues(this.props.intl, "policy", "deletePolicyDialog.message",
+                {
+                    label: policyLabel(this.props.modulesManager, policy),
+                }),
+        );
+        this.setState(
+            { confirmedAction },
+            confirm
+        )
+    }
 
     onDoubleClick = (i, newTab = false) => {
         historyPush(this.props.modulesManager, this.props.history, "policy.route.policy", [i.policyUuid, this.props.family.uuid])
@@ -153,7 +175,7 @@ class FamilyOrInsureePoliciesSummary extends PagedDataHandler {
         if (this.showBalance) {
             h.push("policies.balance");
         }
-        h.push("", "")
+        h.push("", "", "")
         return h
     }
 
@@ -182,8 +204,9 @@ class FamilyOrInsureePoliciesSummary extends PagedDataHandler {
     };
 
     rowLocked = (policy) => !!policy.clientMutationId
-    canDelete = (policy) => !policy.clientMutationId && !this.props.readOnly && this.props.rights.includes(RIGHT_POLICY_DELETE)
-    canRenew = (policy) => !policy.clientMutationId && !this.props.readOnly && this.props.rights.includes(RIGHT_POLICY_ADD) //&& (policy.status === ??)
+    canDelete = (policy) => !this.props.readOnly && canDeletePolicy(this.props.rights, policy)
+    canSuspend = (policy) => !this.props.readOnly && canSuspendPolicy(this.props.rights, policy)
+    canRenew = (policy) => !this.props.readOnly && canRenewPolicy(this.props.rights, policy)
 
     itemFormatters = () => {
         let f = [
@@ -201,12 +224,16 @@ class FamilyOrInsureePoliciesSummary extends PagedDataHandler {
         if (this.showBalance) {
             f.push(i => i.balance)
         }
-        f.push(i => !!this.canDelete(i) ?
-            withTooltip(<IconButton onClick={e => this.confirmDelete(i)}><DeleteIcon /></IconButton>, formatMessage(this.props.intl, "policy", "familyDeletePolicy.tooltip")) :
+        f.push(i => !this.props.readOnly && this.canRenew(i) ?
+            withTooltip(<IconButton onClick={e => this.renewPolicy(i)}><RenewIcon /></IconButton>, formatMessage(this.props.intl, "policy", "action.RenewPolicy.tooltip")) :
             null
         )
-        f.push(i => this.canRenew(i) ?
-            withTooltip(<IconButton onClick={e => this.renewPolicy(i)}><RenewIcon /></IconButton>, formatMessage(this.props.intl, "policy", "familyRenewPolicy.tooltip")) :
+        f.push(i => !this.props.readOnly && this.canSuspend(i) ?
+            withTooltip(<IconButton onClick={e => this.confirmSuspend(i)}><SuspendIcon /></IconButton>, formatMessage(this.props.intl, "policy", "action.SuspendPolicy.tooltip")) :
+            null
+        )
+        f.push(i => !this.props.readOnly && this.canDelete(i) ?
+            withTooltip(<IconButton onClick={e => this.confirmDelete(i)}><DeleteIcon /></IconButton>, formatMessage(this.props.intl, "policy", "action.DeletePolicy.tooltip")) :
             null
         )
         return f;
@@ -238,19 +265,19 @@ class FamilyOrInsureePoliciesSummary extends PagedDataHandler {
         let actions = !!readOnly || !rights.includes(RIGHT_POLICY_ADD) ? [] : [
             {
                 button: <IconButton onClick={this.addNewPolicy}><AddIcon /></IconButton>,
-                tooltip: formatMessage(intl, "policy", "familyAddPolicy.tooltip")
+                tooltip: formatMessage(intl, "policy", "action.AddPolicy.tooltip")
             }
         ];
 
         return (
             <Paper className={classes.paper}>
                 <Grid container alignItems="center" direction="row" className={classes.paperHeader}>
-                    <Grid item xs={8}>
+                    <Grid item xs={6}>
                         <Typography className={classes.tableTitle}>
                             {this.header()}
                         </Typography>
                     </Grid>
-                    <Grid item xs={4}>
+                    <Grid item xs={6}>
                         <Grid container direction="row" justify="flex-end">
                             <Grid item className={classes.paperHeaderAction}>
                                 <FormControlLabel
@@ -318,7 +345,7 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps = dispatch => {
-    return bindActionCreators({ fetch: fetchFamilyOrInsureePolicies, selectPolicy, deletePolicy, coreConfirm, journalize }, dispatch);
+    return bindActionCreators({ fetch: fetchFamilyOrInsureePolicies, selectPolicy, deletePolicy, suspendPolicy, coreConfirm, journalize }, dispatch);
 };
 
 export default withHistory(withModulesManager(connect(mapStateToProps, mapDispatchToProps)(
