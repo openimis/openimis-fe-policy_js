@@ -74,7 +74,7 @@ const mapStateToProps = (state, props) => ({
     rights: !!state.core && !!state.core.user && !!state.core.user.i_user ? state.core.user.i_user.rights : [],
     policy_uuid: props.match.params.policy_uuid,
     family_uuid: props.match.params.family_uuid,
-    renew: props.match.params.renew
+    renew: props.match.params.renew,
 })
 
 

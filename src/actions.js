@@ -193,7 +193,7 @@ export function renewPolicy(mm, policy, clientMutationLabel) {
 }
 
 export function suspendPolicy(mm, policy, clientMutationLabel) {
-  let mutation = formatMutation("suspendPolicies", `uuids: ["${policy.policyUuid}"]`, clientMutationLabel);
+  let mutation = formatMutation("suspendPolicies", `uuids: ["${policy.policyUuid || policy.uuid}"]`, clientMutationLabel);
   var requestedDateTime = new Date();
   policy.clientMutationId = mutation.clientMutationId;
   return graphql(
@@ -208,7 +208,7 @@ export function suspendPolicy(mm, policy, clientMutationLabel) {
 }
 
 export function deletePolicy(mm, policy, clientMutationLabel) {
-  let mutation = formatMutation("deletePolicies", `uuids: ["${policy.policyUuid}"]`, clientMutationLabel);
+  let mutation = formatMutation("deletePolicies", `uuids: ["${policy.policyUuid || policy.uuid}"]`, clientMutationLabel);
   var requestedDateTime = new Date();
   policy.clientMutationId = mutation.clientMutationId;
   return graphql(

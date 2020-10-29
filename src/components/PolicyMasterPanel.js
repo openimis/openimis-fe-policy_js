@@ -1,5 +1,6 @@
 import React, { Fragment } from "react";
 import { connect } from "react-redux";
+import { bindActionCreators } from "redux";
 import { withTheme, withStyles } from "@material-ui/core/styles";
 import { injectIntl } from 'react-intl';
 import { Paper, Grid, Typography, Divider, IconButton } from "@material-ui/core";
@@ -9,11 +10,11 @@ import {
     Pause as SuspendIcon,
 } from '@material-ui/icons';
 import {
-    formatMessage, withTooltip, withModulesManager, historyPush,
+    formatMessage, formatMessageWithValues, withTooltip, withModulesManager, historyPush, coreConfirm, journalize,
     FormattedMessage, FormPanel, Contributions, PublishedComponent, ProgressOrError
 } from "@openimis/fe-core";
 import { policyLabel, canDeletePolicy, canSuspendPolicy, canRenewPolicy } from "../utils/utils";
-import { fetchPolicyValues } from "../actions";
+import { fetchPolicyValues, deletePolicy, suspendPolicy } from "../actions";
 
 const styles = theme => ({
     paper: theme.paper.paper,
@@ -25,6 +26,15 @@ const POLICY_POLICY_CONTRIBUTION_KEY = "policy.Policy"
 const POLICY_POLICY_PANELS_CONTRIBUTION_KEY = "policy.Policy.panels"
 
 class PolicyMasterPanel extends FormPanel {
+
+    componentDidUpdate(prevProps, prevState, snapshot) {
+        if (!prevProps.confirmed && this.props.confirmed) {
+            this.state.confirmedAction();
+        } else if (prevProps.submittingMutation && !this.props.submittingMutation) {
+            this.props.journalize(this.props.mutation);
+            this.setState({ reset: this.state.reset + 1 });
+        }
+    }
 
     _onProductChange = product => {
         !product ?
@@ -230,7 +240,13 @@ const mapStateToProps = state => ({
     rights: !!state.core && !!state.core.user && !!state.core.user.i_user ? state.core.user.i_user.rights : [],
     fetchingPolicyValues: state.policy.fetchingPolicyValues,
     errorPolicyValues: state.policy.errorPolicyValues,
+    confirmed: state.core.confirmed,
+    submittingMutation: state.policy.submittingMutation,
+    mutation: state.policy.mutation,
 })
 
+const mapDispatchToProps = dispatch => {
+    return bindActionCreators({ fetchPolicyValues, deletePolicy, suspendPolicy, coreConfirm, journalize }, dispatch);
+};
 
-export default withModulesManager(injectIntl(withTheme(withStyles(styles)(connect(mapStateToProps, { fetchPolicyValues })(PolicyMasterPanel)))));
+export default withModulesManager(injectIntl(withTheme(withStyles(styles)(connect(mapStateToProps, mapDispatchToProps)(PolicyMasterPanel)))));
