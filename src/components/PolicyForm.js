@@ -92,7 +92,7 @@ class PolicyForm extends Component {
                 e => { if (policy.stage === POLICY_STAGE_RENEW) { this.props.fetchPolicyValues(policy) } }
             );
         } else if (!_.isEqual(prevState.policy.product, this.state.policy.product) || !_.isEqual(prevState.policy.enrollDate, this.state.policy.enrollDate)) {
-            if (!!this.state.policy.product) {
+            if (!this.props.readOnly && !!this.state.policy.product) {
                 this.props.fetchPolicyValues(this.state.policy)
             }
         } else if (!!prevProps.fetchingPolicyValues && !this.props.fetchingPolicyValues && !!this.props.fetchedPolicyValues) {
