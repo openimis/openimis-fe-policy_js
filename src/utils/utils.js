@@ -38,13 +38,13 @@ export function policySumDedRems(policy) {
 }
 
 export function canDeletePolicy(rights, policy){
-    return !policy.validityTo && !policy.clientMutationId && rights.includes(RIGHT_POLICY_DELETE)
+    return !policy.validityTo && !!policy.uuid && !policy.clientMutationId && rights.includes(RIGHT_POLICY_DELETE)
 }
 export function canRenewPolicy(rights, policy){
-    return !policy.validityTo && !policy.clientMutationId && rights.includes(RIGHT_POLICY_RENEW) //&& (policy.status === ??)
+    return !policy.validityTo && !!policy.uuid && !policy.clientMutationId && rights.includes(RIGHT_POLICY_RENEW) //&& (policy.status === ??)
 }
 export function canSuspendPolicy(rights, policy){
-    return !policy.validityTo && !policy.clientMutationId && rights.includes(RIGHT_POLICY_SUSPEND) && policy.status === POLICY_STATUS_ACTIVE
+    return !policy.validityTo && !!policy.uuid && !policy.clientMutationId && rights.includes(RIGHT_POLICY_SUSPEND) && policy.status === POLICY_STATUS_ACTIVE
 }
 
 export function policyMutation(state) {
