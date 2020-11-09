@@ -4,15 +4,18 @@ import { connect } from "react-redux";
 import { injectIntl } from 'react-intl';
 import { IconButton, Tooltip } from "@material-ui/core";
 import {
-    Search as SearchIcon, People as PeopleIcon, Tab as TabIcon, Delete as DeleteIcon
+    People as PeopleIcon, Tab as TabIcon,
+    Autorenew as RenewIcon,
+    Delete as DeleteIcon,
+    Pause as SuspendIcon,
 } from '@material-ui/icons';
 import {
     withModulesManager, formatMessageWithValues, formatDateFromISO, formatMessage,
-    withHistory, historyPush,
+    withHistory, historyPush, coreConfirm, journalize,
     Searcher, PublishedComponent, AmountInput,
 } from "@openimis/fe-core";
-import { fetchPolicySummaries } from "../actions";
-import { policyBalance } from "../utils/utils";
+import { fetchPolicySummaries, deletePolicy, suspendPolicy } from "../actions";
+import { policyLabel, policyBalance, canDeletePolicy, canSuspendPolicy, canRenewPolicy } from "../utils/utils";
 
 import PolicyFilter from "./PolicyFilter";
 
@@ -25,6 +28,15 @@ class PolicySearcher extends Component {
         this.rowsPerPageOptions = props.modulesManager.getConf("fe-policy", "policyFilter.rowsPerPageOptions", [10, 20, 50, 100]);
         this.defaultPageSize = props.modulesManager.getConf("fe-policy", "policyFilter.defaultPageSize", 10);
         this.locationLevels = this.props.modulesManager.getConf("fe-location", "location.Location.MaxLevels", 4);
+    }
+
+    componentDidUpdate(prevProps, prevState, snapshot) {
+        if (!prevProps.confirmed && this.props.confirmed) {
+            this.state.confirmedAction();
+        } else if (prevProps.submittingMutation && !this.props.submittingMutation) {
+            this.props.journalize(this.props.mutation);
+            this.setState({ reset: this.state.reset + 1 });
+        }
     }
 
     fetch = (prms) => {
@@ -53,6 +65,54 @@ class PolicySearcher extends Component {
         return prms;
     }
 
+
+    renewPolicy = (policy) => historyPush(this.props.modulesManager, this.props.history, "policy.route.policy", [policy.uuid, policy.family.uuid, true])
+
+    confirmSuspend = (policy) => {
+        let confirmedAction = () => this.props.suspendPolicy(this.props.modulesManager, policy, formatMessageWithValues(
+            this.props.intl,
+            "policy",
+            "SuspendPolicy.mutationLabel",
+            { policy: policyLabel(this.props.modulesManager, policy) }
+        ))
+        let confirm = e => this.props.coreConfirm(
+            formatMessageWithValues(this.props.intl, "policy", "suspendPolicyDialog.title", { label: policyLabel(this.props.modulesManager, policy) }),
+            formatMessageWithValues(this.props.intl, "policy", "suspendPolicyDialog.message",
+                {
+                    label: policyLabel(this.props.modulesManager, policy),
+                }),
+        );
+        this.setState(
+            { confirmedAction },
+            confirm
+        )
+    }
+
+    confirmDelete = (policy) => {
+        let confirmedAction = () => this.props.deletePolicy(this.props.modulesManager, policy, formatMessageWithValues(
+            this.props.intl,
+            "policy",
+            "DeletePolicy.mutationLabel",
+            { policy: policyLabel(this.props.modulesManager, policy) }
+        ))
+        let confirm = e => this.props.coreConfirm(
+            formatMessageWithValues(this.props.intl, "policy", "deletePolicyDialog.title", { label: policyLabel(this.props.modulesManager, policy) }),
+            formatMessageWithValues(this.props.intl, "policy", "deletePolicyDialog.message",
+                {
+                    label: policyLabel(this.props.modulesManager, policy),
+                }),
+        );
+        this.setState(
+            { confirmedAction },
+            confirm
+        )
+    }
+
+
+    canDelete = (policy) => canDeletePolicy(this.props.rights, policy)
+    canSuspend = (policy) => canSuspendPolicy(this.props.rights, policy)
+    canRenew = (policy) => !this.props.renew && canRenewPolicy(this.props.rights, policy)
+
     headers = (filters) => {
         var h = [
             "policy.policySummaries.enrollDate",
@@ -70,6 +130,9 @@ class PolicySearcher extends Component {
             "policy.policySummaries.validityTo",
             "policy.policySummaries.openFamily",
             "policy.policySummaries.openNewTab",
+            "policy.policySummaries.renew",
+            "policy.policySummaries.suspend",
+            "policy.policySummaries.delete",
         ];
         return h;
     }
@@ -126,6 +189,21 @@ class PolicySearcher extends Component {
                 <Tooltip title={formatMessage(this.props.intl, "policy", "policySummaries.openNewTabButton.tooltip")}>
                     <IconButton onClick={e => !policy.clientMutationId && this.props.onDoubleClick(policy, true)}><TabIcon /></IconButton >
                 </Tooltip>
+            ),
+            policy => this.canRenew(policy) && (
+                <Tooltip title={formatMessage(this.props.intl, "policy", "action.RenewPolicy.tooltip")}>
+                    <IconButton onClick={e => !policy.clientMutationId && this.renewPolicy(policy)}><RenewIcon /></IconButton >
+                </Tooltip>
+            ),
+            policy => this.canSuspend(policy) && (
+                <Tooltip title={formatMessage(this.props.intl, "policy", "action.SuspendPolicy.tooltip")}>
+                    <IconButton onClick={e => !policy.clientMutationId && this.confirmSuspend(policy)}><SuspendIcon /></IconButton >
+                </Tooltip>
+            ),
+            policy => this.canDelete(policy) && (
+                <Tooltip title={formatMessage(this.props.intl, "policy", "action.DeletePolicy.tooltip")}>
+                    <IconButton onClick={e => !policy.clientMutationId && this.confirmDelete(policy)}><DeleteIcon /></IconButton >
+                </Tooltip>
             )
         ];
         return formatters;
@@ -176,17 +254,20 @@ class PolicySearcher extends Component {
 
 const mapStateToProps = state => ({
     rights: !!state.core && !!state.core.user && !!state.core.user.i_user ? state.core.user.i_user.rights : [],
+    confirmed: state.core.confirmed,
     policies: state.policy.policies,
     policiesPageInfo: state.policy.policiesPageInfo,
     fetchingPolicies: state.policy.fetchingPolicies,
     fetchedPolicies: state.policy.fetchedPolicies,
     errorPolicies: state.policy.errorPolicies,
+    submittingMutation: state.policy.submittingMutation,
+    mutation: state.policy.mutation,
 });
 
 
 const mapDispatchToProps = dispatch => {
     return bindActionCreators(
-        { fetchPolicySummaries },
+        { fetchPolicySummaries, deletePolicy, suspendPolicy, coreConfirm, journalize },
         dispatch);
 };
 
