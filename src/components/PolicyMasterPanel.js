@@ -14,7 +14,7 @@ import {
     FormattedMessage, FormPanel, Contributions, PublishedComponent, ProgressOrError
 } from "@openimis/fe-core";
 import { policyLabel, canDeletePolicy, canSuspendPolicy, canRenewPolicy } from "../utils/utils";
-import { fetchPolicyValues, deletePolicy, suspendPolicy } from "../actions";
+import { deletePolicy, suspendPolicy } from "../actions";
 
 const styles = theme => ({
     paper: theme.paper.paper,
@@ -246,7 +246,7 @@ const mapStateToProps = state => ({
 })
 
 const mapDispatchToProps = dispatch => {
-    return bindActionCreators({ fetchPolicyValues, deletePolicy, suspendPolicy, coreConfirm, journalize }, dispatch);
+    return bindActionCreators({ deletePolicy, suspendPolicy, coreConfirm, journalize }, dispatch);
 };
 
 export default withModulesManager(injectIntl(withTheme(withStyles(styles)(connect(mapStateToProps, mapDispatchToProps)(PolicyMasterPanel)))));

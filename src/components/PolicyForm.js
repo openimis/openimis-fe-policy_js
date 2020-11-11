@@ -4,9 +4,9 @@ import { injectIntl } from 'react-intl';
 import { withTheme, withStyles } from "@material-ui/core/styles";
 import moment from "moment";
 import {
-    historyPush, withModulesManager, withHistory, journalize,
+    historyPush, withModulesManager, withHistory, coreAlert, journalize,
     toISODate,
-    formatMessageWithValues,
+    formatMessageWithValues, formatMessage,
     ProgressOrError, Form,
 } from "@openimis/fe-core";
 import PolicyMasterPanel from "./PolicyMasterPanel";
@@ -96,7 +96,18 @@ class PolicyForm extends Component {
                 this.props.fetchPolicyValues(this.state.policy)
             }
         } else if (!!prevProps.fetchingPolicyValues && !this.props.fetchingPolicyValues && !!this.props.fetchedPolicyValues) {
-            this.setState(state => ({ policy: { ...state.policy, ...this.props.policyValues } }))
+            this.setState(state => (
+                { policy: { ...state.policy, ...this.props.policyValues.policy } }
+            ),
+                e => {
+                    if (!_.isEmpty(this.props.policyValues.warnings)) {
+                        let messages = this.props.policyValues.warnings
+                        messages.push(formatMessage(this.props.intl, "policy", "policyValues.alert.message"))
+                        this.props.coreAlert(
+                            formatMessage(this.props.intl, "policy", "policyValues.alert.title"),
+                            messages)
+                    }
+                })
         } else if (prevProps.policy_uuid && !this.props.policy_uuid) {
             document.title = formatMessageWithValues(
                 this.props.intl, "policy", "Policy.title",
@@ -195,7 +206,6 @@ class PolicyForm extends Component {
                             forcedDirty={!ro && (!!this.props.renew || !policy_uuid)}
                         />
                     )}
-
             </Fragment>
         )
     }
@@ -217,4 +227,4 @@ const mapStateToProps = state => ({
     mutation: state.policy.mutation,
 })
 
-export default injectIntl(withModulesManager(withHistory(connect(mapStateToProps, { fetchPolicyFull, fetchPolicyValues, journalize })(withTheme(withStyles(styles)(PolicyForm))))));
+export default injectIntl(withModulesManager(withHistory(connect(mapStateToProps, { fetchPolicyFull, fetchPolicyValues, journalize, coreAlert })(withTheme(withStyles(styles)(PolicyForm))))));

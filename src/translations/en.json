@@ -114,5 +114,7 @@
     "policy.suspendPolicyDialog.message": "Are you sure you want to suspend policy {label}?",
     "policy.DeletePolicy.mutationLabel": "Delete Policy {policy}",
     "policy.deletePolicyDialog.title": "Delete policy?",
-    "policy.deletePolicyDialog.message": "Are you sure you want to delete policy {label}? Related contributions will be deleted (but not payments)."
+    "policy.deletePolicyDialog.message": "Are you sure you want to delete policy {label}? Related contributions will be deleted (but not payments).",
+    "policy.policyValues.alert.title": "Policy Value Warning:",
+    "policy.policyValues.alert.message": "However, policy can still be created."
 }

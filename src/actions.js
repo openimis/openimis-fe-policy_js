@@ -127,7 +127,7 @@ export function fetchPolicyValues(policy) {
   if (!!policy.prevPolicy) {
     params.push(`prevUuid: "${policy.prevPolicy.uuid}"`)
   }
-  let projections = ["startDate", "expiryDate", "value"]
+  let projections = ["policy{startDate expiryDate value}", "warnings"]
   const payload = formatQuery("policyValues",
     params,
     projections
