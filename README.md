@@ -12,14 +12,22 @@ None
 * `core.Router`: registering `policy/policies` routes in openIMIS client-side router
 * `insuree.MainMenu`:
 
-   **Policies** (`menu.policies` translation key), pointing to `/FindPolicy.aspx` legacy openIMIS (via proxy page)
+   **Policies** (`menu.policies` translation key)
    
 * `insuree.EnquiryDialog`: `[FamilyOrInsureePoliciesSummary, InsureeEligibilityEnquiry, InsureeEligibilitySummary]`, adding the (family) policies details, ability to query eligibility on an item and service and remaining counts and amounts to enquiry dialog (of insuree module)
+* `insuree.FamilyOverview.panels`: `[FamilyOrInsureePoliciesSummary]`,  policy section in the family overview
 
 ## Available Contribution Points
-None
+* `policy.Filter`, contributions point for the filter (searcher page)
+* `policy.Policy`, contributions point for the policy master panel (in policy page)
+* `policy.Policy.panels`, contributions point to add panels below the policy master panel (in policy page)
+* `policy.PolicyValues`, contributions point for the policy values panel (in policy page)
+* `policy.PolicyValues.panels`, contributions point to add panels below the policy values panel (in policy page)
 
 ## Published Components
+* `policy.PolicyOfficerPicker`, picker for policy officers (from the database)
+* `policy.PolicyStatusPicker`, picker for the policy status (idle, ready, active, suspended or expired), from (translated) constants (1, 2, 4, 8 or 16)
+* `policy.PolicyStagePicker`, picker for policy stages (new or renew), from (translated) constants (N or R)
 * `policy.FamilyOrInsureePoliciesSummary`, insuree (family) policies summary (by default contributed to insuree enquiry dialog)
 * `policy.InsureeEligibilitySummary`, querying insuree eligibility to an item and service (by default contributed to insuree enquiry dialog)
 * `policy.InsureeEligibilityEnquiry`, remaining counts and amounts of insuree (by default contributed to insuree enquiry dialog)
@@ -31,6 +39,14 @@ None
 * `POLICY_INSUREE_SERVICE_ELIGIBILITY_{REQ|RESP|ERR}`, query insuree eligibility for a service (GraphQL: 
 `policyServiceEligibilityByInsuree`)
 * `POLICY_INSUREE_ELIGIBILITY_{REQ|RESP|ERR}`, insuree eligibility summary (GraphQL: `policyEligibilityByInsuree`)
+* `POLICY_FAMILY_POLICIES_{REQ|RESP|ERR}`, fetching the policies of the (redux) family into the redux state
+* `POLICY_POLICY_OFFICERS_{REQ|RESP|ERR}`, fetching the policy officers (cached into PolicyOfficerPicker)
+* `POLICY_POLICIES_{REQ|RESP|ERR}`, fetching policies (as triggered by the searcher)
+* `POLICY_POLICY_{REQ|RESP|ERR}`, fetching one policy (full details)... as for the policy page
+* `POLICY_FETCH_POLICY_VALUES__{REQ|RESP|ERR}`, request backend the policy (being created/updated) values (start date, expiry date and value)
+* `POLICY_MUTATION_REQ`, sending a mutation (create, update, nenew, suspend or delete)
+* `POLICY_MUTATION_ERR`, failed submitting a mutation
+* `POLICY_{CREATE|UPDATE|RENEW|SUSPEND|DELETE}_POLICY_RESP`, create policy mutation response (i.e. when successfull)
 
 ## Other Modules Listened Redux Actions
 None

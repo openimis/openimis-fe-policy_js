@@ -8,14 +8,18 @@ import {
     Add as AddIcon,
     Autorenew as RenewIcon,
     Delete as DeleteIcon,
+    Pause as SuspendIcon,
 } from '@material-ui/icons';
 import {
     Table, PagedDataHandler,
     formatMessage, formatMessageWithValues,
     formatDateFromISO, withModulesManager,
-    formatSorter, sort, withTooltip
+    formatSorter, sort, withTooltip,
+    historyPush, withHistory, coreConfirm, journalize,
 } from "@openimis/fe-core";
-import { fetchFamilyOrInsureePolicies, selectPolicy } from "../actions";
+import { fetchFamilyOrInsureePolicies, selectPolicy, deletePolicy, suspendPolicy } from "../actions";
+import { policyLabel, canDeletePolicy, canSuspendPolicy, canRenewPolicy } from "../utils/utils";
+import { RIGHT_POLICY_ADD } from "../constants";
 
 const styles = theme => ({
     paper: theme.paper.paper,
@@ -43,18 +47,71 @@ class FamilyOrInsureePoliciesSummary extends PagedDataHandler {
     componentDidMount() {
         this.setState(
             {
+                confirmedAction: null,
                 onlyActiveOrLastExpired: true,
                 orderBy: "expiryDate"
             },
             e => this.query())
     }
 
-    addNewPolicy = () => alert("Will be implemented along Policy module migration!")
-    deletePolicy = () => alert("Will be implemented along Policy module migration!")
-    renewPolicy = () => alert("Will be implemented along Policy module migration!")
+    componentDidUpdate(prevProps, prevState, snapshot) {
+        if (this.insureeChanged(prevProps) || this.familyChanged(prevProps)) {
+            this.query();
+        } else if (!prevProps.confirmed && this.props.confirmed) {
+            this.state.confirmedAction();
+        } else if (prevProps.submittingMutation && !this.props.submittingMutation) {
+            this.props.journalize(this.props.mutation);
+            this.setState({ reset: this.state.reset + 1 });
+        }
+    }
+
+    addNewPolicy = () => historyPush(this.props.modulesManager, this.props.history, "policy.route.policy", ["_NEW_", this.props.family.uuid])
+
+    renewPolicy = (i) => historyPush(this.props.modulesManager, this.props.history, "policy.route.policy", [i.policyUuid, this.props.family.uuid, true])
+
+    confirmSuspend = (policy) => {
+        policy.family = this.props.family
+        let confirmedAction = () => this.props.suspendPolicy(this.props.modulesManager, policy, formatMessageWithValues(
+            this.props.intl,
+            "policy",
+            "SuspendPolicy.mutationLabel",
+            { policy: policyLabel(this.props.modulesManager, policy) }
+        ))
+        let confirm = e => this.props.coreConfirm(
+            formatMessageWithValues(this.props.intl, "policy", "suspendPolicyDialog.title", { label: policyLabel(this.props.modulesManager, policy) }),
+            formatMessageWithValues(this.props.intl, "policy", "suspendPolicyDialog.message",
+                {
+                    label: policyLabel(this.props.modulesManager, policy),
+                }),
+        );
+        this.setState(
+            { confirmedAction },
+            confirm
+        )
+    }
+
+    confirmDelete = (policy) => {
+        let confirmedAction = () => this.props.deletePolicy(this.props.modulesManager, policy, formatMessageWithValues(
+            this.props.intl,
+            "policy",
+            "DeletePolicy.mutationLabel",
+            { policy: policyLabel(this.props.modulesManager, policy) }
+        ))
+        let confirm = e => this.props.coreConfirm(
+            formatMessageWithValues(this.props.intl, "policy", "deletePolicyDialog.title", { label: policyLabel(this.props.modulesManager, policy) }),
+            formatMessageWithValues(this.props.intl, "policy", "deletePolicyDialog.message",
+                {
+                    label: policyLabel(this.props.modulesManager, policy),
+                }),
+        );
+        this.setState(
+            { confirmedAction },
+            confirm
+        )
+    }
 
     onDoubleClick = (i, newTab = false) => {
-        alert("Will be implemented along Policy module migration!")
+        historyPush(this.props.modulesManager, this.props.history, "policy.route.policy", [i.policyUuid, this.props.family.uuid])
     }
 
 
@@ -75,12 +132,6 @@ class FamilyOrInsureePoliciesSummary extends PagedDataHandler {
                 || prevProps.family.uuid !== this.props.family.uuid
             )
         )
-
-    componentDidUpdate(prevProps, prevState, snapshot) {
-        if (this.insureeChanged(prevProps) || this.familyChanged(prevProps)) {
-            this.query();
-        }
-    }
 
     queryPrms() {
         let prms = [
@@ -124,7 +175,7 @@ class FamilyOrInsureePoliciesSummary extends PagedDataHandler {
         if (this.showBalance) {
             h.push("policies.balance");
         }
-        h.push("","")
+        h.push("", "", "")
         return h
     }
 
@@ -152,6 +203,11 @@ class FamilyOrInsureePoliciesSummary extends PagedDataHandler {
         return a;
     };
 
+    rowLocked = (policy) => !!policy.clientMutationId
+    canDelete = (policy) => !this.props.readOnly && canDeletePolicy(this.props.rights, policy)
+    canSuspend = (policy) => !this.props.readOnly && canSuspendPolicy(this.props.rights, policy)
+    canRenew = (policy) => !this.props.readOnly && canRenewPolicy(this.props.rights, policy)
+
     itemFormatters = () => {
         let f = [
             i => i.productCode,
@@ -168,9 +224,18 @@ class FamilyOrInsureePoliciesSummary extends PagedDataHandler {
         if (this.showBalance) {
             f.push(i => i.balance)
         }
-        f.push(i => withTooltip(<IconButton onClick={this.deletePolicy}><DeleteIcon /></IconButton>, formatMessage(this.props.intl, "policy", "familyDeletePolicy.tooltip")))
-        f.push(i =>withTooltip(<IconButton onClick={this.renewPolicy}><RenewIcon /></IconButton>, formatMessage(this.props.intl, "policy", "familyRenewPolicy.tooltip")))
-
+        f.push(i => !this.props.readOnly && this.canRenew(i) ?
+            withTooltip(<IconButton onClick={e => this.renewPolicy(i)}><RenewIcon /></IconButton>, formatMessage(this.props.intl, "policy", "action.RenewPolicy.tooltip")) :
+            null
+        )
+        f.push(i => !this.props.readOnly && this.canSuspend(i) ?
+            withTooltip(<IconButton onClick={e => this.confirmSuspend(i)}><SuspendIcon /></IconButton>, formatMessage(this.props.intl, "policy", "action.SuspendPolicy.tooltip")) :
+            null
+        )
+        f.push(i => !this.props.readOnly && this.canDelete(i) ?
+            withTooltip(<IconButton onClick={e => this.confirmDelete(i)}><DeleteIcon /></IconButton>, formatMessage(this.props.intl, "policy", "action.DeletePolicy.tooltip")) :
+            null
+        )
         return f;
     }
 
@@ -192,27 +257,27 @@ class FamilyOrInsureePoliciesSummary extends PagedDataHandler {
     itemIdentifier = (i) => i.policyUuid
 
     render() {
-        const { intl, classes, fetchingPolicies, fetchedPolicies, policies, pageInfo, errorPolicies, family, insuree, reset, readOnly } = this.props;
+        const { intl, classes, rights, fetchingPolicies, fetchedPolicies, policies, pageInfo, errorPolicies, family, insuree, reset, readOnly } = this.props;
         if ((!family || !family.uuid) && (!insuree || !insuree.uuid)) {
             return null;
         }
 
-        let actions = !!readOnly ? [] : [
+        let actions = !!readOnly || !rights.includes(RIGHT_POLICY_ADD) ? [] : [
             {
                 button: <IconButton onClick={this.addNewPolicy}><AddIcon /></IconButton>,
-                tooltip: formatMessage(intl, "policy", "familyAddPolicy.tooltip")
+                tooltip: formatMessage(intl, "policy", "action.AddPolicy.tooltip")
             }
         ];
 
         return (
             <Paper className={classes.paper}>
-                <Grid container  alignItems="center" direction="row" className={classes.paperHeader}>
-                    <Grid item xs={8}>
+                <Grid container alignItems="center" direction="row" className={classes.paperHeader}>
+                    <Grid item xs={6}>
                         <Typography className={classes.tableTitle}>
                             {this.header()}
                         </Typography>
                     </Grid>
-                    <Grid item xs={4}>
+                    <Grid item xs={6}>
                         <Grid container direction="row" justify="flex-end">
                             <Grid item className={classes.paperHeaderAction}>
                                 <FormControlLabel
@@ -257,6 +322,7 @@ class FamilyOrInsureePoliciesSummary extends PagedDataHandler {
                     count={pageInfo.totalCount}
                     onChangePage={this.onChangePage}
                     onChangeRowsPerPage={this.onChangeRowsPerPage}
+                    rowLocked={this.rowLocked}
                 />
             </Paper>
         )
@@ -265,6 +331,7 @@ class FamilyOrInsureePoliciesSummary extends PagedDataHandler {
 
 
 const mapStateToProps = state => ({
+    rights: !!state.core && !!state.core.user && !!state.core.user.i_user ? state.core.user.i_user.rights : [],
     fetchingPolicies: state.policy.fetchingPolicies,
     fetchedPolicies: state.policy.fetchedPolicies,
     policies: state.policy.policies,
@@ -272,14 +339,17 @@ const mapStateToProps = state => ({
     errorPolicies: state.policy.errorPolicies,
     family: state.insuree.family || {},
     insuree: state.insuree.insuree,
+    confirmed: state.core.confirmed,
+    submittingMutation: state.policy.submittingMutation,
+    mutation: state.policy.mutation,
 });
 
 const mapDispatchToProps = dispatch => {
-    return bindActionCreators({ fetch: fetchFamilyOrInsureePolicies, selectPolicy }, dispatch);
+    return bindActionCreators({ fetch: fetchFamilyOrInsureePolicies, selectPolicy, deletePolicy, suspendPolicy, coreConfirm, journalize }, dispatch);
 };
 
-export default withModulesManager(connect(mapStateToProps, mapDispatchToProps)(
+export default withHistory(withModulesManager(connect(mapStateToProps, mapDispatchToProps)(
     injectIntl(withTheme(
         withStyles(styles)(FamilyOrInsureePoliciesSummary)
-    )))
+    ))))
 );

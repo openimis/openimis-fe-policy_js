@@ -1,4 +1,9 @@
-import { parseData, pageInfo, formatServerError, formatGraphQLError } from '@openimis/fe-core';
+import {
+    parseData, pageInfo,
+    dispatchMutationReq, dispatchMutationResp, dispatchMutationErr,
+    formatServerError, formatGraphQLError
+} from '@openimis/fe-core';
+import { policyBalance, policySumDedRems } from "./utils/utils";
 
 export const reducer = (
     state = {
@@ -8,6 +13,9 @@ export const reducer = (
         policies: null,
         policiesPageInfo: { totalCount: 0 },
         policy: null,
+        fetchingPolicy: null,
+        errorPolicy: null,
+        fetchedPolicy: false,
         fetchingInsureeEligibility: false,
         fetchedInsureeEligibility: false,
         errorInsureeEligibility: null,
@@ -20,6 +28,15 @@ export const reducer = (
         fetchedInsureeServiceEligibility: false,
         errorInsureeServiceEligibility: null,
         insureeInsureeServiceEligibility: null,
+        fetchedPolicyOfficers: false,
+        errorPolicyOfficers: null,
+        policyOfficers: null,
+        fetchingPolicyValues: false,
+        fetchedPolicyValues: false,
+        errorPolicyValues: null,
+        policyValues: null,
+        submittingMutation: false,
+        mutation: {},
     },
     action) => {
     switch (action.type) {
@@ -151,6 +168,111 @@ export const reducer = (
                 fetchingInsureeServiceEligibility: false,
                 errorInsureeServiceEligibility: formatServerError(action.payload),
             };
+        case 'POLICY_POLICY_OFFICERS_REQ':
+            return {
+                ...state,
+                fetchingPolicyOfficers: true,
+                fetchedPolicyOfficers: false,
+                policyOfficers: null,
+                errorPolicyOfficers: null,
+            };
+        case 'POLICY_POLICY_OFFICERS_RESP':
+            return {
+                ...state,
+                fetchingPolicyOfficers: false,
+                fetchedPolicyOfficers: true,
+                policyOfficers: parseData(action.payload.data.policyOfficers),
+                errorPolicyOfficers: formatGraphQLError(action.payload)
+            };
+        case 'POLICY_POLICY_OFFICERS_ERR':
+            return {
+                ...state,
+                fetchingPolicyOfficers: false,
+                errorPolicyOfficers: formatServerError(action.payload)
+            };
+        case 'POLICY_POLICIES_REQ':
+            return {
+                ...state,
+                fetchingPolicies: true,
+                fetchedPolicies: false,
+                policies: [],
+                errorPolicies: null,
+            };
+        case 'POLICY_POLICIES_RESP':
+            return {
+                ...state,
+                fetchingPolicies: false,
+                fetchedPolicies: true,
+                policies: parseData(action.payload.data.policies),
+                policiesPageInfo: pageInfo(action.payload.data.policies),
+                errorPolicies: formatGraphQLError(action.payload)
+            };
+        case 'POLICY_POLICIES_ERR':
+            return {
+                ...state,
+                fetching: false,
+                error: formatServerError(action.payload)
+            };
+        case 'POLICY_POLICY_REQ':
+            return {
+                ...state,
+                fetchingPolicy: true,
+                fetchedPolicy: false,
+                policy: null,
+                errorPolicy: null,
+            };
+        case 'POLICY_POLICY_RESP':
+            let policy = parseData(action.payload.data.policies)[0];
+            policy.balance = policyBalance(policy);
+            policy = policySumDedRems(policy);
+            return {
+                ...state,
+                fetchingPolicy: false,
+                fetchedPolicy: true,
+                policy,
+                errorPolicy: formatGraphQLError(action.payload)
+            };
+        case 'POLICY_POLICY_ERR':
+            return {
+                ...state,
+                fetchingPolicy: false,
+                errorPolicy: formatServerError(action.payload)
+            };
+        case 'POLICY_FETCH_POLICY_VALUES_REQ':
+            return {
+                ...state,
+                fetchingPolicyValues: true,
+                fetchedPolicyValues: false,
+                errorPolicyValues: null,
+                policyValues: null,
+            };
+        case 'POLICY_FETCH_POLICY_VALUES_RESP':
+            return {
+                ...state,
+                fetchingPolicyValues: false,
+                fetchedPolicyValues: true,
+                policyValues: action.payload.data.policyValues,
+            };
+        case 'POLICY_FETCH_POLICY_VALUES_ERR':
+            return {
+                ...state,
+                fetchingPolicyValues: false,
+                errorPolicyValues: formatServerError(action.payload),
+            }
+        case 'POLICY_MUTATION_REQ':
+            return dispatchMutationReq(state, action)
+        case 'POLICY_MUTATION_ERR':
+            return dispatchMutationErr(state, action);
+        case 'POLICY_CREATE_POLICY_RESP':
+            return dispatchMutationResp(state, "createPolicy", action);
+        case 'POLICY_UPDATE_POLICY_RESP':
+            return dispatchMutationResp(state, "updatePolicy", action);
+        case 'POLICY_RENEW_POLICY_RESP':
+            return dispatchMutationResp(state, "renewPolicy", action);
+        case 'POLICY_SUSPEND_POLICIES_RESP':
+            return dispatchMutationResp(state, "suspendPolicies", action);
+        case 'POLICY_DELETE_POLICIES_RESP':
+            return dispatchMutationResp(state, "deletePolicies", action);
         default:
             return state;
     }
