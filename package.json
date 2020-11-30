@@ -1,6 +1,6 @@
 {
   "name": "@openimis/fe-policy",
-  "version": "1.2.0-rc4",
+  "version": "1.2.0-rc5",
   "license": "AGPL-3.0-only",
   "description": "openIMIS Frontend Policy reference module",
   "repository": "openimis/openimis-fe-policy_js",
@@ -13,6 +13,9 @@
   "scripts": {
     "build": "rollup -c",
     "start": "rollup -c -w"
+  },
+  "peerDependency": {
+    "react-intl": "^5.8.1"
   },
   "devDependencies": {
     "@babel/cli": "^7.8.4",
@@ -30,7 +33,6 @@
     "moment": "^2.25.3",
     "prop-types": "^15.7.2",
     "react-autosuggest": "^10.0.2",
-    "react-intl": "^2.9.0",
     "react-router-dom": "^5.2.0",
     "redux": "^4.0.5",
     "redux-api-middleware": "^3.2.1",
