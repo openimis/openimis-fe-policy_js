@@ -24,7 +24,7 @@ const DEFAULT_CONFIG = {
   "refs": [
     { key: "policy.PolicyOfficerPicker", ref: PolicyOfficerPicker },
     { key: "policy.PolicyOfficerPicker.projection", ref: ["id", "uuid", "code", "lastName", "otherNames"] },
-    { key: "policy.PolicyPicker.projection", ref: ["id", "uuid", "startDate", "expiryDate"] },
+    { key: "policy.PolicyPicker.projection", ref: ["id", "uuid", "startDate", "product{name}", "expiryDate", "value"] },
     { key: "policy.PolicyOfficerPicker.sort", ref: 'officer__code' },
     { key: "policy.PolicyStatusPicker", ref: PolicyStatusPicker },
     { key: "policy.PolicyStatusPicker.projection", ref: null },
