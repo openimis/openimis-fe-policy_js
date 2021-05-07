@@ -1,7 +1,6 @@
 import React, { Component } from "react";
 import { withTheme, withStyles } from "@material-ui/core/styles";
-import { FormattedDate } from 'react-intl';
-import { withModulesManager, FieldLabel, Table } from "@openimis/fe-core";
+import { withModulesManager, formatDateFromISO, FieldLabel, Table } from "@openimis/fe-core";
 import ThumbUp from "@material-ui/icons/ThumbUp";
 import ThumbDown from "@material-ui/icons/ThumbDown";
 
@@ -15,7 +14,7 @@ class Eligibility extends Component {
         if (!modulesManager.hideField("policy", "insureeEligibility.minDate")) {
             itemFormatters.push(
                 i => <FieldLabel module="policy" id="insureeEligibility.minDate" />,
-                i => !!i.minDate ? <FormattedDate value={i.minDate} /> : null
+                i => formatDateFromISO(this.props.modulesManager, this.props.intl, i.minDate),
             );
         }
         if (!modulesManager.hideField("policy", "insureeEligibility.left")) {

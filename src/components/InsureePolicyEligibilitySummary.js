@@ -4,8 +4,11 @@ import { bindActionCreators } from "redux";
 import { injectIntl } from 'react-intl';
 import { withTheme, withStyles } from "@material-ui/core/styles";
 import { Grid } from "@material-ui/core";
-import { withModulesManager, ProgressOrError, PublishedComponent, FormattedMessage, AmountInput, TextInput } from "@openimis/fe-core";
-import { fetchPolicies } from "../actions";
+import {
+    withModulesManager,
+    ProgressOrError, PublishedComponent, FormattedMessage, AmountInput, TextInput
+} from "@openimis/fe-core";
+import { fetchFamilyOrInsureePolicies } from "../actions";
 
 const styles = theme => ({
     item: theme.paper.item,
@@ -14,7 +17,7 @@ const styles = theme => ({
 class InsureePolicyEligibilitySummary extends Component {
 
     state = {
-        insureePolicies: []
+        policies: []
     }
 
     constructor(props) {
@@ -24,15 +27,18 @@ class InsureePolicyEligibilitySummary extends Component {
 
     componentDidMount() {
         if (this.props.insuree) {
-            this.props.fetchPolicies(this.props.insuree.chfId);
+            this.props.fetchFamilyOrInsureePolicies(
+                this.props.modulesManager,
+                [`chfId:"${this.props.insuree.chfId}"`]
+            )
         } else {
-            this.setState({ insureePolicies: [] })
+            this.setState({ policies: [] })
         }
     }
 
     componentDidUpdate(prevProps, prevState, snapshot) {
         if (!!prevProps.insuree && !this.props.insuree) {
-            this.setState({ insureePolicies: [] })
+            this.setState({ policies: [] })
             return;
         }
         if ((!prevProps.insuree && !!this.props.insuree) ||
@@ -43,28 +49,31 @@ class InsureePolicyEligibilitySummary extends Component {
             )
         ) {
             this.setState(
-                { insureePolicies: [] },
+                { policies: [] },
                 e => {
-                    this.props.fetchPolicies(this.props.insuree.chfId)
+                    this.props.fetchFamilyOrInsureePolicies(
+                        this.props.modulesManager,
+                        [`chfId:"${this.props.insuree.chfId}"`]
+                    )
                 }
             )
             return;
         }
         if (!prevProps.fetchedPolicies && this.props.fetchedPolicies) {
-            this.setState({ insureePolicies: this.props.insureePolicies })
+            this.setState((state, props) => ({ policies: props.policies }))
         }
     }
 
     render() {
         const { classes, fetchingPolicies, fetchedPolicies, errorPolicies } = this.props;
-        const { insureePolicies } = this.state;
-        var activePolicies = !!insureePolicies && insureePolicies.filter(p => this.activePolicyStatus.includes(p.status));
+        const { policies } = this.state;
+        var activePolicies = !!policies && policies.filter(p => this.activePolicyStatus.includes(p.status));
         return (
             <Fragment>
                 <ProgressOrError progress={fetchingPolicies} error={errorPolicies} />
                 {!!fetchedPolicies && !activePolicies.length &&
                     <Grid item className={classes.item}>
-                        <FormattedMessage module="policy" id="insureePolicies.noActivePolicy" />
+                        <FormattedMessage module="policy" id="policies.noActivePolicy" />
                     </Grid>
                 }
                 {!!fetchedPolicies && !!activePolicies.length && (
@@ -76,7 +85,7 @@ class InsureePolicyEligibilitySummary extends Component {
                                         <TextInput
                                             value={activePolicy.productCode}
                                             module="policy"
-                                            label="policy.insureePolicies.productCode"
+                                            label="policy.policies.productCode"
                                             readOnly={true}
                                         />
                                     </Grid>
@@ -84,15 +93,15 @@ class InsureePolicyEligibilitySummary extends Component {
                                         <TextInput
                                             value={activePolicy.productName}
                                             module="policy"
-                                            label="policy.insureePolicies.productName"
+                                            label="policy.policies.productName"
                                             readOnly={true}
                                         />
                                     </Grid>
                                     <Grid item xs={3} className={classes.item}>
-                                        <PublishedComponent id="core.DatePicker"
+                                        <PublishedComponent pubRef="core.DatePicker"
                                             value={activePolicy.expiryDate}
                                             module="policy"
-                                            label="insureePolicies.expiryDate"
+                                            label="policies.expiryDate"
                                             readOnly={true}
                                         />
                                     </Grid>
@@ -100,7 +109,7 @@ class InsureePolicyEligibilitySummary extends Component {
                                         <AmountInput
                                             value={(activePolicy.ceiling || 0) - (activePolicy.ded || 0)}
                                             module="policy"
-                                            label="insureePolicies.balance"
+                                            label="policies.balance"
                                             readOnly={true}
                                             displayZero={true}
                                         />
@@ -116,14 +125,14 @@ class InsureePolicyEligibilitySummary extends Component {
 }
 
 const mapStateToProps = state => ({
-    fetchingPolicies: state.policy.fetchingInsureePolicies,
-    fetchedPolicies: state.policy.fetchedInsureePolicies,
-    insureePolicies: state.policy.insureePolicies,
-    errorPolicies: state.policy.errorInsureePolicies,
+    fetchingPolicies: state.policy.fetchingPolicies,
+    fetchedPolicies: state.policy.fetchedPolicies,
+    policies: state.policy.policies,
+    errorPolicies: state.policy.errorPolicies,
 });
 
 const mapDispatchToProps = dispatch => {
-    return bindActionCreators({ fetchPolicies }, dispatch);
+    return bindActionCreators({ fetchFamilyOrInsureePolicies }, dispatch);
 };
 
 export default withModulesManager(connect(mapStateToProps, mapDispatchToProps)(

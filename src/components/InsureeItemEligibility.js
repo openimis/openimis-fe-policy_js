@@ -8,11 +8,13 @@ import { fetchItemEligibility } from "../actions";
 import Eligibility from "./Eligibility";
 
 const styles = theme => ({
-    paper: {
+    item: {
         margin: theme.spacing(1) / 2,
-        marginRight: 0,
     },
-    header: theme.table.title,
+    header: {
+        padding: 10,
+        fontWeight: 500,
+    }
 });
 
 
@@ -28,21 +30,6 @@ class InsureeItemEligibility extends Component {
         })
     }
 
-    componentDidUpdate(prevProps, prevState, snapshot) {
-        if (!prevProps.insuree && !!this.props.insuree
-            || !!prevProps.insuree && this.props.insuree && (
-                prevProps.insuree.chfId == null
-                || prevProps.insuree.chfId !== this.props.insuree.chfId
-            )
-        ) {
-            this.setState({
-                insureeItemEligibility: null,
-                fetchedItemEligibility: false,
-                selected: null
-            })
-        }
-    }
-
     onItemSelected = i => {
         this.setState(
             { reset: !i },
@@ -56,7 +43,7 @@ class InsureeItemEligibility extends Component {
         const { classes, fetchingItemEligibility, fetchedItemEligibility, insureeItemEligibility, errorItemEligibility } = this.props;
         const { reset } = this.state;
         return (
-            <Paper className={classes.paper}>
+            <div className={classes.item}>
                 <Grid container alignItems="center">
                     <Grid item xs={4}>
                         <Typography className={classes.header}>
@@ -65,7 +52,7 @@ class InsureeItemEligibility extends Component {
                     </Grid>
                     <Grid item xs={8}>
                         <PublishedComponent
-                            id="medical.ItemPicker"
+                            pubRef="medical.ItemPicker"
                             onChange={this.onItemSelected}
                             withLabel={false}
                             withPlaceholder={true}
@@ -84,7 +71,7 @@ class InsureeItemEligibility extends Component {
                         )}
                     </Grid>
                 </Grid>
-            </Paper>
+            </div>
         )
     }
 }
