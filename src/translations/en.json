@@ -42,12 +42,12 @@
   "policy.insureeEligibility.antenatalAmountLeft": "Antenatal",
   "policy.insureeEligibility.minDate": "Eligible from {date}",
   "policy.insureeEligibility.left": "{count} left",
-
   "policy.action.AddPolicy.tooltip": "Create new policy",
   "policy.action.DeletePolicy.tooltip": "Delete policy",
   "policy.action.SuspendPolicy.tooltip": "Suspend policy",
   "policy.action.RenewPolicy.tooltip": "Renew policy",
   "policy.PolicyOfficerPicker.label": "Officer",
+  "policy.PolicyOfficerPicker.placeholder": "Search for an Officer...",
   "policy.PolicyOfficerPicker.null": "Any",
   "policy.PolicyOfficer.none": "None",
   "policy.PolicyFilter.enrollDateFrom": "Enrolment From",

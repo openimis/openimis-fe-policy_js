@@ -7,7 +7,7 @@ import {
     historyPush, withModulesManager, withHistory, coreAlert, journalize,
     toISODate,
     formatMessageWithValues, formatMessage,
-    ProgressOrError, Form,
+    ProgressOrError, Form, Helmet,
 } from "@openimis/fe-core";
 import PolicyMasterPanel from "./PolicyMasterPanel";
 import { fetchPolicyFull, fetchPolicyValues } from "../actions";
@@ -54,7 +54,6 @@ class PolicyForm extends Component {
     }
 
     componentDidMount() {
-        document.title = formatMessageWithValues(this.props.intl, "policy", "Policy.title", { label: "" })
         if (!!this.props.policy_uuid && this.props.policy_uuid !== "_NEW") {
             this.setState(
                 (state, props) => ({ policy_uuid: props.policy_uuid, renew: this.props.renew }),
@@ -74,13 +73,6 @@ class PolicyForm extends Component {
     }
 
     componentDidUpdate(prevProps, prevState, snapshot) {
-        if ((prevState.policy && prevState.policy.uuid)
-            !== (this.state.policy && this.state.policy_uuid)) {
-            document.title = formatMessageWithValues(
-                this.props.intl, "policy", "Policy.title",
-                { label: policyLabel(this.props.modulesManager, this.state.policy) }
-            )
-        }
         if (prevProps.fetchedPolicy !== this.props.fetchedPolicy && !!this.props.fetchedPolicy) {
             var policy = this.props.policy || {};
             if (!!this.state.renew) {
@@ -109,9 +101,6 @@ class PolicyForm extends Component {
                     }
                 })
         } else if (prevProps.policy_uuid && !this.props.policy_uuid) {
-            document.title = formatMessageWithValues(
-                this.props.intl, "policy", "Policy.title",
-                { label: policyLabel(this.props.modulesManager, this.state.policy) })
             this.setState({ policy: this._newPolicy(), newPolicy: true, lockNew: false, policy_uuid: null });
         } else if (prevProps.submittingMutation && !this.props.submittingMutation) {
             this.props.journalize(this.props.mutation);
@@ -181,6 +170,7 @@ class PolicyForm extends Component {
             !!policy.validityTo
         return (
             <Fragment>
+                <Helmet title={formatMessageWithValues(this.props.intl, "policy", "Policy.title", { label: policyLabel(this.props.modulesManager, this.state.policy) })} />
                 <ProgressOrError progress={fetchingPolicy} error={errorPolicy} />
                 {((!!fetchedPolicy && !!policy && policy.uuid === policy_uuid) || !policy_uuid || policy.stage === POLICY_STAGE_RENEW) &&
                     (

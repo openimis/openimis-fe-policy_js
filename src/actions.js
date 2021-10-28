@@ -18,14 +18,6 @@ const POLICY_BY_FAMILY_OR_INSUREE_PROJECTION = [
   "ceiling", "ceilingInPatient", "ceilingOutPatient"
 ]
 
-export function fetchPolicyOfficers(mm) {
-  const payload = formatPageQuery("policyOfficers",
-    null,
-    mm.getRef("policy.PolicyOfficerPicker.projection")
-  );
-  return graphql(payload, 'POLICY_POLICY_OFFICERS');
-}
-
 export function fetchFamilyOrInsureePolicies(mm, filters) {
   let qry = "policiesByFamily";
   let RDX = 'POLICY_FAMILY_POLICIES';
