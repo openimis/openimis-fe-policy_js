@@ -1,15 +1,12 @@
 import React, { Component, Fragment } from "react";
 import { injectIntl } from "react-intl";
 import { withTheme, withStyles } from "@material-ui/core/styles";
-import { Grid, Paper } from "@material-ui/core";
+import { Paper } from "@material-ui/core";
 import InsureeServiceEligibility from "./InsureeServiceEligibility";
 import InsureeItemEligibility from "./InsureeItemEligibility";
 
 const styles = (theme) => ({
-  paper: {
-    ...theme.paper.paper,
-    marginInline: 0,
-  },
+  paper: theme.paper.paper,
 });
 
 class InsureeEligibilityEnquiry extends Component {

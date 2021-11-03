@@ -1,6 +1,5 @@
 import React from "react";
-import { withTheme, withStyles } from "@material-ui/core/styles";
-import { useModulesManager, useTranslations, FieldLabel } from "@openimis/fe-core";
+import { useModulesManager, useTranslations } from "@openimis/fe-core";
 import { Grid, Typography, Box } from "@material-ui/core";
 import ThumbUp from "@material-ui/icons/ThumbUp";
 import ThumbDown from "@material-ui/icons/ThumbDown";
