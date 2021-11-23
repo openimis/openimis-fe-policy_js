@@ -1,39 +1,46 @@
-import React, { Component } from "react";
-import { withTheme, withStyles } from "@material-ui/core/styles";
-import { withModulesManager, formatDateFromISO, FieldLabel, Table } from "@openimis/fe-core";
+import React from "react";
+import { useModulesManager, useTranslations } from "@openimis/fe-core";
+import { Grid, Typography, Box } from "@material-ui/core";
 import ThumbUp from "@material-ui/icons/ThumbUp";
 import ThumbDown from "@material-ui/icons/ThumbDown";
 
-const styles = theme => ({
-});
+const Thumb = (props) => {
+  if (props.isOk) {
+    return <ThumbUp />;
+  } else {
+    return <ThumbDown />;
+  }
+};
 
-class Eligibility extends Component {
-    render() {
-        const { modulesManager, eligibility } = this.props;
-        let itemFormatters = [];
-        if (!modulesManager.hideField("policy", "insureeEligibility.minDate")) {
-            itemFormatters.push(
-                i => <FieldLabel module="policy" id="insureeEligibility.minDate" />,
-                i => formatDateFromISO(this.props.modulesManager, this.props.intl, i.minDate),
-            );
-        }
-        if (!modulesManager.hideField("policy", "insureeEligibility.left")) {
-            itemFormatters.push(
-                i => <FieldLabel module="policy" id="insureeEligibility.left" />,
-                i => i.left
-            );
-        }
-        if (!modulesManager.hideField("policy", "insureeEligibility.isOk")) {
-            itemFormatters.push(i => i.isOk ? <ThumbUp /> : <ThumbDown />);
-        }
+const Info = (props) => {
+  return <Box mr={3}>{props.children}</Box>;
+};
 
-        return (
-            <Table
-                items={[eligibility]}
-                itemFormatters={itemFormatters}
-            />
-        )
-    }
-}
+const Eligibility = (props) => {
+  const { isOk, minDate, remaining } = props;
+  const modulesManager = useModulesManager();
+  const { formatMessageWithValues, formatDateFromISO } = useTranslations("policy", modulesManager);
+  return (
+    <Grid container>
+      {!modulesManager.hideField("policy", "insureeEligibility.isOk") && (
+        <Info>
+          <Thumb isOk={isOk} />
+        </Info>
+      )}
+      {!modulesManager.hideField("policy", "insureeEligibility.minDate") && minDate && (
+        <Info>
+          <Typography>
+            {formatMessageWithValues("insureeEligibility.minDate", { date: formatDateFromISO(minDate) })}
+          </Typography>
+        </Info>
+      )}
+      {!modulesManager.hideField("policy", "insureeEligibility.left") && remaining !== null && (
+        <Info>
+          <Typography>{formatMessageWithValues("insureeEligibility.left", { count: remaining })}</Typography>
+        </Info>
+      )}
+    </Grid>
+  );
+};
 
-export default withModulesManager(withTheme(withStyles(styles)(Eligibility)));
+export default Eligibility;

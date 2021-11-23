@@ -2,90 +2,80 @@ import React, { Component } from "react";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 import { withTheme, withStyles } from "@material-ui/core/styles";
-import { Paper, Grid, Typography } from "@material-ui/core";
+import { Box, Grid, Typography } from "@material-ui/core";
 import { FormattedMessage, ProgressOrError, PublishedComponent, withModulesManager } from "@openimis/fe-core";
 import { fetchServiceEligibility } from "../actions";
 import Eligibility from "./Eligibility";
 
-const styles = theme => ({
-    item: {
-        margin: theme.spacing(1) / 2,
-    },
-    header: {
-        padding: 10,
-        fontWeight: 500,
-    }
+const styles = (theme) => ({
+  item: {
+    margin: 10,
+  },
+  header: {
+    padding: 10,
+    paddingBottom: 0,
+    fontWeight: 500,
+  },
+  section: {
+    margin: 10,
+  },
 });
-
 
 class InsureeServiceEligibility extends Component {
-
-    state = {
-        reset: true
+  onServiceSelected = (service) => {
+    const { insuree } = this.props;
+    if (service) {
+      this.props.fetchServiceEligibility(insuree.chfId, service.code);
     }
+  };
 
-    componentDidMount() {
-        this.setState({ reset: true })
-    }
-
-
-    onServiceSelected = i => {
-        this.setState(
-            { reset: !i },
-            e => !!i && this.props.fetchServiceEligibility(
-                this.props.insuree.chfId,
-                i.code)
-        )
-    }
-
-    render() {
-        const { classes, fetchingServiceEligibility, fetchedServiceEligibility, insureeServiceEligibility, errorServiceEligibility } = this.props;
-        const { reset } = this.state;
-        return (
-            <div className={classes.item}>
-                <Grid container alignItems="center">
-                    <Grid item xs={4}>
-                        <Typography className={classes.header}>
-                            <FormattedMessage module="policy" id="insureeEligibility.service" />
-                        </Typography>
-                    </Grid>
-                    <Grid item xs={8}>
-                        <PublishedComponent
-                            pubRef="medical.ServicePicker"
-                            onChange={this.onServiceSelected}
-                            withLabel={false}
-                            withPlaceholder={true}
-                        />
-                    </Grid>
-                    <Grid item xs={12}>
-                        {fetchingServiceEligibility && (
-                            <ProgressOrError progress={fetchingServiceEligibility} error={errorServiceEligibility} />
-                        )}
-                        {!reset && fetchedServiceEligibility && (
-                            <Eligibility eligibility={{
-                                "minDate": insureeServiceEligibility.minServiceDate,
-                                "left": insureeServiceEligibility.serviceLeft,
-                                "isOk": insureeServiceEligibility.isServiceOk
-                            }} />
-                        )}
-                    </Grid>
-                </Grid>
-            </div>
-        )
-    }
+  render() {
+    const { classes, className, isFetching, isFetched, eligibility, error } = this.props;
+    return (
+      <Box className={className}>
+        <Box>
+          <Typography className={classes.header}>
+            <FormattedMessage module="policy" id="insureeEligibility.service" />
+          </Typography>
+        </Box>
+        <Grid container className={classes.section} alignItems="center">
+          <Grid item xs={6}>
+            <Box mr={3}>
+              <PublishedComponent
+                pubRef="medical.ServicePicker"
+                onChange={this.onServiceSelected}
+                withLabel={false}
+                withPlaceholder={true}
+              />
+            </Box>
+          </Grid>
+          <ProgressOrError size={16} progress={isFetching} error={error} />
+          <Box flexGrow={1}>
+            {isFetched && (
+              <Eligibility
+                minDate={eligibility.minServiceDate}
+                remaining={eligibility.serviceLeft}
+                isOk={eligibility.isServiceOk}
+              />
+            )}
+          </Box>
+        </Grid>
+      </Box>
+    );
+  }
 }
 
-const mapStateToProps = state => ({
-    insureeServiceEligibility: state.policy.insureeServiceEligibility,
-    fetchingServiceEligibility: state.policy.fetchingInsureeServiceEligibility,
-    fetchedServiceEligibility: state.policy.fetchedInsureeServiceEligibility,
-    errorServiceEligibility: state.policy.errorInsureeServiceEligibility,
+const mapStateToProps = (state) => ({
+  eligibility: state.policy.insureeServiceEligibility,
+  isFetching: state.policy.fetchingInsureeServiceEligibility,
+  isFetched: state.policy.fetchedInsureeServiceEligibility,
+  error: state.policy.errorInsureeServiceEligibility,
 });
 
-const mapDispatchToProps = dispatch => {
-    return bindActionCreators({ fetchServiceEligibility }, dispatch);
+const mapDispatchToProps = (dispatch) => {
+  return bindActionCreators({ fetchServiceEligibility }, dispatch);
 };
 
-export default withModulesManager(connect(mapStateToProps, mapDispatchToProps)(
-    withTheme(withStyles(styles)(InsureeServiceEligibility))
-));
+export default withModulesManager(
+  connect(mapStateToProps, mapDispatchToProps)(withTheme(withStyles(styles)(InsureeServiceEligibility)))
+);
