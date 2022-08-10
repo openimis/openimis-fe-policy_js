@@ -42,14 +42,14 @@ const DEFAULT_CONFIG = {
     { path: ROUTE_POLICY_POLICY + "/:policy_uuid?/:family_uuid?/:renew?", component: PolicyPage },
   ],
   "policy.Policy.panels": [PolicyValuesPanel],
-  "insuree.MainMenu": [
+  /*"insuree.MainMenu": [
     {
       text: <FormattedMessage module="policy" id="menu.policies" />,
       icon: <ListAlt />,
       route: "/" + ROUTE_POLICY_POLICIES,
       filter: rights => rights.includes(RIGHT_POLICY)
     },
-  ],
+  ],*/
   "insuree.EnquiryDialog": [FamilyOrInsureePoliciesSummary, InsureeEligibilityEnquiry, InsureeEligibilitySummary],
   "insuree.FamilyOverview.panels": [FamilyOrInsureePoliciesSummary],  
   "insuree.FamilyOverview.mutations": [policyMutation]
