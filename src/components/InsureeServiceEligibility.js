@@ -32,7 +32,7 @@ class InsureeServiceEligibility extends Component {
   render() {
     const { classes, className, isFetching, isFetched, eligibility, error } = this.props;
     return (
-      <div className={className}>
+      <Box className={className}>
         <Box>
           <Typography className={classes.header}>
             <FormattedMessage module="policy" id="insureeEligibility.service" />
@@ -60,7 +60,7 @@ class InsureeServiceEligibility extends Component {
             )}
           </Box>
         </Grid>
-      </div>
+      </Box>
     );
   }
 }

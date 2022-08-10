@@ -28,13 +28,15 @@ import { RIGHT_POLICY_ADD } from "../constants";
 const styles = (theme) => ({
   paper: {
     ...theme.paper.paper,
-    margin: 0,
   },
   paperHeader: {
     ...theme.paper.header,
-    padding: 10,
   },
   tableTitle: theme.table.title,
+  title: {
+    ...theme.table.title,
+    padding: 0,
+  },
   fab: theme.fab,
   button: {
     margin: theme.spacing(1),
@@ -301,8 +303,19 @@ class FamilyOrInsureePoliciesSummary extends PagedDataHandler {
   itemIdentifier = (i) => i.policyUuid;
 
   render() {
-    const { intl, classes, rights, fetchingPolicies, policies, pageInfo, errorPolicies, family, insuree, readOnly } =
-      this.props;
+    const {
+      intl,
+      classes,
+      rights,
+      fetchingPolicies,
+      policies,
+      pageInfo,
+      errorPolicies,
+      family,
+      insuree,
+      readOnly,
+      className,
+    } = this.props;
     if ((!family || !family.uuid) && (!insuree || !insuree.uuid)) {
       return null;
     }
@@ -322,7 +335,7 @@ class FamilyOrInsureePoliciesSummary extends PagedDataHandler {
           ];
 
     return (
-      <Paper className={classes.paper}>
+      <Paper className={clsx(classes.paper, className)}>
         <Grid
           container
           justifyContent="space-between"
@@ -330,7 +343,7 @@ class FamilyOrInsureePoliciesSummary extends PagedDataHandler {
           className={clsx(classes.paperHeader, classes.tableTitle)}
         >
           <Grid item>
-            <Typography>{this.header()}</Typography>
+            <Typography className={classes.title}>{this.header()}</Typography>
           </Grid>
           <Grid item>
             <Grid container alignItems="center" spacing={3}>
