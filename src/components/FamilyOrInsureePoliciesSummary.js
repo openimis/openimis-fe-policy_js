@@ -191,13 +191,7 @@ class FamilyOrInsureePoliciesSummary extends PagedDataHandler {
       "policies.productCode",
       "policies.productName",
       "policies.expiryDate",
-      "policies.status",
-      "policies.deduction",
-      "policies.hospitalDeduction",
-      "policies.nonHospitalDeduction",
-      "policies.ceiling",
-      "policies.hospitalCeiling",
-      "policies.nonHospitalCeiling",
+      "policies.status"
     ];
     if (this.showBalance) {
       h.push("policies.balance");
@@ -221,12 +215,6 @@ class FamilyOrInsureePoliciesSummary extends PagedDataHandler {
       this.sorter("productName"),
       this.sorter("expiryDate"),
       this.sorter("status"),
-      this.sorter("deduction"),
-      this.sorter("hospitalDeduction"),
-      this.sorter("nonHospitalDeduction"),
-      this.sorter("ceiling"),
-      this.sorter("hospitalCeiling"),
-      this.sorter("nonHospitalCeiling"),
     ];
     if (this.showBalance) {
       a.push(this.sorter("balance"));
@@ -245,12 +233,6 @@ class FamilyOrInsureePoliciesSummary extends PagedDataHandler {
       (i) => i.productName,
       (i) => formatDateFromISO(this.props.modulesManager, this.props.intl, i.expiryDate),
       (i) => formatMessage(this.props.intl, "policy", `policies.status.${i.status}`),
-      (i) => i.ded,
-      (i) => i.dedInPatient,
-      (i) => i.dedOutPatient,
-      (i) => i.ceiling,
-      (i) => i.ceilingInPatient,
-      (i) => i.ceilingOutPatient,
     ];
     if (this.showBalance) {
       f.push((i) => i.balance);
