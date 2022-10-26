@@ -229,7 +229,6 @@ class PolicyMasterPanel extends FormPanel {
                             <Contributions {...this.props} updateAttribute={this.updateAttribute} contributionKey={POLICY_POLICY_CONTRIBUTION_KEY} />
                         </Grid>
                     </Paper>
-                    <Contributions {...this.props} updateAttribute={this.updateAttribute} contributionKey={POLICY_POLICY_PANELS_CONTRIBUTION_KEY} />
                 </Grid>
             </Grid>
         )
