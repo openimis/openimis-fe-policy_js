@@ -282,9 +282,15 @@ class FamilyOrInsureePoliciesSummary extends PagedDataHandler {
     }
   };
 
+  canAdd = () => {
+    if (this.props.policies != null && this.props.policies.length != "0") return false;
+    return true;
+  };
+
   itemIdentifier = (i) => i.policyUuid;
 
   render() {
+    console.log(this.props.policies);
     const {
       intl,
       classes,
@@ -308,7 +314,7 @@ class FamilyOrInsureePoliciesSummary extends PagedDataHandler {
         : [
             {
               button: (
-                <IconButton onClick={this.addNewPolicy}>
+                <IconButton disabled={!this.canAdd()} onClick={this.addNewPolicy}>
                   <AddIcon />
                 </IconButton>
               ),
