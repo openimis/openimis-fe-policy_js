@@ -76,7 +76,7 @@ class FamilyOrInsureePoliciesSummary extends PagedDataHandler {
   componentDidUpdate(prevProps, prevState, snapshot) {
     if (this.insureeChanged(prevProps) || this.familyChanged(prevProps)) {
       this.query();
-    } else if (!prevProps.confirmed && this.props.confirmed) {
+    } else if (!prevProps.confirmed && this.props.confirmed && !!this.state.confirmedAction) {
       this.state.confirmedAction();
     } else if (prevProps.submittingMutation && !this.props.submittingMutation) {
       this.props.journalize(this.props.mutation);
