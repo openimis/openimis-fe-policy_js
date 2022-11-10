@@ -129,7 +129,7 @@ export function fetchPolicyValues(policy) {
 
 function formatPolicyGQL(mm, policy) {
   return `
-  ${policy.uuid !== undefined && policy.uuid !== null ? `policyUuid: "${policy.uuid}"` : ''}
+  ${policy.uuid !== undefined && policy.uuid !== null ? `uuid: "${policy.uuid}"` : ''}
   enrollDate: "${policy.enrollDate}"
   startDate: "${policy.startDate}"
   expiryDate: "${policy.expiryDate}"
