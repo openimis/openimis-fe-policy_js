@@ -67,7 +67,7 @@ class InsureePolicyEligibilitySummary extends Component {
     render() {
         const { classes, fetchingPolicies, fetchedPolicies, errorPolicies } = this.props;
         const { policies } = this.state;
-        var activePolicies = !!policies && policies.filter(p => this.activePolicyStatus.includes(p.status));
+        var activePolicies = !!policies && policies.filter(p => this.activePolicyStatus.some(s => s == p.status));
         return (
             <Fragment>
                 <ProgressOrError progress={fetchingPolicies} error={errorPolicies} />
