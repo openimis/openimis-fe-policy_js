@@ -143,6 +143,8 @@ class PolicyFilter extends Component {
                         <PublishedComponent
                             pubRef="policy.PolicyOfficerPicker"
                             withNull={true}
+                            district={5}
+                            filters={filters}
                             value={this._filterValue('officer')}
                             onChange={(v, s) => this._onChangeRef('officer', v, s)}
                         />
