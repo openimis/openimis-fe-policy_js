@@ -28,6 +28,7 @@ import {
   Contributions,
   PublishedComponent,
   ProgressOrError,
+  decodeId,
 } from "@openimis/fe-core";
 import {
   policyLabel,
@@ -65,25 +66,6 @@ class PolicyMasterPanel extends FormPanel {
           value: null,
         })
       : this.updateAttribute("product", product);
-  };
-
-  _filterProducts = (products) => {
-    if (!products || !this.props.edited || !this.props.edited.family)
-      return products;
-    let loc = this.props.edited.family.location;
-    let familyRegion = null;
-    let familyDistrict = null;
-    while (!!loc) {
-      familyRegion = familyDistrict;
-      familyDistrict = loc;
-      loc = loc.parent;
-    }
-    return products.filter(
-      (p) =>
-        !p.location ||
-        p.location.id === familyRegion.id ||
-        p.location.id === familyDistrict.id
-    );
   };
 
   renewPolicy = () =>
@@ -175,6 +157,7 @@ class PolicyMasterPanel extends FormPanel {
       errorPolicyValues,
       title = "Policy.details.title",
     } = this.props;
+
     let actions = [];
     if (this.canRenew(edited)) {
       actions.push({
@@ -303,8 +286,12 @@ class PolicyMasterPanel extends FormPanel {
                   withNull={true}
                   nullLabel={formatMessage(intl, "product", "Product.none")}
                   onChange={this._onProductChange}
-                  filter={this._filterProducts}
                   required={true}
+                  locationId={
+                    !!edited.family
+                      ? decodeId(edited.family.location.parent.parent.parent.id)
+                      : 0
+                  }
                 />
               </Grid>
               <Grid item xs={3} className={classes.item}>
