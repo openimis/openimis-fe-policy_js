@@ -65,41 +65,34 @@ const amounts = insureeEligibility => (
 class InsureeEligibilitySummary extends Component {
 
 
-    // uncomment this in case componentdidupdated does not work
     componentDidMount(){
         if(this.props.insuree) this.props.fetchEligibility(this.props.insuree.chfId);
-        console.log("Sample in did mount");       
-        console.log("props: ", this.props);
+        console.log("component did mount");       
     }
 
     // the component goes into the loop
     // if statement goes into the infinity loop
     componentDidUpdate(prevProps, prevState, snapshot) {
         console.log("component did update");
-
-        console.log("PrevProps: ");
-        if (!prevProps.insuree && !!this.props.insuree){
-            console.log("Warunek 1#");
-        }
-        if (!!prevProps.insuree && this.props.insuree){
-            console.log("Warunek 2#");
-        }
-        if (prevProps.insuree.chfId == null
-            || prevProps.insuree.chfId !== this.props.insuree.chfId){
-            console.log("Warunek 3#");
-        }
+        console.log("prevprops", prevProps);
+        console.log("!prevProps.insuree: ", !prevProps.insuree); // false
+        console.log("!!this.props.insuree", Boolean(this.props.insuree));
+        console.log("!!prevProps.insuree", Boolean(prevProps.insuree)); // true
+        console.log("this.props.insuree", this.props.insuree != null);
+        console.log("prevProps.insuree.chfId (= Null?)", prevProps.insuree.chfId === null);
+        console.log("this.props.insuree.chfId", this.props.insuree.chfId)
+        console.log("---------------------------\nSTATEMENTS\n---------------------------")
+        console.log(!prevProps.insuree && Boolean(this.props.insuree))
+        console.log(Boolean(prevProps.insuree) && this.props.insuree !== null)
+        console.log(prevProps?.insuree?.chfId == null)
+        console.log(prevProps?.insuree?.chfId !== this.props?.insuree?.chfId)
         // 1# nie było insuree i jest insuree LUB
         // 2# było insuree i jest insuree ORAZ
         // 3# poprzednie insuree to null lub jest różne od obecnego
-        if (!prevProps.insuree && !!this.props.insuree
-            || !!prevProps.insuree && this.props.insuree && (
-                prevProps.insuree.chfId == null
-                || prevProps.insuree.chfId !== this.props.insuree.chfId
-            )
-        ) {
-                console.log("component did update - in if statement");
+        if(prevProps?.insuree?.chfId !== this.props?.insuree?.chfId){
+            console.log("component did update - in if statement");
             this.props.fetchEligibility(this.props.insuree.chfId);
-        }
+        }       
     }
 
     render() {
