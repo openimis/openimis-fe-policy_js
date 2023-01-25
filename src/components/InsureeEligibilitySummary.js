@@ -63,19 +63,20 @@ const amounts = insureeEligibility => (
 )
 
 class InsureeEligibilitySummary extends Component {
-    componentDidUpdate(prevProps, prevState, snapshot) {
-        if (!prevProps.insuree && !!this.props.insuree
-            || !!prevProps.insuree && this.props.insuree && (
-                prevProps.insuree.chfId == null
-                || prevProps.insuree.chfId !== this.props.insuree.chfId
-            )
-        ) {
+
+    componentDidMount(){
+        this.props?.insuree && this.props.fetchEligibility(this.props.insuree.chfId);
+    }
+
+    componentDidUpdate(prevProps, prevState) {
+        if(prevProps?.insuree?.chfId !== this.props?.insuree?.chfId){
             this.props.fetchEligibility(this.props.insuree.chfId);
-        }
+        }       
     }
 
     render() {
         const { classes, insuree, insureeEligibility } = this.props;
+
         if (!insuree || !insureeEligibility) return null;
 
         return (
@@ -94,7 +95,6 @@ class InsureeEligibilitySummary extends Component {
         )
     }
 }
-
 
 const mapStateToProps = state => ({
     insuree: state.insuree.insuree,
