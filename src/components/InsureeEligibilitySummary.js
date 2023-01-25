@@ -64,42 +64,18 @@ const amounts = insureeEligibility => (
 
 class InsureeEligibilitySummary extends Component {
 
-
     componentDidMount(){
-        if(this.props.insuree) this.props.fetchEligibility(this.props.insuree.chfId);
-        console.log("component did mount");       
+        this.props?.insuree && this.props.fetchEligibility(this.props.insuree.chfId);
     }
 
-    // the component goes into the loop
-    // if statement goes into the infinity loop
-    componentDidUpdate(prevProps, prevState, snapshot) {
-        console.log("component did update");
-        console.log("prevprops", prevProps);
-        console.log("!prevProps.insuree: ", !prevProps.insuree); // false
-        console.log("!!this.props.insuree", Boolean(this.props.insuree));
-        console.log("!!prevProps.insuree", Boolean(prevProps.insuree)); // true
-        console.log("this.props.insuree", this.props.insuree != null);
-        console.log("prevProps.insuree.chfId (= Null?)", prevProps.insuree.chfId === null);
-        console.log("this.props.insuree.chfId", this.props.insuree.chfId)
-        console.log("---------------------------\nSTATEMENTS\n---------------------------")
-        console.log(!prevProps.insuree && Boolean(this.props.insuree))
-        console.log(Boolean(prevProps.insuree) && this.props.insuree !== null)
-        console.log(prevProps?.insuree?.chfId == null)
-        console.log(prevProps?.insuree?.chfId !== this.props?.insuree?.chfId)
-        // 1# nie było insuree i jest insuree LUB
-        // 2# było insuree i jest insuree ORAZ
-        // 3# poprzednie insuree to null lub jest różne od obecnego
+    componentDidUpdate(prevProps, prevState) {
         if(prevProps?.insuree?.chfId !== this.props?.insuree?.chfId){
-            console.log("component did update - in if statement");
             this.props.fetchEligibility(this.props.insuree.chfId);
         }       
     }
 
     render() {
-        // console.log("amounts: ", amounts);
         const { classes, insuree, insureeEligibility } = this.props;
-        console.log("insuree: ", insuree.chfId);
-        // console.log("filters: \n", this.props);
 
         if (!insuree || !insureeEligibility) return null;
 
@@ -119,7 +95,6 @@ class InsureeEligibilitySummary extends Component {
         )
     }
 }
-
 
 const mapStateToProps = state => ({
     insuree: state.insuree.insuree,
