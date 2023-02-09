@@ -36,7 +36,7 @@ import {
   canSuspendPolicy,
   canRenewPolicy,
 } from "../utils/utils";
-import { deletePolicy, suspendPolicy } from "../actions";
+import { deletePolicy, suspendPolicy, fetchPolicyValues } from "../actions";
 
 const styles = (theme) => ({
   paper: theme.paper.paper,
@@ -147,6 +147,13 @@ class PolicyMasterPanel extends FormPanel {
   canRenew = (policy) =>
     !this.props.renew && canRenewPolicy(this.props.rights, policy);
 
+  fetchPolicyValue(e) {
+    this.updateAttribute("enrollDate", e);
+    let policy = this.props.edited;
+    policy.enrollDate = e;
+    this.props.fetchPolicyValues(policy);
+  }
+
   render() {
     const {
       intl,
@@ -239,7 +246,7 @@ class PolicyMasterPanel extends FormPanel {
                   label="Policy.enrollDate"
                   readOnly={readOnly}
                   required={true}
-                  onChange={(v) => this.updateAttribute("enrollDate", v)}
+                  onChange={(v) => this.fetchPolicyValue(v)}
                 />
               </Grid>
               <Grid item xs={3} className={classes.item}>
@@ -353,7 +360,7 @@ const mapStateToProps = (state) => ({
 
 const mapDispatchToProps = (dispatch) => {
   return bindActionCreators(
-    { deletePolicy, suspendPolicy, coreConfirm, journalize },
+    { deletePolicy, suspendPolicy, coreConfirm, journalize, fetchPolicyValues },
     dispatch
   );
 };
