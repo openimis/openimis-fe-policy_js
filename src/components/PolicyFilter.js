@@ -165,6 +165,7 @@ class PolicyFilter extends Component {
               <PublishedComponent
                 pubRef="policy.PolicyOfficerPicker"
                 withNull={true}
+                filters={filters}
                 value={this._filterValue("officer")}
                 onChange={(v, s) => this._onChangeRef("officer", v, s)}
               />
@@ -348,6 +349,7 @@ class PolicyFilter extends Component {
     );
   }
 }
+
 
 export default withModulesManager(
   injectIntl(withTheme(withStyles(styles)(PolicyFilter)))

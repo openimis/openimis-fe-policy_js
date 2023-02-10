@@ -15,13 +15,21 @@ const PolicyOfficerPicker = (props) => {
     placeholder,
     extraFragment,
     multiple,
+    filters,
   } = props;
   const [searchString, setSearchString] = useState(null);
   const { formatMessage } = useTranslations("policy");
 
+  let distinctId = null;
+  let regionId = null;
+  if(filters?.location_0?.filter){
+    if(filters?.location_0?.filter) distinctId = filters?.location_0?.filter.replace( /^\D+/g, '');
+    if(filters?.location_1?.filter) regionId = filters?.location_1?.filter.replace( /^\D+/g, '');
+  }
+
   const { isLoading, data, error } = useGraphqlQuery(
-    `query PolicyOfficerPicker ($searchString: String, $first: Int) {
-      policyOfficers(search: $searchString, first: $first) {
+    `query PolicyOfficerPicker ($searchString: String, $first: Int, $district: String, $region: String) {
+      policyOfficers(search: $searchString, first: $first, district: $district, region: $region) {
         edges {
           node {
             id
@@ -30,11 +38,11 @@ const PolicyOfficerPicker = (props) => {
             lastName
             otherNames
             ${extraFragment ?? ""}
-          } 
+          }
         }
       }
     }`,
-    { searchString, first: 20 },
+    { searchString, first: 20, district: distinctId, region: regionId},
     { skip: true }
   );
 
