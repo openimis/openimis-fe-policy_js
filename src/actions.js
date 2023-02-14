@@ -83,7 +83,7 @@ export function fetchServiceEligibility(chfid, code) {
     {
       policyServiceEligibilityByInsuree(chfId:"${chfid}", serviceCode:"${code}")
       {
-        minDateService,serviceLeft, isServiceOk
+        minDateService, serviceLeft, isServiceOk
       }
     }
   `;
