@@ -55,7 +55,7 @@ class InsureeItemEligibility extends Component {
               <Eligibility
                 minDate={eligibility.minServiceDate}
                 remaining={eligibility.itemLeft}
-                isOk={eligibility.isServiceOk}
+                isOk={eligibility.isItemOk}
               />
             )}
           </Box>
