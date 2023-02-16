@@ -56,8 +56,29 @@ class PolicyPage extends Component {
     }
   };
 
+  // getAction(modulesManager, key) {
+  //   const contributions = modulesManager.getContribs(key);
+
+  //   const fetchFamily = contributions?.[0];
+
+  //   return fetchFamily
+  // }
+
+  // componentDidMount = () => {
+  //   //fetchFamily here
+  //   const POLICY_FETCH_FAMILY_KEY = "policy.Policy.fetchFamily";
+  //   const { modulesManager } = this.props;
+
+  //   const fetchFamily = this.getAction(modulesManager, POLICY_FETCH_FAMILY_KEY);
+  //   console.log("fetchFamily", fetchFamily);
+
+  //   fetchFamily(modulesManager, this.props.family_uuid);
+
+  // }
+
   render() {
-    const { classes, policy_uuid, family_uuid, renew } = this.props;
+    const { classes, policy_uuid, family_uuid, renew, modulesManager} = this.props;
+    console.log("family_uuid in policyPage", family_uuid);
     return (
       <div className={classes.page}>
         <PolicyForm

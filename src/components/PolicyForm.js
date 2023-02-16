@@ -48,12 +48,15 @@ class PolicyForm extends Component {
     policy.stage = POLICY_STAGE_NEW;
     policy.enrollDate = toISODate(moment().toDate());
     policy.jsonExt = {};
+    console.log("family from this.props in newPolicy", this.props.family);
+    // console.log("this.props in PolicyForm", this.props);
     if (
       !!this.props.family &&
       this.props.family.uuid === this.props.family_uuid
     ) {
       policy.family = this.props.family;
     }
+    console.log("policy", policy);
     return policy;
   }
 
