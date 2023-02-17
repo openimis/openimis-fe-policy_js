@@ -308,6 +308,7 @@ class PolicyMasterPanel extends FormPanel {
                   )}
                   onChange={(v) => this.updateAttribute("officer", v)}
                   required={true}
+                  villageId={decodeId(edited.family.location.id)}
                 />
               </Grid>
               <Grid item xs={3} className={classes.item}>
