@@ -157,7 +157,7 @@ class PolicyMasterPanel extends FormPanel {
       errorPolicyValues,
       title = "Policy.details.title",
     } = this.props;
-
+    
     let actions = [];
     if (this.canRenew(edited)) {
       actions.push({
