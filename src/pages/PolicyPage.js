@@ -57,7 +57,7 @@ class PolicyPage extends Component {
   };
 
   render() {
-    const { classes, policy_uuid, family_uuid, renew } = this.props;
+    const { classes, policy_uuid, family_uuid, renew, modulesManager } = this.props;
     return (
       <div className={classes.page}>
         <PolicyForm

@@ -10,6 +10,8 @@ import _ from "lodash";
 import _uuid from "lodash-uuid";
 import { decodeId } from "@openimis/fe-core";
 
+const FAMILY_HEAD_PROJECTION = "headInsuree{id,uuid,chfId,lastName,otherNames,email,phone,dob,gender{code}}";
+
 const POLICY_BY_FAMILY_OR_INSUREE_PROJECTION = [
   "policyUuid",
   "productCode",
@@ -29,6 +31,21 @@ const POLICY_BY_FAMILY_OR_INSUREE_PROJECTION = [
   "ceiling",
   "ceilingInPatient",
   "ceilingOutPatient",
+];
+
+const FAMILY_FULL_PROJECTION = (mm) => [
+  "id",
+  "uuid",
+  "poverty",
+  "confirmationNo",
+  "confirmationType{code}",
+  "familyType{code}",
+  "address",
+  "validityFrom",
+  "validityTo",
+  FAMILY_HEAD_PROJECTION,
+  "location" + mm.getProjection("location.Location.FlatProjection"),
+  "clientMutationId",
 ];
 
 export function fetchFamilyOrInsureePolicies(mm, filters) {
@@ -287,3 +304,14 @@ export function deletePolicy(mm, policy, clientMutationLabel) {
     }
   );
 }
+
+export function fetchFamily(mm, familyUuid, headInsureeChfId) {
+  let filters = [];
+  if (!!familyUuid) {
+    filters.push(`uuid: "${familyUuid}"`, "showHistory: true");
+  } else {
+    filters.push(`headInsuree_ChfId: "${headInsureeChfId}"`);
+  }
+  const payload = formatPageQuery("families", filters, FAMILY_FULL_PROJECTION(mm));
+  return graphql(payload, "INSUREE_FAMILY_OVERVIEW");
+};

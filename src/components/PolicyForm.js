@@ -17,7 +17,7 @@ import {
   Helmet,
 } from "@openimis/fe-core";
 import PolicyMasterPanel from "./PolicyMasterPanel";
-import { fetchPolicyFull, fetchPolicyValues } from "../actions";
+import { fetchPolicyFull, fetchPolicyValues, fetchFamily } from "../actions";
 import { policyLabel } from "../utils/utils";
 import {
   RIGHT_POLICY,
@@ -37,7 +37,7 @@ class PolicyForm extends Component {
   state = {
     lockNew: false,
     reset: 0,
-    policy: this._newPolicy(),
+    policy: {},
     newInsuree: true,
     renew: false,
   };
@@ -57,6 +57,16 @@ class PolicyForm extends Component {
     return policy;
   }
 
+  async initialFamilyFetch() {
+    await this.props.fetchFamily(
+      this.props.modulesManager,
+      this.props.family_uuid
+    );
+    this.setState(() => ({
+      policy: this._newPolicy(),
+    }));
+  }
+
   _renewPolicy(from_policy) {
     let policy = {};
     policy.prevPolicy = from_policy;
@@ -69,6 +79,8 @@ class PolicyForm extends Component {
   }
 
   componentDidMount() {
+    if (!!this.props.family_uuid && !this.props.policy_uuid)
+      this.initialFamilyFetch();
     if (!!this.props.policy_uuid && this.props.policy_uuid !== "_NEW") {
       this.setState(
         (state, props) => ({
@@ -291,6 +303,7 @@ export default injectIntl(
         fetchPolicyValues,
         journalize,
         coreAlert,
+        fetchFamily,
       })(withTheme(withStyles(styles)(PolicyForm)))
     )
   )
