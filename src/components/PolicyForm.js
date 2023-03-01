@@ -1,24 +1,26 @@
 import React, { Component, Fragment } from "react";
 import { connect } from "react-redux";
 import { injectIntl } from "react-intl";
-import { withTheme, withStyles } from "@material-ui/core/styles";
 import moment from "moment";
+
+import { withTheme, withStyles } from "@material-ui/core/styles";
+
 import {
-  historyPush,
-  withModulesManager,
-  withHistory,
   coreAlert,
-  journalize,
-  toISODate,
-  formatMessageWithValues,
-  formatMessage,
-  ProgressOrError,
   Form,
+  formatMessage,
+  formatMessageWithValues,
   Helmet,
+  historyPush,
+  journalize,
+  ProgressOrError,
+  SelectDialog,
+  toISODate,
+  withHistory,
+  withModulesManager,
 } from "@openimis/fe-core";
 import PolicyMasterPanel from "./PolicyMasterPanel";
 import { fetchPolicyFull, fetchPolicyValues, fetchFamily } from "../actions";
-import { policyLabel } from "../utils/utils";
 import {
   RIGHT_POLICY,
   RIGHT_POLICY_EDIT,
@@ -26,6 +28,7 @@ import {
   POLICY_STAGE_RENEW,
   POLICY_STATUS_IDLE,
 } from "../constants";
+import { policyLabel } from "../utils/utils";
 
 const styles = (theme) => ({
   page: theme.page,
@@ -40,6 +43,7 @@ class PolicyForm extends Component {
     policy: {},
     newInsuree: true,
     renew: false,
+    confirmProduct: false,
   };
 
   _newPolicy() {
@@ -77,6 +81,13 @@ class PolicyForm extends Component {
     policy.product = from_policy.product;
     return policy;
   }
+
+  confirmProduct = () => {
+    this.setState((state) => ({
+      ...state,
+      confirmProduct: true,
+    }));
+  };
 
   componentDidMount() {
     if (!!this.props.family_uuid && !this.props.policy_uuid)
@@ -144,24 +155,8 @@ class PolicyForm extends Component {
           policy: { ...state.policy, ...this.props.policyValues.policy },
         }),
         (e) => {
-          if (!_.isEmpty(this.props.policyValues.warnings)) {
-            let messages = this.props.policyValues.warnings;
-            messages.push(
-              formatMessage(
-                this.props.intl,
-                "policy",
-                "policyValues.alert.message"
-              )
-            );
-            this.props.coreAlert(
-              formatMessage(
-                this.props.intl,
-                "policy",
-                "policyValues.alert.title"
-              ),
-              messages
-            );
-          }
+          if (!_.isEmpty(this.props.policyValues.warnings))
+            this.confirmProduct();
         }
       );
     } else if (prevProps.policy_uuid && !this.props.policy_uuid) {
@@ -198,6 +193,27 @@ class PolicyForm extends Component {
 
   onEditedChanged = (p) => {
     this.setState((state) => ({ policy: { ...state.policy, ...p } }));
+  };
+
+  onConfirmProductDialog = () => {
+    this.setState((state) => ({
+      ...state,
+      confirmProduct: false,
+    }));
+  };
+
+  onRejectProductDialog = () => {
+    this.setState((state) => ({
+      ...state,
+      confirmProduct: false,
+      policy: {
+        ...state.policy,
+        product: null,
+        startDate: null,
+        expiryDate: null,
+        value: null,
+      },
+    }));
   };
 
   canSave = () => {
@@ -247,6 +263,16 @@ class PolicyForm extends Component {
             "Policy.title",
             { label: policyLabel(this.props.modulesManager, this.state.policy) }
           )}
+        />
+        <SelectDialog
+          confirmState={this.state.confirmProduct}
+          onConfirm={this.onConfirmProductDialog}
+          onClose={this.onRejectProductDialog}
+          module="policy"
+          confirmTitle="policyValues.alert.title"
+          confirmMessage="policyValues.alert.message"
+          confirmationButton="dialogActions.continue"
+          rejectionButton="dialogActions.goBack"
         />
         <ProgressOrError progress={fetchingPolicy} error={errorPolicy} />
         {((!!fetchedPolicy && !!policy && policy.uuid === policy_uuid) ||
