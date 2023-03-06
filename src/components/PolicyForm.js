@@ -152,10 +152,10 @@ class PolicyForm extends Component {
     ) {
       this.setState(
         (state) => ({
-          policy: { ...state.policy, ...this.props.policyValues.policy },
+          policy: { ...state.policy, ...this.props.policyValues?.policy },
         }),
         (e) => {
-          if (!_.isEmpty(this.props.policyValues.warnings))
+          if (!_.isEmpty(this.props.policyValues?.warnings))
             this.confirmProduct();
         }
       );

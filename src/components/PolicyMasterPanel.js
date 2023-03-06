@@ -1,4 +1,4 @@
-import React, { Fragment } from "react";
+import React from "react";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 import { withTheme, withStyles } from "@material-ui/core/styles";
@@ -308,7 +308,9 @@ class PolicyMasterPanel extends FormPanel {
                   )}
                   onChange={(v) => this.updateAttribute("officer", v)}
                   required={true}
-                  villageId={decodeId(edited.family.location.id)}
+                  villageId={
+                    !!edited.family ? decodeId(edited.family.location.id) : 0
+                  }
                 />
               </Grid>
               <Grid item xs={3} className={classes.item}>
