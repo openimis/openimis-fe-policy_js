@@ -152,12 +152,13 @@ class PolicyMasterPanel extends FormPanel {
       intl,
       classes,
       edited,
+      edited_id,
       readOnly,
       fetchingPolicyValues,
       errorPolicyValues,
       title = "Policy.details.title",
     } = this.props;
-    
+
     let actions = [];
     if (this.canRenew(edited)) {
       actions.push({
@@ -282,14 +283,16 @@ class PolicyMasterPanel extends FormPanel {
                   pubRef="product.ProductPicker"
                   value={!!edited && edited.product}
                   module="policy"
-                  readOnly={readOnly}
+                  readOnly={!!edited_id || readOnly}
                   withNull={true}
                   nullLabel={formatMessage(intl, "product", "Product.none")}
                   onChange={this._onProductChange}
                   required={true}
                   locationId={
                     !!edited.family
-                      ? decodeId(edited.family.location.parent.parent.parent.id)
+                      ? decodeId(
+                          edited.family?.location?.parent?.parent?.parent?.id
+                        )
                       : 0
                   }
                 />
@@ -309,7 +312,7 @@ class PolicyMasterPanel extends FormPanel {
                   onChange={(v) => this.updateAttribute("officer", v)}
                   required={true}
                   villageId={
-                    !!edited.family ? decodeId(edited.family.location.id) : 0
+                    !!edited.family ? decodeId(edited.family?.location?.id) : 0
                   }
                 />
               </Grid>
