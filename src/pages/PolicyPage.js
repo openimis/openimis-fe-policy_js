@@ -61,6 +61,7 @@ class PolicyPage extends Component {
     return (
       <div className={classes.page}>
         <PolicyForm
+          key={`${policy_uuid}-${family_uuid}`}
           policy_uuid={policy_uuid !== "_NEW_" ? policy_uuid : null}
           family_uuid={family_uuid}
           back={(e) =>
