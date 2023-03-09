@@ -29,12 +29,12 @@ const counts = insureeEligibility => (
             "insureeEligibility.antenatalsLeft"
         ]}
         itemFormatters={[
-            i => i.totalAdmissionsLeft,
-            i => i.totalVisitsLeft,
-            i => i.totalConsultationsLeft,
-            i => i.totalSurgeriesLeft,
-            i => i.totalDeliveriesLeft,
-            i => i.totalAntenatalLeft
+            i => i.totalAdmissionsLeft ?? "N/A",
+            i => i.totalVisitsLeft ?? "N/A",
+            i => i.totalConsultationsLeft ?? "N/A",
+            i => i.totalSurgeriesLeft ?? "N/A",
+            i => i.totalDeliveriesLeft ?? "N/A",
+            i => i.totalAntenatalLeft ?? "N/A"
         ]}
         items={[insureeEligibility]}
     />
@@ -52,11 +52,11 @@ const amounts = insureeEligibility => (
             "insureeEligibility.antenatalAmountLeft"
         ]}
         itemFormatters={[
-            i => i.hospitalizationAmountLeft,
-            i => i.consultationAmountLeft,
-            i => i.surgeryAmountLeft,
-            i => i.deliveryAmountLeft,
-            i => i.antenatalAmountLeft
+            i => i.hospitalizationAmountLeft ?? "N/A",
+            i => i.consultationAmountLeft ?? "N/A",
+            i => i.surgeryAmountLeft ?? "N/A",
+            i => i.deliveryAmountLeft ?? "N/A",
+            i => i.antenatalAmountLeft ?? "N/A"
         ]}
         items={[insureeEligibility]}
     />
@@ -71,7 +71,7 @@ class InsureeEligibilitySummary extends Component {
     componentDidUpdate(prevProps, prevState) {
         if(prevProps?.insuree?.chfId !== this.props?.insuree?.chfId){
             this.props.fetchEligibility(this.props.insuree.chfId);
-        }       
+        }
     }
 
     render() {
