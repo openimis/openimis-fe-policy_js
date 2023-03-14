@@ -7,7 +7,6 @@ import {
   toISODate,
 } from "@openimis/fe-core";
 import _ from "lodash";
-import _uuid from "lodash-uuid";
 import { decodeId } from "@openimis/fe-core";
 
 const FAMILY_HEAD_PROJECTION = "headInsuree{id,uuid,chfId,lastName,otherNames,email,phone,dob,gender{code}}";
