@@ -117,5 +117,6 @@
   "policy.deletePolicyDialog.title": "Delete policy?",
   "policy.deletePolicyDialog.message": "Are you sure you want to delete policy {label}? Related contributions will be deleted (but not payments).",
   "policy.policyValues.alert.title": "Policy Value Warning:",
-  "policy.policyValues.alert.message": "However, policy can still be created."
+  "policy.policyValues.alert.message": "However, policy can still be created.",
+  "policySummaries.printSelected": "Print Selected"
 }
