@@ -291,7 +291,7 @@ class PolicyMasterPanel extends FormPanel {
                   locationId={
                     !!edited.family
                       ? decodeId(
-                          edited.family?.location?.parent?.parent?.parent?.id
+                          edited.family?.location?.parent?.parent?.id
                         )
                       : 0
                   }

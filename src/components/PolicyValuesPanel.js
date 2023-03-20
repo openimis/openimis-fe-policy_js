@@ -35,7 +35,6 @@ class PolicyValuesPanel extends Component {
     } = this.props;
 
     let readOnly = contributionPanelReadOnly;
-    console.log(readOnly);
     return (
       <Grid item xs={12}>
         <Paper className={classes.paper}>
