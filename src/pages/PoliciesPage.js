@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+import { bindActionCreators } from "redux";
 import { connect } from "react-redux";
 import { injectIntl } from "react-intl";
 import { withTheme, withStyles } from "@material-ui/core/styles";
@@ -6,6 +7,7 @@ import {
   historyPush,
   withModulesManager,
   withHistory,
+  clearCurrentPaginationPage,
 } from "@openimis/fe-core";
 import PolicySearcher from "../components/PolicySearcher";
 
@@ -22,6 +24,12 @@ class PoliciesPage extends Component {
       [p.uuid],
       newTab
     );
+  };
+
+  componentDidMount = () => {
+    const moduleName = "policy";
+    const { module } = this.props;
+    if (module !== moduleName) this.props.clearCurrentPaginationPage();
   };
 
   render() {
@@ -42,12 +50,15 @@ const mapStateToProps = (state) => ({
     !!state.core && !!state.core.user && !!state.core.user.i_user
       ? state.core.user.i_user.rights
       : [],
+  module: state.core?.savedPagination?.module,
 });
+
+const mapDispatchToProps = (dispatch) => bindActionCreators({ clearCurrentPaginationPage }, dispatch);
 
 export default injectIntl(
   withModulesManager(
     withHistory(
-      connect(mapStateToProps)(withTheme(withStyles(styles)(PoliciesPage)))
+      connect(mapStateToProps, mapDispatchToProps)(withTheme(withStyles(styles)(PoliciesPage)))
     )
   )
 );
