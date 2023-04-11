@@ -285,14 +285,20 @@ class PolicyMasterPanel extends FormPanel {
                   module="policy"
                   readOnly={!!edited_id || readOnly}
                   withNull={true}
+                  label={formatMessage(intl, "product", "Product")}
+                  withLabel={true}
                   nullLabel={formatMessage(intl, "product", "Product.none")}
+                  withPlaceholder={true}
+                  placeholder={formatMessage(
+                    intl,
+                    "product",
+                    "ProductPicker.placeholder"
+                  )}
                   onChange={this._onProductChange}
                   required={true}
                   locationId={
                     !!edited.family
-                      ? decodeId(
-                          edited.family?.location?.parent?.parent?.id
-                        )
+                      ? decodeId(edited.family?.location?.parent?.parent?.id)
                       : 0
                   }
                 />
@@ -303,6 +309,14 @@ class PolicyMasterPanel extends FormPanel {
                   value={!!edited && edited.officer}
                   module="policy"
                   readOnly={readOnly}
+                  withPlaceholder={true}
+                  withLabel={true}
+                  label={formatMessage(intl, "policy", "PolicyOfficerPicker.label")}
+                  placeholder={formatMessage(
+                    intl,
+                    "policy",
+                    "PolicyOfficerPicker.placeholder"
+                  )}
                   withNull={true}
                   nullLabel={formatMessage(
                     intl,
