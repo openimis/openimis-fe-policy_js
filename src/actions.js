@@ -167,7 +167,7 @@ export function fetchPolicyFull(mm, policy_uuid) {
   ];
   const payload = formatPageQuery(
     "policies",
-    [`uuid: "${policy_uuid}"`],
+    [`uuid: "${policy_uuid}"`, 'showHistory: true'],
     projections
   );
   return graphql(payload, "POLICY_POLICY");
