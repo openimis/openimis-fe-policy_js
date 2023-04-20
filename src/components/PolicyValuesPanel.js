@@ -66,7 +66,8 @@ class PolicyValuesPanel extends Component {
                 <AmountInput
                   module="policy"
                   label="Policy.sumPremiums"
-                  value={edited.sumPremiums}
+                  value={edited.sumPremiums || 0}
+                  displayZero={true}
                   readOnly={readOnly}
                 />
               </Grid>
@@ -74,7 +75,8 @@ class PolicyValuesPanel extends Component {
                 <AmountInput
                   module="policy"
                   label="Policy.balance"
-                  value={edited.balance}
+                  value={edited.balance || 0}
+                  displayZero={true}
                   readOnly={readOnly}
                 />
               </Grid>
