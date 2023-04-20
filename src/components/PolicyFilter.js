@@ -153,6 +153,18 @@ class PolicyFilter extends Component {
                 withNull={true}
                 value={this._filterValue("product")}
                 onChange={(v, s) => this._onChangeRef("product", v, s)}
+                withLabel
+                label={formatMessage(
+                  intl,
+                  "policy",
+                  "PolicyFilter.product.label"
+                )}
+                withPlaceholder
+                placeholder={formatMessage(
+                  intl,
+                  "policy",
+                  "PolicyFilter.product.placeholder"
+                )}
               />
             </Grid>
           }
@@ -168,6 +180,18 @@ class PolicyFilter extends Component {
                 filters={filters}
                 value={this._filterValue("officer")}
                 onChange={(v, s) => this._onChangeRef("officer", v, s)}
+                withLabel
+                label={formatMessage(
+                   intl,
+                    "policy",
+                    "PolicyOfficerPicker.label"
+                  )}
+                  withPlaceholder
+                  placeholder={formatMessage(
+                    intl,
+                    "policy",
+                    "PolicyOfficerPicker.placeholder"
+                  )}
               />
             </Grid>
           }
@@ -349,7 +373,6 @@ class PolicyFilter extends Component {
     );
   }
 }
-
 
 export default withModulesManager(
   injectIntl(withTheme(withStyles(styles)(PolicyFilter)))
