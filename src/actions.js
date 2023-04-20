@@ -30,6 +30,7 @@ const POLICY_BY_FAMILY_OR_INSUREE_PROJECTION = [
   "ceiling",
   "ceilingInPatient",
   "ceilingOutPatient",
+  "maxInstallments",
 ];
 
 const FAMILY_FULL_PROJECTION = (mm) => [

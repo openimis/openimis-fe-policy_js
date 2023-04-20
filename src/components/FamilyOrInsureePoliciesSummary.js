@@ -174,6 +174,7 @@ class FamilyOrInsureePoliciesSummary extends PagedDataHandler {
   }
 
   onChangeSelection = (i) => {
+    console.log(i);
     this.props.selectPolicy(i[0] || null);
   };
 
@@ -198,6 +199,7 @@ class FamilyOrInsureePoliciesSummary extends PagedDataHandler {
       "policies.ceiling",
       "policies.hospitalCeiling",
       "policies.nonHospitalCeiling",
+      "policies.maxInstallments",
     ];
     if (this.showBalance) {
       h.push("policies.balance");
@@ -227,6 +229,7 @@ class FamilyOrInsureePoliciesSummary extends PagedDataHandler {
       this.sorter("ceiling"),
       this.sorter("hospitalCeiling"),
       this.sorter("nonHospitalCeiling"),
+      this.sorter("maxInstallments"),
     ];
     if (this.showBalance) {
       a.push(this.sorter("balance"));
