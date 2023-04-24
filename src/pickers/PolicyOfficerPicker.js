@@ -1,5 +1,7 @@
 import React, { useState } from "react";
+
 import { TextField } from "@material-ui/core";
+
 import {
   useTranslations,
   Autocomplete,
@@ -11,8 +13,8 @@ const PolicyOfficerPicker = (props) => {
     onChange,
     readOnly,
     required,
-    withLabel = true,
-    withPlaceholder,
+    withLabel = false,
+    withPlaceholder = false,
     value,
     label,
     filterOptions,
@@ -83,9 +85,13 @@ const PolicyOfficerPicker = (props) => {
         <TextField
           {...inputProps}
           required={required}
-          label={withLabel && (label || nullLabel)}
+          label={
+            (withLabel && (label || nullLabel)) ||
+            formatMessage("PolicyOfficerPicker.label")
+          }
           placeholder={
-            withPlaceholder && (placeholder || formatMessage("Search..."))
+            (withPlaceholder && placeholder) ||
+            formatMessage("PolicyOfficerPicker.placeholder")
           }
         />
       )}
