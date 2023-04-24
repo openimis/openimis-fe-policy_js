@@ -50,6 +50,8 @@
   "policy.PolicyOfficerPicker.placeholder": "Search for an Officer...",
   "policy.PolicyOfficerPicker.null": "Any",
   "policy.PolicyOfficer.none": "None",
+  "policy.PolicyFilter.product.label": "Product",
+  "policy.PolicyFilter.product.placeholder": "Search for a Product...",
   "policy.PolicyFilter.enrollDateFrom": "Enrolment From",
   "policy.PolicyFilter.enrollDateTo": "Enrolment To",
   "policy.PolicyFilter.startDateFrom": "Start From",
