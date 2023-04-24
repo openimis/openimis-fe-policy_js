@@ -94,6 +94,12 @@ export function fetchItemEligibility(chfid, code) {
   return graphql(payload, "POLICY_INSUREE_ITEM_ELIGIBILITY");
 }
 
+export function itemEligibilityClear() {
+  return (dispatch) => {
+    dispatch({ type: `POLICY_INSUREE_ITEM_ELIGIBILITY_CLEAR` });
+  };
+}
+
 export function fetchServiceEligibility(chfid, code) {
   let payload = `
     {
@@ -104,6 +110,12 @@ export function fetchServiceEligibility(chfid, code) {
     }
   `;
   return graphql(payload, "POLICY_INSUREE_SERVICE_ELIGIBILITY");
+}
+
+export function serviceEligibilityClear() {
+  return (dispatch) => {
+    dispatch({ type: `POLICY_INSUREE_SERVICE_ELIGIBILITY_CLEAR` });
+  };
 }
 
 export function fetchPolicySummaries(mm, filters) {
@@ -155,7 +167,7 @@ export function fetchPolicyFull(mm, policy_uuid) {
   ];
   const payload = formatPageQuery(
     "policies",
-    [`uuid: "${policy_uuid}"`],
+    [`uuid: "${policy_uuid}"`, 'showHistory: true'],
     projections
   );
   return graphql(payload, "POLICY_POLICY");

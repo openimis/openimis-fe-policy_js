@@ -35,7 +35,6 @@ class PolicyValuesPanel extends Component {
     } = this.props;
 
     let readOnly = contributionPanelReadOnly;
-    console.log(readOnly);
     return (
       <Grid item xs={12}>
         <Paper className={classes.paper}>
@@ -67,7 +66,8 @@ class PolicyValuesPanel extends Component {
                 <AmountInput
                   module="policy"
                   label="Policy.sumPremiums"
-                  value={edited.sumPremiums}
+                  value={edited.sumPremiums || 0}
+                  displayZero={true}
                   readOnly={readOnly}
                 />
               </Grid>
@@ -75,7 +75,8 @@ class PolicyValuesPanel extends Component {
                 <AmountInput
                   module="policy"
                   label="Policy.balance"
-                  value={edited.balance}
+                  value={edited.balance || 0}
+                  displayZero={true}
                   readOnly={readOnly}
                 />
               </Grid>

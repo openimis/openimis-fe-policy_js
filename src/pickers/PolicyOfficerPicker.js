@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { TextField } from "@material-ui/core";
 import {
   useTranslations,
   Autocomplete,
@@ -18,6 +19,7 @@ const PolicyOfficerPicker = (props) => {
     filterSelectedOptions,
     placeholder,
     extraFragment,
+    nullLabel,
     multiple,
     filters,
     villageId,
@@ -58,14 +60,7 @@ const PolicyOfficerPicker = (props) => {
   return (
     <Autocomplete
       multiple={multiple}
-      required={required}
-      placeholder={
-        placeholder ?? formatMessage("PolicyOfficerPicker.placeholder")
-      }
-      label={label ?? formatMessage("PolicyOfficerPicker.label")}
       error={error}
-      withLabel={withLabel}
-      withPlaceholder={withPlaceholder}
       readOnly={readOnly}
       options={data?.policyOfficers?.edges.map((edge) => edge.node) ?? []}
       isLoading={isLoading}
@@ -84,6 +79,16 @@ const PolicyOfficerPicker = (props) => {
       filterOptions={filterOptions}
       filterSelectedOptions={filterSelectedOptions}
       onInputChange={setSearchString}
+      renderInput={(inputProps) => (
+        <TextField
+          {...inputProps}
+          required={required}
+          label={withLabel && (label || nullLabel)}
+          placeholder={
+            withPlaceholder && (placeholder || formatMessage("Search..."))
+          }
+        />
+      )}
     />
   );
 };
