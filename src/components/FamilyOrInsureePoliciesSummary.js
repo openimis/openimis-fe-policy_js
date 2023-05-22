@@ -258,31 +258,31 @@ class FamilyOrInsureePoliciesSummary extends PagedDataHandler {
     f.push((i) =>
       !this.props.readOnly && this.canRenew(i)
         ? withTooltip(
-            <IconButton onClick={(e) => this.renewPolicy(i)}>
-              <RenewIcon />
-            </IconButton>,
-            formatMessage(this.props.intl, "policy", "action.RenewPolicy.tooltip")
-          )
+          <IconButton onClick={(e) => this.renewPolicy(i)}>
+            <RenewIcon />
+          </IconButton>,
+          formatMessage(this.props.intl, "policy", "action.RenewPolicy.tooltip")
+        )
         : null
     );
     f.push((i) =>
       !this.props.readOnly && this.canSuspend(i)
         ? withTooltip(
-            <IconButton onClick={(e) => this.confirmSuspend(i)}>
-              <SuspendIcon />
-            </IconButton>,
-            formatMessage(this.props.intl, "policy", "action.SuspendPolicy.tooltip")
-          )
+          <IconButton onClick={(e) => this.confirmSuspend(i)}>
+            <SuspendIcon />
+          </IconButton>,
+          formatMessage(this.props.intl, "policy", "action.SuspendPolicy.tooltip")
+        )
         : null
     );
     f.push((i) =>
       !this.props.readOnly && this.canDelete(i)
         ? withTooltip(
-            <IconButton onClick={(e) => this.confirmDelete(i)}>
-              <DeleteIcon />
-            </IconButton>,
-            formatMessage(this.props.intl, "policy", "action.DeletePolicy.tooltip")
-          )
+          <IconButton onClick={(e) => this.confirmDelete(i)}>
+            <DeleteIcon />
+          </IconButton>,
+          formatMessage(this.props.intl, "policy", "action.DeletePolicy.tooltip")
+        )
         : null
     );
     return f;
@@ -321,18 +321,18 @@ class FamilyOrInsureePoliciesSummary extends PagedDataHandler {
     }
 
     let actions =
-      !!readOnly || !rights.includes(RIGHT_POLICY_ADD)
+      !!readOnly || !rights.includes(RIGHT_POLICY_ADD) || family.headInsuree.score < 100
         ? []
         : [
-            {
-              button: (
-                <IconButton onClick={this.addNewPolicy}>
-                  <AddIcon />
-                </IconButton>
-              ),
-              tooltip: formatMessage(intl, "policy", "action.AddPolicy.tooltip"),
-            },
-          ];
+          {
+            button: (
+              <IconButton onClick={this.addNewPolicy}>
+                <AddIcon />
+              </IconButton>
+            ),
+            tooltip: formatMessage(intl, "policy", "action.AddPolicy.tooltip"),
+          },
+        ];
 
     return (
       <Paper className={clsx(classes.paper, className)}>
