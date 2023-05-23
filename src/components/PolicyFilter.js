@@ -28,35 +28,9 @@ const styles = (theme) => ({
 const POLICY_FILTER_CONTRIBUTION_KEY = "policy.Filter";
 
 class PolicyFilter extends Component {
-  state = {
-    showHistory: false,
-    showInactive: false,
-  };
-
-  componentDidUpdate(prevProps, prevState, snapshot) {
-    if (
-      prevProps.filters["showHistory"] !== this.props.filters["showHistory"] &&
-      !!this.props.filters["showHistory"] &&
-      this.state.showHistory !== this.props.filters["showHistory"]["value"]
-    ) {
-      this.setState((state, props) => ({
-        showHistory: props.filters["showHistory"]["value"],
-      }));
-    } else if (
-      prevProps.filters["showInactive"] !==
-        this.props.filters["showInactive"] &&
-      !!this.props.filters["showInactive"] &&
-      this.state.showInactive !== this.props.filters["showInactive"]["value"]
-    ) {
-      this.setState((state, props) => ({
-        showInactive: props.filters["showInactive"]["value"],
-      }));
-    }
-  }
-
   debouncedOnChangeFilter = _debounce(
     this.props.onChangeFilters,
-    this.props.modulesManager.getConf("fe-policy", "debounceTime", 800)
+    this.props.modulesManager.getConf("fe-policy", "debounceTime", 200)
   );
 
   _filterValue = (k) => {
@@ -64,23 +38,23 @@ class PolicyFilter extends Component {
     return !!filters && !!filters[k] ? filters[k].value : null;
   };
 
-  _onChangeShowHistory = () => {
+  _onChangeShowHistory = (key, value) => {
     let filters = [
       {
-        id: "showHistory",
-        value: !this.state.showHistory,
-        filter: `showHistory: ${!this.state.showHistory}`,
+        id: key,
+        value: value,
+        filter: `${key}: ${value}`,
       },
     ];
     this.props.onChangeFilters(filters);
   };
 
-  _onChangeShowInactive = () => {
+  _onChangeShowInactive = (key, value) => {
     let filters = [
       {
-        id: "showInactive",
-        value: !this.state.showInactive,
-        filter: `showInactive: ${!this.state.showInactive}`,
+        id: key,
+        value: value,
+        filter: `${key}: ${value}`,
       },
     ];
     this.props.onChangeFilters(filters);
@@ -182,16 +156,16 @@ class PolicyFilter extends Component {
                 onChange={(v, s) => this._onChangeRef("officer", v, s)}
                 withLabel
                 label={formatMessage(
-                   intl,
-                    "policy",
-                    "PolicyOfficerPicker.label"
-                  )}
-                  withPlaceholder
-                  placeholder={formatMessage(
-                    intl,
-                    "policy",
-                    "PolicyOfficerPicker.placeholder"
-                  )}
+                  intl,
+                  "policy",
+                  "PolicyOfficerPicker.label"
+                )}
+                withPlaceholder
+                placeholder={formatMessage(
+                  intl,
+                  "policy",
+                  "PolicyOfficerPicker.placeholder"
+                )}
               />
             </Grid>
           }
@@ -329,8 +303,13 @@ class PolicyFilter extends Component {
                 control={
                   <Checkbox
                     color="primary"
-                    checked={this.state.showInactive}
-                    onChange={(e) => this._onChangeShowInactive()}
+                    checked={!!this._filterValue("showInactive")}
+                    onChange={(event) =>
+                      this._onChangeShowInactive(
+                        "showInactive",
+                        event.target.checked
+                      )
+                    }
                   />
                 }
                 label={formatMessage(
@@ -351,8 +330,13 @@ class PolicyFilter extends Component {
                 control={
                   <Checkbox
                     color="primary"
-                    checked={this.state.showHistory}
-                    onChange={(e) => this._onChangeShowHistory()}
+                    checked={!!this._filterValue("showHistory")}
+                    onChange={(event) =>
+                      this._onChangeShowHistory(
+                        "showHistory",
+                        event.target.checked
+                      )
+                    }
                   />
                 }
                 label={formatMessage(
