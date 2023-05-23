@@ -38,18 +38,7 @@ class PolicyFilter extends Component {
     return !!filters && !!filters[k] ? filters[k].value : null;
   };
 
-  _onChangeShowHistory = (key, value) => {
-    let filters = [
-      {
-        id: key,
-        value: value,
-        filter: `${key}: ${value}`,
-      },
-    ];
-    this.props.onChangeFilters(filters);
-  };
-
-  _onChangeShowInactive = (key, value) => {
+  _onChangeCheckbox = (key, value) => {
     let filters = [
       {
         id: key,
@@ -305,7 +294,7 @@ class PolicyFilter extends Component {
                     color="primary"
                     checked={!!this._filterValue("showInactive")}
                     onChange={(event) =>
-                      this._onChangeShowInactive(
+                      this._onChangeCheckbox(
                         "showInactive",
                         event.target.checked
                       )
@@ -332,7 +321,7 @@ class PolicyFilter extends Component {
                     color="primary"
                     checked={!!this._filterValue("showHistory")}
                     onChange={(event) =>
-                      this._onChangeShowHistory(
+                      this._onChangeCheckbox(
                         "showHistory",
                         event.target.checked
                       )
