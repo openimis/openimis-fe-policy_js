@@ -311,6 +311,7 @@ class FamilyOrInsureePoliciesSummary extends PagedDataHandler {
       policies,
       pageInfo,
       errorPolicies,
+      maxInsureeScore,
       family,
       insuree,
       readOnly,
@@ -321,7 +322,7 @@ class FamilyOrInsureePoliciesSummary extends PagedDataHandler {
     }
 
     let actions =
-      !!readOnly || !rights.includes(RIGHT_POLICY_ADD) || family.headInsuree.score < 100
+      !!readOnly || !rights.includes(RIGHT_POLICY_ADD) || family.headInsuree.score < maxInsureeScore
         ? []
         : [
           {
