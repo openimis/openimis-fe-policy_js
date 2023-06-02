@@ -4,7 +4,7 @@ import { bindActionCreators } from "redux";
 import { withTheme, withStyles } from "@material-ui/core/styles";
 import { Box, Grid, Typography } from "@material-ui/core";
 import { FormattedMessage, ProgressOrError, PublishedComponent, withModulesManager } from "@openimis/fe-core";
-import { fetchServiceEligibility } from "../actions";
+import {fetchServiceEligibility, serviceEligibilityClear} from "../actions";
 import Eligibility from "./Eligibility";
 
 const styles = (theme) => ({
@@ -26,8 +26,14 @@ class InsureeServiceEligibility extends Component {
     const { insuree } = this.props;
     if (service) {
       this.props.fetchServiceEligibility(insuree.chfId, service.code);
+    } else {
+      this.props.serviceEligibilityClear();
     }
   };
+
+  componentWillUnmount() {
+    this.props.serviceEligibilityClear();
+  }
 
   render() {
     const { classes, className, isFetching, isFetched, eligibility, error } = this.props;
@@ -73,7 +79,7 @@ const mapStateToProps = (state) => ({
 });
 
 const mapDispatchToProps = (dispatch) => {
-  return bindActionCreators({ fetchServiceEligibility }, dispatch);
+  return bindActionCreators({ fetchServiceEligibility, serviceEligibilityClear }, dispatch);
 };
 
 export default withModulesManager(

@@ -143,6 +143,14 @@ export const reducer = (
                 fetchingInsureeItemEligibility: false,
                 errorInsureeItemEligibility: formatServerError(action.payload),
             };
+        case 'POLICY_INSUREE_ITEM_ELIGIBILITY_CLEAR':
+          return {
+            ...state,
+            fetchingInsureeItemEligibility: false,
+            fetchedInsureeItemEligibility: false,
+            insureeItemEligibility: null,
+            errorInsureeItemEligibility: null,
+          };
         case 'POLICY_INSUREE_SERVICE_ELIGIBILITY_REQ':
             return {
                 ...state,
@@ -165,6 +173,14 @@ export const reducer = (
                 fetchingInsureeServiceEligibility: false,
                 errorInsureeServiceEligibility: formatServerError(action.payload),
             };
+        case 'POLICY_INSUREE_SERVICE_ELIGIBILITY_CLEAR':
+          return {
+            ...state,
+            fetchingInsureeServiceEligibility: false,
+            fetchedInsureeServiceEligibility: false,
+            insureeServiceEligibility: null,
+            errorInsureeServiceEligibility: null,
+          };
         case 'POLICY_POLICIES_REQ':
             return {
                 ...state,
