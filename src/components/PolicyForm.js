@@ -192,7 +192,7 @@ class PolicyForm extends Component {
   };
 
   onEditedChanged = (p) => {
-    //this.setState((state) => ({ policy: { ...state.policy, ...p } }));
+    this.setState((state) => ({ policy: { ...state.policy, ...p } }));
   };
 
   onConfirmProductDialog = () => {
