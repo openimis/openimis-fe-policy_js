@@ -1,8 +1,10 @@
 import React, { Component, Fragment } from "react";
 import { connect } from "react-redux";
-import { injectIntl } from 'react-intl';
-import { withTheme, withStyles } from "@material-ui/core/styles";
+import { injectIntl } from "react-intl";
 import moment from "moment";
+
+import { withTheme, withStyles } from "@material-ui/core/styles";
+
 import {
   historyPush, withModulesManager, withHistory, coreAlert, journalize,
   toISODate,
@@ -12,7 +14,6 @@ import {
 import PolicyMasterPanel from "./PolicyMasterPanel";
 import { fetchPolicyFull, fetchPolicyValues, fetchFamily } from "../actions";
 import { policyLabel } from "../utils/utils";
-import { RIGHT_POLICY, RIGHT_POLICY_EDIT, POLICY_STAGE_NEW, POLICY_STAGE_RENEW, POLICY_STATUS_IDLE } from "../constants";
 
 const styles = theme => ({
   page: theme.page,
@@ -21,6 +22,14 @@ const styles = theme => ({
 const POLICY_HEAD_PANEL_CONTRIBUTION_KEY = "policy.Policy.headPanel";
 
 class PolicyForm extends Component {
+  state = {
+    lockNew: false,
+    reset: 0,
+    policy: {},
+    newInsuree: true,
+    renew: false,
+    confirmProduct: false,
+  };
 
   state = {
     lockNew: false,
@@ -213,6 +222,23 @@ class PolicyForm extends Component {
   }
 }
 
+const mapStateToProps = (state) => ({
+  rights:
+    !!state.core && !!state.core.user && !!state.core.user.i_user
+      ? state.core.user.i_user.rights
+      : [],
+  fetchingPolicy: state.policy.fetchingPolicy,
+  errorPolicy: state.policy.errorPolicy,
+  fetchedPolicy: state.policy.fetchedPolicy,
+  policy: state.policy.policy,
+  fetchingPolicyValues: state.policy.fetchingPolicyValues,
+  fetchedPolicyValues: state.policy.fetchedPolicyValues,
+  errorPolicyValues: state.policy.errorPolicyValues,
+  policyValues: state.policy.policyValues,
+  family: state.insuree.family,
+  submittingMutation: state.policy.submittingMutation,
+  mutation: state.policy.mutation,
+});
 
 const mapStateToProps = state => ({
   rights: !!state.core && !!state.core.user && !!state.core.user.i_user ? state.core.user.i_user.rights : [],
@@ -230,3 +256,4 @@ const mapStateToProps = state => ({
 })
 
 export default injectIntl(withModulesManager(withHistory(connect(mapStateToProps, { fetchPolicyFull, fetchPolicyValues, journalize, coreAlert,fetchFamily })(withTheme(withStyles(styles)(PolicyForm))))));
+
