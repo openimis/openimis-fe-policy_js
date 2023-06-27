@@ -296,11 +296,6 @@ class PolicyMasterPanel extends FormPanel {
                   )}
                   onChange={this._onProductChange}
                   required={true}
-                  locationId={
-                    !!edited.family
-                      ? decodeId(edited.family?.location?.parent?.parent?.id)
-                      : 0
-                  }
                 />
               </Grid>
               <Grid item xs={3} className={classes.item}>
@@ -325,9 +320,6 @@ class PolicyMasterPanel extends FormPanel {
                   )}
                   onChange={(v) => this.updateAttribute("officer", v)}
                   required={true}
-                  villageId={
-                    !!edited.family ? decodeId(edited.family?.location?.id) : 0
-                  }
                 />
               </Grid>
               <Grid item xs={3} className={classes.item}>
