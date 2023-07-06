@@ -50,6 +50,8 @@
   "policy.PolicyOfficerPicker.placeholder": "Search for an Officer...",
   "policy.PolicyOfficerPicker.null": "Any",
   "policy.PolicyOfficer.none": "None",
+  "policy.PolicyFilter.product.label": "Product",
+  "policy.PolicyFilter.product.placeholder": "Search for a Product...",
   "policy.PolicyFilter.enrollDateFrom": "Enrolment From",
   "policy.PolicyFilter.enrollDateTo": "Enrolment To",
   "policy.PolicyFilter.startDateFrom": "Start From",
@@ -117,5 +119,7 @@
   "policy.deletePolicyDialog.title": "Delete policy?",
   "policy.deletePolicyDialog.message": "Are you sure you want to delete policy {label}? Related contributions will be deleted (but not payments).",
   "policy.policyValues.alert.title": "Policy Value Warning:",
-  "policy.policyValues.alert.message": "However, policy can still be created."
+  "policy.policyValues.alert.message": "The family has more Insurees than the maximum number of members allowed in the selected product. However, the policy can still be created. Do you want to continue?",
+  "policy.dialogActions.continue": "Continue",
+  "policy.dialogActions.goBack": "Go back"
 }
