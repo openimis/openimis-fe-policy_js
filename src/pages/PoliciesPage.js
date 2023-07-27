@@ -35,6 +35,13 @@ class PoliciesPage extends Component {
     if (module !== moduleName) this.props.clearCurrentPaginationPage();
   };
 
+  printSelected = (selection) => {
+    this.props.print(selection.map((i) => decodeId(i.family.headInsuree.id)));
+  };
+
+  canPrintSelected = (selection) =>
+    !!selection && selection.length;
+
   render() {
     const { classes } = this.props;
     var actions = [];
@@ -45,12 +52,6 @@ class PoliciesPage extends Component {
       icon: <PrintIcon />,
     });
 
-    printSelected = (selection) => {
-      this.props.print(selection.map((i) => decodeId(i.family.headInsuree.id)));
-    };
-
-    canPrintSelected = (selection) =>
-      !!selection && selection.length;
     return (
       <div className={classes.page}>
         <PolicySearcher
