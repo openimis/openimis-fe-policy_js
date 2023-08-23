@@ -12,7 +12,7 @@ import {
 import {
     withModulesManager, formatMessageWithValues, formatDateFromISO, formatMessage,
     withHistory, historyPush, coreConfirm, journalize,
-    Searcher, PublishedComponent, AmountInput,
+    Searcher, PublishedComponent, AmountInput, decodeId
 } from "@openimis/fe-core";
 import { fetchPolicySummaries, deletePolicy, suspendPolicy } from "../actions";
 import { policyLabel, policyBalance, canDeletePolicy, canSuspendPolicy, canRenewPolicy } from "../utils/utils";
@@ -52,12 +52,16 @@ class PolicySearcher extends Component {
         let prms = Object.keys(state.filters)
             .filter(f => !!state.filters[f]['filter'])
             .map(f => state.filters[f]['filter']);
+        if (!state.beforeCursor && !state.afterCursor) {
         prms.push(`first: ${state.pageSize}`);
+        }
         if (!!state.afterCursor) {
             prms.push(`after: "${state.afterCursor}"`)
+            prms.push(`first: ${state.pageSize}`);
         }
         if (!!state.beforeCursor) {
             prms.push(`before: "${state.beforeCursor}"`)
+            prms.push(`last: ${state.pageSize}`);
         }
         if (!!state.orderBy) {
             prms.push(`orderBy: ["${state.orderBy}"]`);
@@ -212,10 +216,13 @@ class PolicySearcher extends Component {
     rowDisabled = (selection, i) => !!i.validityTo
     rowLocked = (selection, i) => !!i.clientMutationId
 
+    canSelectAll = (selection) =>
+        this.props.policies.map((i) => decodeId(i.family.headInsuree.id)).filter((s) => !selection.map((s) => decodeId(s.family.headInsuree.id)).includes(s)).length;
+
     render() {
         const { intl,
             policies, policiesPageInfo, fetchingPolicies, fetchedPolicies, errorPolicies,
-            filterPaneContributionsKey, cacheFiltersKey, onDoubleClick
+            filterPaneContributionsKey, cacheFiltersKey, onDoubleClick, actions
         } = this.props;
 
         let count = policiesPageInfo.totalCount;
@@ -232,6 +239,7 @@ class PolicySearcher extends Component {
                     fetchingItems={fetchingPolicies}
                     fetchedItems={fetchedPolicies}
                     errorItems={errorPolicies}
+                    canSelectAll={this.canSelectAll}
                     contributionKey={POLICY_SEARCHER_CONTRIBUTION_KEY}
                     tableTitle={formatMessageWithValues(intl, "policy", "policySummaries", { count })}
                     rowsPerPageOptions={this.rowsPerPageOptions}
@@ -245,6 +253,8 @@ class PolicySearcher extends Component {
                     sorts={this.sorts}
                     rowDisabled={this.rowDisabled}
                     rowLocked={this.rowLocked}
+                    actions={actions}
+                    withSelection="multiple"
                     onDoubleClick={(i) => !i.clientMutationId && onDoubleClick(i)}
                 />
             </Fragment>

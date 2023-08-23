@@ -1,35 +1,91 @@
 import React, { Component } from "react";
+import { bindActionCreators } from "redux";
 import { connect } from "react-redux";
-import { injectIntl } from 'react-intl';
+import { injectIntl } from "react-intl";
 import { withTheme, withStyles } from "@material-ui/core/styles";
-import { historyPush, withModulesManager, withHistory } from "@openimis/fe-core";
+import PrintIcon from "@material-ui/icons/ListAlt";
+import {
+  historyPush,
+  withModulesManager,
+  withHistory,
+  decodeId,
+  clearCurrentPaginationPage,
+} from "@openimis/fe-core";
 import PolicySearcher from "../components/PolicySearcher";
+import { print } from "../actions";
 
-const styles = theme => ({
-    page: theme.page,
+const styles = (theme) => ({
+  page: theme.page,
 });
 
 class PoliciesPage extends Component {
+  onDoubleClick = (p, newTab = false) => {
+    historyPush(
+      this.props.modulesManager,
+      this.props.history,
+      "policy.route.policy",
+      [p.uuid],
+      newTab
+    );
+  };
 
-    onDoubleClick = (p, newTab = false) => {
-        historyPush(this.props.modulesManager, this.props.history, "policy.route.policy", [p.uuid], newTab)
-    }
+  componentDidMount = () => {
+    const moduleName = "policy";
+    const { module } = this.props;
+    if (module !== moduleName) this.props.clearCurrentPaginationPage();
+  };
 
-    render() {
-        const { classes } = this.props;
-        return (
-            <div className={classes.page}>
-                <PolicySearcher
-                    cacheFiltersKey="policyPoliciesPageFiltersCache"
-                    onDoubleClick={this.onDoubleClick}
-                />
-            </div >
-        )
-    }
+  printSelected = (selection) => {
+    this.props.print(selection.map((i) => decodeId(i.family.headInsuree.id)));
+  };
+
+  canPrintSelected = (selection) =>
+    !!selection && selection.length;
+
+  render() {
+    const { classes } = this.props;
+    var actions = [];
+    actions.push({
+      label: "policySummaries.printSelected",
+      action: this.printSelected,
+      enabled: this.canPrintSelected,
+      icon: <PrintIcon />,
+    });
+
+    return (
+      <div className={classes.page}>
+        <PolicySearcher
+          cacheFiltersKey="policyPoliciesPageFiltersCache"
+          onDoubleClick={this.onDoubleClick}
+          actions={actions}
+        />
+      </div>
+    );
+  }
 }
 
-const mapStateToProps = state => ({
-    rights: !!state.core && !!state.core.user && !!state.core.user.i_user ? state.core.user.i_user.rights : [],
-})
+const mapStateToProps = (state) => ({
+  rights:
+    !!state.core && !!state.core.user && !!state.core.user.i_user
+      ? state.core.user.i_user.rights
+      : [],
+  module: state.core?.savedPagination?.module,
+});
 
-export default injectIntl(withModulesManager(withHistory(connect(mapStateToProps)(withTheme(withStyles(styles)(PoliciesPage))))));
+const mapDispatchToProps = (dispatch) => {
+  return bindActionCreators(
+    {
+      print,
+      clearCurrentPaginationPage
+    },
+    dispatch,
+  );
+};
+
+export default injectIntl(
+  withModulesManager(
+    withHistory(
+      connect(mapStateToProps, mapDispatchToProps)(withTheme(withStyles(styles)(PoliciesPage)))
+    )
+  )
+);
