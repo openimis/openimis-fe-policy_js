@@ -11,16 +11,45 @@ import InsureeEligibilitySummary from "./components/InsureeEligibilitySummary";
 import InsureeEligibilityEnquiry from "./components/InsureeEligibilityEnquiry";
 import InsureePolicyEligibilitySummary from "./components/InsureePolicyEligibilitySummary";
 import messages_en from "./translations/en.json";
-import { FormattedMessage } from "@openimis/fe-core";
+import { FormattedMessage, decodeId } from "@openimis/fe-core";
 import { reducer } from "./reducer";
 import { RIGHT_POLICY } from "./constants";
 import { policyMutation } from "./utils/utils";
+import PolicyRenewalsReport from "./reports/PolicyRenewalsReport";
 const ROUTE_POLICY_POLICIES = "policy/policies";
 const ROUTE_POLICY_POLICY = "policy/policy";
 
 const DEFAULT_CONFIG = {
   "translations": [{ key: 'en', messages: messages_en }],
   "reducers": [{ key: 'policy', reducer }],
+  "reports": [
+    {
+      key: "policy_renewals",
+      component: PolicyRenewalsReport,
+      isValid: (values) => values.dateStart && values.dateEnd,
+      getParams: (values) => {
+        const params = {}
+        if (values.region) {
+          params.requested_region_id = decodeId(values.region.id);
+        }
+        if (values.district) {
+          params.requested_district_id = decodeId(values.district.id);
+        }
+        if (values.product) {
+          params.requested_product_id = decodeId(values.product.id);
+        }
+        if (values.officer) {
+          params.requested_officer_id = decodeId(values.officer.id);
+        }
+        if (values.sorting) {
+          params.requested_sorting = values.sorting;
+        }
+        params.date_start = values.dateStart;
+        params.date_end = values.dateEnd;
+        return params;
+      },
+    },
+  ],
   "refs": [
     { key: "policy.PolicyOfficerPicker", ref: PolicyOfficerPicker },
     { key: "policy.PolicyOfficerPicker.projection", ref: ["id", "uuid", "code", "lastName", "otherNames"] },
@@ -51,7 +80,7 @@ const DEFAULT_CONFIG = {
     },
   ],
   "insuree.EnquiryDialog": [FamilyOrInsureePoliciesSummary, InsureeEligibilityEnquiry, InsureeEligibilitySummary],
-  "insuree.FamilyOverview.panels": [FamilyOrInsureePoliciesSummary],  
+  "insuree.FamilyOverview.panels": [FamilyOrInsureePoliciesSummary],
   "insuree.FamilyOverview.mutations": [policyMutation]
 }
 
