@@ -3,9 +3,11 @@ import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 import { injectIntl } from "react-intl";
 import clsx from "clsx";
+
 import { withTheme, withStyles } from "@material-ui/core/styles";
 import { Divider, Grid, Paper, Typography, FormControlLabel, Checkbox, IconButton } from "@material-ui/core";
 import { Add as AddIcon, Autorenew as RenewIcon, Delete as DeleteIcon, Pause as SuspendIcon } from "@material-ui/icons";
+
 import {
   Table,
   PagedDataHandler,
@@ -22,8 +24,8 @@ import {
   journalize,
 } from "@openimis/fe-core";
 import { fetchFamilyOrInsureePolicies, selectPolicy, deletePolicy, suspendPolicy } from "../actions";
-import { policyLabel, canDeletePolicy, canSuspendPolicy, canRenewPolicy } from "../utils/utils";
 import { RIGHT_POLICY_ADD } from "../constants";
+import { policyLabel, canDeletePolicy, canSuspendPolicy, canRenewPolicy } from "../utils/utils";
 
 const styles = (theme) => ({
   paper: {
@@ -47,6 +49,17 @@ const styles = (theme) => ({
 });
 
 class FamilyOrInsureePoliciesSummary extends PagedDataHandler {
+  state = {
+    page: 0,
+    pageSize: this.props.modulesManager.getConf(
+      "fe-policy",
+      "familyOrInsureePoliciesSummary.defaultPageSize",
+      5
+    ),
+    afterCursor: null,
+    beforeCursor: null,
+  };
+
   constructor(props) {
     super(props);
     this.rowsPerPageOptions = props.modulesManager.getConf(
@@ -59,15 +72,29 @@ class FamilyOrInsureePoliciesSummary extends PagedDataHandler {
       "familyOrInsureePoliciesSummary.defaultPageSize",
       5
     );
-    this.showBalance = props.modulesManager.getConf("fe-policy", "familyOrInsureePoliciesSummary.showBalance", false);
+    this.showBalance = props.modulesManager.getConf(
+      "fe-policy",
+      "familyOrInsureePoliciesSummary.showBalance",
+      false
+    );
+    this.onlyActiveOrLastExpired = props.modulesManager.getConf(
+      "fe-policy",
+      "familyOrInsureePoliciesSummary.onlyActiveOrLastExpired",
+      true
+    );
+    this.orderByExpiryDate = props.modulesManager.getConf(
+      "fe-policy",
+      "familyOrInsureePoliciesSummary.orderByExpiryDate",
+      "expiryDate"
+    );
   }
 
   componentDidMount() {
     this.setState(
       {
         confirmedAction: null,
-        onlyActiveOrLastExpired: true,
-        orderBy: "expiryDate",
+        onlyActiveOrLastExpired: this.onlyActiveOrLastExpired,
+        orderBy: this.orderByExpiryDate,
       },
       (e) => this.query()
     );

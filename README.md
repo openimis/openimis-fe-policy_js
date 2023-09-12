@@ -56,4 +56,5 @@ None
 * `state.insuree`, loading insuree policies (,eligibility,...)
 
 ## Configurations Options
-None
+- `familyOrInsureePoliciesSummary.orderByExpiryDate`: Allows to set whether you want to sort policies by expiry date in ascending or descending order. Default: __"expiryDate"__ which means ascending order.
+- `familyOrInsureePoliciesSummary.onlyActiveOrLastExpired`: Enables to choose whether you want to display only active and the last expired policies, or all. Default: __true__. 
