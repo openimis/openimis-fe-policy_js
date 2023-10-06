@@ -342,13 +342,14 @@ class FamilyOrInsureePoliciesSummary extends PagedDataHandler {
       insuree,
       readOnly,
       className,
+      hideAddPolicyButton = false,
     } = this.props;
     if ((!family || !family.uuid) && (!insuree || !insuree.uuid)) {
       return null;
     }
 
     let actions =
-      !!readOnly || !rights.includes(RIGHT_POLICY_ADD)
+      hideAddPolicyButton || !!readOnly || !rights.includes(RIGHT_POLICY_ADD) 
         ? []
         : [
             {
