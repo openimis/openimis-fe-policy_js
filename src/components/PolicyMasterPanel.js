@@ -202,6 +202,11 @@ class PolicyMasterPanel extends FormPanel {
         ),
       });
     }
+    const minimumPolicyEffectiveDate = this.props.modulesManager.getConf(
+      "fe-policy",
+      "minimumPolicyEffectiveDate",
+      0
+    );
 
     return (
       <Grid container>
@@ -238,6 +243,13 @@ class PolicyMasterPanel extends FormPanel {
                   value={!!edited ? edited.enrollDate : null}
                   module="policy"
                   label="Policy.enrollDate"
+                  minDate={
+                    !!minimumPolicyEffectiveDate
+                      ? new Date().setDate(
+                          new Date().getDate() - minimumPolicyEffectiveDate
+                        )
+                      : undefined
+                  }
                   readOnly={readOnly}
                   required={true}
                   onChange={(v) => this.updateAttribute("enrollDate", v)}
@@ -311,7 +323,11 @@ class PolicyMasterPanel extends FormPanel {
                   readOnly={readOnly}
                   withPlaceholder={true}
                   withLabel={true}
-                  label={formatMessage(intl, "policy", "PolicyOfficerPicker.label")}
+                  label={formatMessage(
+                    intl,
+                    "policy",
+                    "PolicyOfficerPicker.label"
+                  )}
                   placeholder={formatMessage(
                     intl,
                     "policy",
