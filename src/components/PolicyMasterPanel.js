@@ -48,6 +48,16 @@ const POLICY_POLICY_CONTRIBUTION_KEY = "policy.Policy";
 const POLICY_POLICY_PANELS_CONTRIBUTION_KEY = "policy.Policy.panels";
 
 class PolicyMasterPanel extends FormPanel {
+  constructor(props){
+    super(props);
+  
+    this.minimumPolicyEffectiveDate = this.props.modulesManager.getConf(
+      "fe-policy",
+      "minimumPolicyEffectiveDate",
+      0
+    );
+  }
+
   componentDidUpdate(prevProps, prevState, snapshot) {
     if (!prevProps.confirmed && this.props.confirmed) {
       this.state.confirmedAction();
@@ -202,11 +212,6 @@ class PolicyMasterPanel extends FormPanel {
         ),
       });
     }
-    const minimumPolicyEffectiveDate = this.props.modulesManager.getConf(
-      "fe-policy",
-      "minimumPolicyEffectiveDate",
-      0
-    );
 
     return (
       <Grid container>
@@ -244,9 +249,9 @@ class PolicyMasterPanel extends FormPanel {
                   module="policy"
                   label="Policy.enrollDate"
                   minDate={
-                    !!minimumPolicyEffectiveDate
+                    !!this.minimumPolicyEffectiveDate
                       ? new Date().setDate(
-                          new Date().getDate() - minimumPolicyEffectiveDate
+                          new Date().getDate() - this.minimumPolicyEffectiveDate
                         )
                       : undefined
                   }
