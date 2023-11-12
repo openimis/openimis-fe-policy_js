@@ -217,6 +217,7 @@ class FamilyOrInsureePoliciesSummary extends PagedDataHandler {
     let h = [
       "policies.productCode",
       "policies.productName",
+      "policies.enrolmentDate",
       "policies.expiryDate",
       "policies.status",
       "policies.deduction",
@@ -246,6 +247,7 @@ class FamilyOrInsureePoliciesSummary extends PagedDataHandler {
     let a = [
       this.sorter("productCode"),
       this.sorter("productName"),
+      this.sorter("enrolmentDate"),
       this.sorter("expiryDate"),
       this.sorter("status"),
       this.sorter("deduction"),
@@ -270,6 +272,7 @@ class FamilyOrInsureePoliciesSummary extends PagedDataHandler {
     let f = [
       (i) => i.productCode,
       (i) => i.productName,
+      (i) => formatDateFromISO(this.props.modulesManager, this.props.intl, i.enrollDate),
       (i) => formatDateFromISO(this.props.modulesManager, this.props.intl, i.expiryDate),
       (i) => formatMessage(this.props.intl, "policy", `policies.status.${i.status}`),
       (i) => i.ded,
