@@ -52,8 +52,35 @@ const DEFAULT_CONFIG = {
   ],
   "refs": [
     { key: "policy.PolicyOfficerPicker", ref: PolicyOfficerPicker },
-    { key: "policy.PolicyOfficerPicker.projection", ref: ["id", "uuid", "code", "lastName", "otherNames"] },
-    { key: "policy.PolicyPicker.projection", ref: ["id", "uuid", "startDate", "product{name, code}", "expiryDate", "value", "sumPremiums"] },
+    {
+      key: "policy.PolicyOfficerPicker.projection",
+      ref: ["id", "uuid", "code", "lastName", "otherNames"],
+    },
+    {
+      key: "policy.PolicyPicker.projection",
+      ref: [
+        "id",
+        "uuid",
+        "startDate",
+        "product{name, code}",
+        "expiryDate",
+        "value",
+        "sumPremiums",
+      ],
+    },
+    {
+      key: "policy.PolicyPicker.projection.withFamily",
+      ref: [
+        "id",
+        "uuid",
+        "startDate",
+        "product{name, code}",
+        "expiryDate",
+        "value",
+        "sumPremiums",
+        "family{id, uuid, headInsuree{chfId, lastName, otherNames, dob}}",
+      ],
+    },
     { key: "policy.PolicyOfficerPicker.sort", ref: 'officer__code' },
     { key: "policy.PolicyStatusPicker", ref: PolicyStatusPicker },
     { key: "policy.PolicyStatusPicker.projection", ref: null },
