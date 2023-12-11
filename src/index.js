@@ -16,6 +16,7 @@ import { reducer } from "./reducer";
 import { RIGHT_POLICY } from "./constants";
 import { policyMutation } from "./utils/utils";
 import PolicyRenewalsReport from "./reports/PolicyRenewalsReport";
+import PolicyPrimaryOperationalIndicatorsReport from "./reports/PolicyPrimaryOperationalIndicatorsReport";
 const ROUTE_POLICY_POLICIES = "policy/policies";
 const ROUTE_POLICY_POLICY = "policy/policy";
 
@@ -46,6 +47,18 @@ const DEFAULT_CONFIG = {
         }
         params.date_start = values.dateStart;
         params.date_end = values.dateEnd;
+        return params;
+      },
+    },
+    {
+      key: "policy_primary_operational_indicators",
+      component: PolicyPrimaryOperationalIndicatorsReport,
+      isValid: (values) => (values) => values.yearMonth,
+      getParams: (values) => {
+        const params = {yearMonth: values.yearMonth}
+        if (values.location) {
+          params.locationId = decodeId(values.location.id);
+        }
         return params;
       },
     },
