@@ -48,6 +48,16 @@ const POLICY_POLICY_CONTRIBUTION_KEY = "policy.Policy";
 const POLICY_POLICY_PANELS_CONTRIBUTION_KEY = "policy.Policy.panels";
 
 class PolicyMasterPanel extends FormPanel {
+  constructor(props){
+    super(props);
+  
+    this.minimumPolicyEffectiveDate = this.props.modulesManager.getConf(
+      "fe-policy",
+      "minimumPolicyEffectiveDate",
+      0
+    );
+  }
+
   componentDidUpdate(prevProps, prevState, snapshot) {
     if (!prevProps.confirmed && this.props.confirmed) {
       this.state.confirmedAction();
@@ -238,6 +248,13 @@ class PolicyMasterPanel extends FormPanel {
                   value={!!edited ? edited.enrollDate : null}
                   module="policy"
                   label="Policy.enrollDate"
+                  minDate={
+                    !!this.minimumPolicyEffectiveDate
+                      ? new Date().setDate(
+                          new Date().getDate() - this.minimumPolicyEffectiveDate
+                        )
+                      : undefined
+                  }
                   readOnly={readOnly}
                   required={true}
                   onChange={(v) => this.updateAttribute("enrollDate", v)}
@@ -301,6 +318,7 @@ class PolicyMasterPanel extends FormPanel {
                       ? decodeId(edited.family?.location?.parent?.parent?.id)
                       : 0
                   }
+                  enrollmentDate={edited?.enrollDate ?? null}
                 />
               </Grid>
               <Grid item xs={3} className={classes.item}>
@@ -311,7 +329,11 @@ class PolicyMasterPanel extends FormPanel {
                   readOnly={readOnly}
                   withPlaceholder={true}
                   withLabel={true}
-                  label={formatMessage(intl, "policy", "PolicyOfficerPicker.label")}
+                  label={formatMessage(
+                    intl,
+                    "policy",
+                    "PolicyOfficerPicker.label"
+                  )}
                   placeholder={formatMessage(
                     intl,
                     "policy",
