@@ -16,6 +16,7 @@ import { reducer } from "./reducer";
 import { RIGHT_POLICY } from "./constants";
 import { policyMutation } from "./utils/utils";
 import PolicyRenewalsReport from "./reports/PolicyRenewalsReport";
+import PolicyPrimaryOperationalIndicatorsReport from "./reports/PolicyPrimaryOperationalIndicatorsReport";
 const ROUTE_POLICY_POLICIES = "policy/policies";
 const ROUTE_POLICY_POLICY = "policy/policy";
 
@@ -49,11 +50,50 @@ const DEFAULT_CONFIG = {
         return params;
       },
     },
+    {
+      key: "policy_primary_operational_indicators",
+      component: PolicyPrimaryOperationalIndicatorsReport,
+      isValid: (values) => (values) => values.yearMonth,
+      getParams: (values) => {
+        const params = {yearMonth: values.yearMonth}
+        if (values.location) {
+          params.locationId = decodeId(values.location.id);
+        }
+        return params;
+      },
+    },
   ],
   "refs": [
     { key: "policy.PolicyOfficerPicker", ref: PolicyOfficerPicker },
-    { key: "policy.PolicyOfficerPicker.projection", ref: ["id", "uuid", "code", "lastName", "otherNames"] },
-    { key: "policy.PolicyPicker.projection", ref: ["id", "uuid", "startDate", "product{name, code}", "expiryDate", "value", "sumPremiums"] },
+    {
+      key: "policy.PolicyOfficerPicker.projection",
+      ref: ["id", "uuid", "code", "lastName", "otherNames"],
+    },
+    {
+      key: "policy.PolicyPicker.projection",
+      ref: [
+        "id",
+        "uuid",
+        "startDate",
+        "product{name, code}",
+        "expiryDate",
+        "value",
+        "sumPremiums",
+      ],
+    },
+    {
+      key: "policy.PolicyPicker.projection.withFamily",
+      ref: [
+        "id",
+        "uuid",
+        "startDate",
+        "product{name, code}",
+        "expiryDate",
+        "value",
+        "sumPremiums",
+        "family{id, uuid, headInsuree{chfId, lastName, otherNames, dob}}",
+      ],
+    },
     { key: "policy.PolicyOfficerPicker.sort", ref: 'officer__code' },
     { key: "policy.PolicyStatusPicker", ref: PolicyStatusPicker },
     { key: "policy.PolicyStatusPicker.projection", ref: null },
