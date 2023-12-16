@@ -7,6 +7,7 @@
   "policy.policies.enrollDate": "Enroll Date",
   "policy.policies.effectiveDate": "Effective Date",
   "policy.policies.expiryDate": "Expiry Date",
+  "policy.policies.enrolmentDate": "Enrolment Date",
   "policy.policies.officer": "Enrollment Officer",
   "policy.policies.status": "Status",
   "policy.policies.status.0": "",
@@ -121,5 +122,16 @@
   "policy.policyValues.alert.title": "Policy Value Warning:",
   "policy.policyValues.alert.message": "The family has more Insurees than the maximum number of members allowed in the selected product. However, the policy can still be created. Do you want to continue?",
   "policy.dialogActions.continue": "Continue",
-  "policy.dialogActions.goBack": "Go back"
+  "policy.dialogActions.goBack": "Go back",
+  "policy.PolicyRenewalsReport.dateStart": "Date From",
+  "policy.PolicyRenewalsReport.dateEnd": "Date To",
+  "policy.PolicyRenewalsReport.region": "Region",
+  "policy.PolicyRenewalsReport.district": "District",
+  "policy.PolicyRenewalsReport.product": "Product",
+  "policy.PolicyRenewalsReport.officer": "Officer",
+  "policy.PolicyRenewalsReport.sorting": "Sorting",
+  "policy.PolicyRenewalsReport.sorting.null": "Any",
+  "policy.PolicyRenewalsReport.sorting.D": "By renewal date",
+  "policy.PolicyRenewalsReport.sorting.R": "By receipt number",
+  "policy.PolicyRenewalsReport.sorting.O": "By enrollment officer"
 }

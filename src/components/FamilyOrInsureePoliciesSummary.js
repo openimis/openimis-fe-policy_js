@@ -3,9 +3,11 @@ import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 import { injectIntl } from "react-intl";
 import clsx from "clsx";
+
 import { withTheme, withStyles } from "@material-ui/core/styles";
 import { Divider, Grid, Paper, Typography, FormControlLabel, Checkbox, IconButton } from "@material-ui/core";
 import { Add as AddIcon, Autorenew as RenewIcon, Delete as DeleteIcon, Pause as SuspendIcon } from "@material-ui/icons";
+
 import {
   Table,
   PagedDataHandler,
@@ -22,8 +24,8 @@ import {
   journalize,
 } from "@openimis/fe-core";
 import { fetchFamilyOrInsureePolicies, selectPolicy, deletePolicy, suspendPolicy } from "../actions";
-import { policyLabel, canDeletePolicy, canSuspendPolicy, canRenewPolicy } from "../utils/utils";
 import { RIGHT_POLICY_ADD } from "../constants";
+import { policyLabel, canDeletePolicy, canSuspendPolicy, canRenewPolicy } from "../utils/utils";
 
 const styles = (theme) => ({
   paper: {
@@ -47,6 +49,17 @@ const styles = (theme) => ({
 });
 
 class FamilyOrInsureePoliciesSummary extends PagedDataHandler {
+  state = {
+    page: 0,
+    pageSize: this.props.modulesManager.getConf(
+      "fe-policy",
+      "familyOrInsureePoliciesSummary.defaultPageSize",
+      5
+    ),
+    afterCursor: null,
+    beforeCursor: null,
+  };
+
   constructor(props) {
     super(props);
     this.rowsPerPageOptions = props.modulesManager.getConf(
@@ -59,15 +72,29 @@ class FamilyOrInsureePoliciesSummary extends PagedDataHandler {
       "familyOrInsureePoliciesSummary.defaultPageSize",
       5
     );
-    this.showBalance = props.modulesManager.getConf("fe-policy", "familyOrInsureePoliciesSummary.showBalance", false);
+    this.showBalance = props.modulesManager.getConf(
+      "fe-policy",
+      "familyOrInsureePoliciesSummary.showBalance",
+      false
+    );
+    this.onlyActiveOrLastExpired = props.modulesManager.getConf(
+      "fe-policy",
+      "familyOrInsureePoliciesSummary.onlyActiveOrLastExpired",
+      true
+    );
+    this.orderByExpiryDate = props.modulesManager.getConf(
+      "fe-policy",
+      "familyOrInsureePoliciesSummary.orderByExpiryDate",
+      "expiryDate"
+    );
   }
 
   componentDidMount() {
     this.setState(
       {
         confirmedAction: null,
-        onlyActiveOrLastExpired: true,
-        orderBy: "expiryDate",
+        onlyActiveOrLastExpired: this.onlyActiveOrLastExpired,
+        orderBy: this.orderByExpiryDate,
       },
       (e) => this.query()
     );
@@ -190,6 +217,7 @@ class FamilyOrInsureePoliciesSummary extends PagedDataHandler {
     let h = [
       "policies.productCode",
       "policies.productName",
+      "policies.enrolmentDate",
       "policies.expiryDate",
       "policies.status",
       "policies.deduction",
@@ -219,6 +247,7 @@ class FamilyOrInsureePoliciesSummary extends PagedDataHandler {
     let a = [
       this.sorter("productCode"),
       this.sorter("productName"),
+      this.sorter("enrolmentDate"),
       this.sorter("expiryDate"),
       this.sorter("status"),
       this.sorter("deduction"),
@@ -243,6 +272,7 @@ class FamilyOrInsureePoliciesSummary extends PagedDataHandler {
     let f = [
       (i) => i.productCode,
       (i) => i.productName,
+      (i) => formatDateFromISO(this.props.modulesManager, this.props.intl, i.enrollDate),
       (i) => formatDateFromISO(this.props.modulesManager, this.props.intl, i.expiryDate),
       (i) => formatMessage(this.props.intl, "policy", `policies.status.${i.status}`),
       (i) => i.ded,
@@ -315,13 +345,14 @@ class FamilyOrInsureePoliciesSummary extends PagedDataHandler {
       insuree,
       readOnly,
       className,
+      hideAddPolicyButton = false,
     } = this.props;
     if ((!family || !family.uuid) && (!insuree || !insuree.uuid)) {
       return null;
     }
 
     let actions =
-      !!readOnly || !rights.includes(RIGHT_POLICY_ADD)
+      hideAddPolicyButton || !!readOnly || !rights.includes(RIGHT_POLICY_ADD) 
         ? []
         : [
             {

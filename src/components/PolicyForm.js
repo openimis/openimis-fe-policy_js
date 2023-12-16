@@ -130,13 +130,8 @@ class PolicyForm extends Component {
           lockNew: false,
           newPolicy: !this.props.renew,
           renew: false,
-        },
-        (e) => {
-          if (policy.stage === POLICY_STAGE_RENEW) {
-            policy.startDate = policy.expiryDate;
-            this.props.fetchPolicyValues(policy);
-          }
         }
+       
       );
     } else if (
       !_.isEqual(prevState.policy.product, this.state.policy.product) ||
