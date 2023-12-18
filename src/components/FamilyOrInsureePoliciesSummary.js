@@ -22,6 +22,7 @@ import {
   withHistory,
   coreConfirm,
   journalize,
+  AmountInput,
 } from "@openimis/fe-core";
 import { fetchFamilyOrInsureePolicies, selectPolicy, deletePolicy, suspendPolicy } from "../actions";
 import { RIGHT_POLICY_ADD } from "../constants";
@@ -220,6 +221,7 @@ class FamilyOrInsureePoliciesSummary extends PagedDataHandler {
       "policies.enrolmentDate",
       "policies.expiryDate",
       "policies.status",
+      "policies.policyValue",
       "policies.deduction",
       "policies.hospitalDeduction",
       "policies.nonHospitalDeduction",
@@ -250,6 +252,7 @@ class FamilyOrInsureePoliciesSummary extends PagedDataHandler {
       this.sorter("enrolmentDate"),
       this.sorter("expiryDate"),
       this.sorter("status"),
+      this.sorter("policyValue"),
       this.sorter("deduction"),
       this.sorter("hospitalDeduction"),
       this.sorter("nonHospitalDeduction"),
@@ -275,6 +278,7 @@ class FamilyOrInsureePoliciesSummary extends PagedDataHandler {
       (i) => formatDateFromISO(this.props.modulesManager, this.props.intl, i.enrollDate),
       (i) => formatDateFromISO(this.props.modulesManager, this.props.intl, i.expiryDate),
       (i) => formatMessage(this.props.intl, "policy", `policies.status.${i.status}`),
+      (i) => <AmountInput value={i.policyValue} readOnly />,
       (i) => i.ded,
       (i) => i.dedInPatient,
       (i) => i.dedOutPatient,
