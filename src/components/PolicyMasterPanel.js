@@ -358,8 +358,7 @@ class PolicyMasterPanel extends FormPanel {
                   value={!!edited && edited.status}
                   module="policy"
                   readOnly={true}
-                  withNull={true}
-                  nullLabel="PolicyStatus.none"
+                  withNull={false}
                   onChange={(v) => this.updateAttribute("status", v)}
                 />
               </Grid>
