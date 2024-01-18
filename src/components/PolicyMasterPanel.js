@@ -9,6 +9,8 @@ import {
   Typography,
   Divider,
   IconButton,
+  FormControlLabel,
+  Checkbox,
 } from "@material-ui/core";
 import {
   Autorenew as RenewIcon,
@@ -29,6 +31,7 @@ import {
   PublishedComponent,
   ProgressOrError,
   decodeId,
+  AmountInput,
 } from "@openimis/fe-core";
 import {
   policyLabel,
@@ -48,14 +51,19 @@ const POLICY_POLICY_CONTRIBUTION_KEY = "policy.Policy";
 const POLICY_POLICY_PANELS_CONTRIBUTION_KEY = "policy.Policy.panels";
 
 class PolicyMasterPanel extends FormPanel {
-  constructor(props){
+  constructor(props) {
     super(props);
-  
+
     this.minimumPolicyEffectiveDate = this.props.modulesManager.getConf(
       "fe-policy",
       "minimumPolicyEffectiveDate",
       0
     );
+    this.defaultPaymentType = this.props.modulesManager.getConf(
+      "fe-policy",
+      "defaultPaymentTypeOfContribution",
+      "C"
+    )
   }
 
   componentDidUpdate(prevProps, prevState, snapshot) {
@@ -362,6 +370,62 @@ class PolicyMasterPanel extends FormPanel {
                   onChange={(v) => this.updateAttribute("status", v)}
                 />
               </Grid>
+              <Grid xs={12}>
+                <Grid item xs={3} className={classes.item}>
+                  <FormControlLabel
+                    control={
+                      <Checkbox
+                        color="primary"
+                        checked={edited?.isPaid}
+                        onChange={(e) =>
+                          this.updateAttribute("isPaid", e.target.checked)
+                        }
+                      />
+                    }
+                    disabled={readOnly}
+                    label={formatMessage(
+                      intl,
+                      "policy",
+                      "Policy.payInOneInstallment"
+                    )}
+                  />
+                </Grid>
+              </Grid>
+              {edited?.isPaid && (
+                <>
+                  <Grid item xs={12} className={classes.item}>
+                    <Typography variant="subtitle1">
+                      <FormattedMessage module="policy" id="Policy.contribDetails" />
+                    </Typography>
+                  </Grid>
+                  <Grid item xs={3} className={classes.item}>
+                    <PublishedComponent
+                      pubRef="core.DatePicker"
+                      module="contribution"
+                      value={edited?.enrollDate}
+                      readOnly
+                      label="contribution.payDate"
+                    />
+                  </Grid>
+                  <Grid item xs={3} className={classes.item}>
+                    <AmountInput
+                      module="contribution"
+                      label="contribution.amount"
+                      readOnly
+                      value={edited?.value || 0}
+                      displayZero={true}
+                    />
+                  </Grid>
+                  <Grid item xs={3} className={classes.item}>
+                    <PublishedComponent
+                      pubRef='contribution.PremiumPaymentTypePicker'
+                      withNull={false}
+                      readOnly
+                      value={this.defaultPaymentType}
+                    />
+                  </Grid>
+                </>
+              )}
               <Contributions
                 {...this.props}
                 updateAttribute={this.updateAttribute}

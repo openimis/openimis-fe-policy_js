@@ -205,6 +205,7 @@ function formatPolicyGQL(mm, policy) {
       ? `uuid: "${policy.uuid}"`
       : ""
   }
+  ${policy.isPaid ? `isPaid: ${policy.isPaid}` : ""}
   enrollDate: "${policy.enrollDate}"
   startDate: "${policy.startDate}"
   expiryDate: "${policy.expiryDate}"
