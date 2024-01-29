@@ -5,9 +5,9 @@ import {
   formatPageQueryWithCount,
   formatMutation,
   toISODate,
+  decodeId,
 } from "@openimis/fe-core";
 import _ from "lodash";
-import { decodeId } from "@openimis/fe-core";
 
 const FAMILY_HEAD_PROJECTION =
   "headInsuree{id,uuid,chfId,lastName,otherNames,email,phone,dob,gender{code}}";
