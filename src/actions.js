@@ -206,7 +206,7 @@ function formatPolicyGQL(mm, policy) {
       : ""
   }
   ${policy.isPaid ? `isPaid: ${policy.isPaid}` : ""}
-  ${policy.receipt ? `receipt: ${policy.receipt}` : ""}
+  ${policy.receipt ? `receipt: "${policy.receipt}"` : ""}
   enrollDate: "${policy.enrollDate}"
   startDate: "${policy.startDate}"
   expiryDate: "${policy.expiryDate}"
