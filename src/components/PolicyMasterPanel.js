@@ -32,6 +32,7 @@ import {
   ProgressOrError,
   decodeId,
   AmountInput,
+  TextInput,
 } from "@openimis/fe-core";
 import {
   policyLabel,
@@ -63,7 +64,7 @@ class PolicyMasterPanel extends FormPanel {
       "fe-policy",
       "defaultPaymentTypeOfContribution",
       "C"
-    )
+    );
   }
 
   componentDidUpdate(prevProps, prevState, snapshot) {
@@ -370,33 +371,57 @@ class PolicyMasterPanel extends FormPanel {
                   onChange={(v) => this.updateAttribute("status", v)}
                 />
               </Grid>
-              <Grid xs={12}>
-                <Grid item xs={3} className={classes.item}>
-                  <FormControlLabel
-                    control={
-                      <Checkbox
-                        color="primary"
-                        checked={edited?.isPaid}
-                        onChange={(e) =>
-                          this.updateAttribute("isPaid", e.target.checked)
-                        }
-                      />
-                    }
-                    disabled={readOnly}
-                    label={formatMessage(
-                      intl,
-                      "policy",
-                      "Policy.payInOneInstallment"
-                    )}
-                  />
+              {!edited_id && (
+                <Grid xs={12}>
+                  <Grid item xs={3} className={classes.item}>
+                    <FormControlLabel
+                      control={
+                        <Checkbox
+                          color="primary"
+                          checked={edited?.isPaid}
+                          onChange={(e) =>
+                            this.updateAttribute("isPaid", e.target.checked)
+                          }
+                        />
+                      }
+                      disabled={readOnly}
+                      label={formatMessage(
+                        intl,
+                        "policy",
+                        "Policy.payInOneInstallment"
+                      )}
+                    />
+                  </Grid>
                 </Grid>
-              </Grid>
+              )}
               {edited?.isPaid && (
                 <>
                   <Grid item xs={12} className={classes.item}>
                     <Typography variant="subtitle1">
-                      <FormattedMessage module="policy" id="Policy.contribDetails" />
+                      <FormattedMessage
+                        module="policy"
+                        id="Policy.contribDetails"
+                      />
                     </Typography>
+                    <i>
+                      <Typography variant="body2">
+                        <FormattedMessage
+                          module="policy"
+                          id="Policy.contribDetails.warning"
+                        />
+                      </Typography>
+                    </i>
+                  </Grid>
+                  <Grid item xs={3} className={classes.item}>
+                    <TextInput
+                      module="contribution"
+                      label="contribution.receipt"
+                      readOnly={readOnly}
+                      value={edited?.receipt}
+                      onChange={(receipt) =>
+                        this.updateAttribute("receipt", receipt)
+                      }
+                    />
                   </Grid>
                   <Grid item xs={3} className={classes.item}>
                     <PublishedComponent
@@ -418,7 +443,7 @@ class PolicyMasterPanel extends FormPanel {
                   </Grid>
                   <Grid item xs={3} className={classes.item}>
                     <PublishedComponent
-                      pubRef='contribution.PremiumPaymentTypePicker'
+                      pubRef="contribution.PremiumPaymentTypePicker"
                       withNull={false}
                       readOnly
                       value={this.defaultPaymentType}

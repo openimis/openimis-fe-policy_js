@@ -113,6 +113,7 @@
   "policy.Policy.expiryDate": "Expiry Date",
   "policy.Policy.payInOneInstallment": "Pay in one installment",
   "policy.Policy.contribDetails": "Contribution Details",
+  "policy.Policy.contribDetails.warning": "WARNING: Leaving the receipt field blank triggers auto-generation. Ensure uniqueness.",
   "policy.CreatePolicy.mutationLabel": "Create Policy {policy}",
   "policy.UpdatePolicy.mutationLabel": "Update Policy {policy}",
   "policy.RenewPolicy.mutationLabel": "Renew Policy {policy}",
