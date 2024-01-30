@@ -5,9 +5,9 @@ import {
   formatPageQueryWithCount,
   formatMutation,
   toISODate,
+  decodeId,
 } from "@openimis/fe-core";
 import _ from "lodash";
-import { decodeId } from "@openimis/fe-core";
 
 const FAMILY_HEAD_PROJECTION =
   "headInsuree{id,uuid,chfId,lastName,otherNames,email,phone,dob,gender{code}}";
@@ -205,6 +205,8 @@ function formatPolicyGQL(mm, policy) {
       ? `uuid: "${policy.uuid}"`
       : ""
   }
+  ${policy.isPaid ? `isPaid: ${policy.isPaid}` : ""}
+  ${policy.receipt ? `receipt: "${policy.receipt}"` : ""}
   enrollDate: "${policy.enrollDate}"
   startDate: "${policy.startDate}"
   expiryDate: "${policy.expiryDate}"
