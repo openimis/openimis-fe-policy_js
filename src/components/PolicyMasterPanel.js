@@ -264,6 +264,7 @@ class PolicyMasterPanel extends FormPanel {
                         )
                       : undefined
                   }
+                  maxDate={new Date()}
                   readOnly={readOnly}
                   required={true}
                   onChange={(v) => this.updateAttribute("enrollDate", v)}
