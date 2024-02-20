@@ -213,7 +213,6 @@ class PolicyForm extends Component {
   };
 
   canSave = () => {
-    if (this.state.policy.isPaid && !this.state.policy.payer) return false;
     if (!this.state.policy.family) return false;
     if (!this.state.policy.product) return false;
     if (!this.state.policy.enrollDate) return false;
