@@ -428,7 +428,6 @@ class PolicyMasterPanel extends FormPanel {
                     <PublishedComponent
                       pubRef="payer.PayerPicker"
                       withNull={true}
-                      required={edited?.isPaid}
                       readOnly={readOnly}
                       value={edited?.payer}
                       onChange={(p) => this.updateAttribute("payer", p)}
