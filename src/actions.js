@@ -207,6 +207,7 @@ function formatPolicyGQL(mm, policy) {
   }
   ${policy.isPaid ? `isPaid: ${policy.isPaid}` : ""}
   ${policy.receipt ? `receipt: "${policy.receipt}"` : ""}
+  ${policy.payer ? `payerUuid: "${policy.payer.uuid}"` : ""}
   enrollDate: "${policy.enrollDate}"
   startDate: "${policy.startDate}"
   expiryDate: "${policy.expiryDate}"

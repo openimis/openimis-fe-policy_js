@@ -426,6 +426,16 @@ class PolicyMasterPanel extends FormPanel {
                   </Grid>
                   <Grid item xs={3} className={classes.item}>
                     <PublishedComponent
+                      pubRef="payer.PayerPicker"
+                      withNull={true}
+                      required={edited?.isPaid}
+                      readOnly={readOnly}
+                      value={edited?.payer}
+                      onChange={(p) => this.updateAttribute("payer", p)}
+                    />
+                  </Grid>
+                  <Grid item xs={3} className={classes.item}>
+                    <PublishedComponent
                       pubRef="core.DatePicker"
                       module="contribution"
                       value={edited?.enrollDate}
