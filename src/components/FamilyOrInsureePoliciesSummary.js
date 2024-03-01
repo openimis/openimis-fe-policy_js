@@ -202,7 +202,13 @@ class FamilyOrInsureePoliciesSummary extends PagedDataHandler {
   }
 
   onChangeSelection = (i) => {
-    this.props.selectPolicy(i[0] || null);
+    const { selectPolicy, disableSelection } = this.props;
+
+    if (disableSelection) {
+      return;
+    }
+
+    selectPolicy(i[0] || null);
   };
 
   toggleCheckbox = (key) => {
@@ -353,6 +359,7 @@ class FamilyOrInsureePoliciesSummary extends PagedDataHandler {
       readOnly,
       className,
       hideAddPolicyButton = false,
+      disableSelection,
     } = this.props;
     if ((!family || !family.uuid) && (!insuree || !insuree.uuid)) {
       return null;
@@ -417,7 +424,7 @@ class FamilyOrInsureePoliciesSummary extends PagedDataHandler {
           items={policies}
           fetching={fetchingPolicies}
           error={errorPolicies}
-          withSelection={"single"}
+          withSelection={disableSelection ? false : "single"}
           onChangeSelection={this.onChangeSelection}
           onDoubleClick={this.onDoubleClick}
           withPagination={true}
