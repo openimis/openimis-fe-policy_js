@@ -316,7 +316,7 @@ class FamilyOrInsureePoliciesSummary extends PagedDataHandler {
       readOnly,
       className,
     } = this.props;
-    if (((!family || !family.uuid) && (!insuree || !insuree.uuid) )|| (!!family && !!family.headInsuree && family.headInsuree.marital == "P")) {
+    if (((!family || !family.uuid) && (!insuree || !insuree.uuid) )|| (!!family.familyType && family.familyType.code == 'P')) {
       return null;
     }
 
