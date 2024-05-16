@@ -5,12 +5,11 @@ import {
   formatPageQueryWithCount,
   formatMutation,
   toISODate,
+  decodeId,
 } from "@openimis/fe-core";
 import _ from "lodash";
-import { decodeId } from "@openimis/fe-core";
 
 const FAMILY_HEAD_PROJECTION = "headInsuree{id,uuid,chfId,marital,lastName,otherNames,email,phone,dob,gender{code}}";
-
 const POLICY_BY_FAMILY_OR_INSUREE_PROJECTION = [
   "policyUuid",
   "productCode",
@@ -167,7 +166,7 @@ export function fetchPolicyFull(mm, policy_uuid) {
   ];
   const payload = formatPageQuery(
     "policies",
-    [`uuid: "${policy_uuid}"`, 'showHistory: true'],
+    [`uuid: "${policy_uuid}"`, "showHistory: true"],
     projections
   );
   return graphql(payload, "POLICY_POLICY");
@@ -204,6 +203,9 @@ function formatPolicyGQL(mm, policy) {
       ? `uuid: "${policy.uuid}"`
       : ""
   }
+  ${policy.isPaid ? `isPaid: ${policy.isPaid}` : ""}
+  ${policy.receipt ? `receipt: "${policy.receipt}"` : ""}
+  ${policy.payer ? `payerUuid: "${policy.payer.uuid}"` : ""}
   enrollDate: "${policy.enrollDate}"
   startDate: "${policy.startDate}"
   expiryDate: "${policy.expiryDate}"
@@ -323,6 +325,10 @@ export function fetchFamily(mm, familyUuid, headInsureeChfId) {
   } else {
     filters.push(`headInsuree_ChfId: "${headInsureeChfId}"`);
   }
-  const payload = formatPageQuery("families", filters, FAMILY_FULL_PROJECTION(mm));
+  const payload = formatPageQuery(
+    "families",
+    filters,
+    FAMILY_FULL_PROJECTION(mm)
+  );
   return graphql(payload, "INSUREE_FAMILY_OVERVIEW");
-};
+}

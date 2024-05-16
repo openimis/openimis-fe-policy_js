@@ -52,6 +52,7 @@ class PolicyForm extends Component {
     policy.stage = POLICY_STAGE_NEW;
     policy.enrollDate = toISODate(moment().toDate());
     policy.jsonExt = {};
+    policy.isPaid = false;
     if (
       !!this.props.family &&
       this.props.family.uuid === this.props.family_uuid
@@ -130,13 +131,8 @@ class PolicyForm extends Component {
           lockNew: false,
           newPolicy: !this.props.renew,
           renew: false,
-        },
-        (e) => {
-          if (policy.stage === POLICY_STAGE_RENEW) {
-            policy.startDate = policy.expiryDate;
-            this.props.fetchPolicyValues(policy);
-          }
         }
+       
       );
     } else if (
       !_.isEqual(prevState.policy.product, this.state.policy.product) ||
