@@ -22,6 +22,7 @@ import {
   withHistory,
   coreConfirm,
   journalize,
+  AmountInput,
 } from "@openimis/fe-core";
 import { fetchFamilyOrInsureePolicies, selectPolicy, deletePolicy, suspendPolicy } from "../actions";
 import { RIGHT_POLICY_ADD } from "../constants";
@@ -201,7 +202,13 @@ class FamilyOrInsureePoliciesSummary extends PagedDataHandler {
   }
 
   onChangeSelection = (i) => {
-    this.props.selectPolicy(i[0] || null);
+    const { selectPolicy, disableSelection } = this.props;
+
+    if (disableSelection) {
+      return;
+    }
+
+    selectPolicy(i[0] || null);
   };
 
   toggleCheckbox = (key) => {
@@ -217,9 +224,11 @@ class FamilyOrInsureePoliciesSummary extends PagedDataHandler {
     let h = [
       "policies.productCode",
       "policies.productName",
+      "policies.effectiveDate",
       "policies.enrolmentDate",
       "policies.expiryDate",
       "policies.status",
+      "policies.policyValue",
       "policies.deduction",
       "policies.hospitalDeduction",
       "policies.nonHospitalDeduction",
@@ -247,9 +256,11 @@ class FamilyOrInsureePoliciesSummary extends PagedDataHandler {
     let a = [
       this.sorter("productCode"),
       this.sorter("productName"),
+      this.sorter("effectiveDate"),
       this.sorter("enrolmentDate"),
       this.sorter("expiryDate"),
       this.sorter("status"),
+      this.sorter("policyValue"),
       this.sorter("deduction"),
       this.sorter("hospitalDeduction"),
       this.sorter("nonHospitalDeduction"),
@@ -272,9 +283,11 @@ class FamilyOrInsureePoliciesSummary extends PagedDataHandler {
     let f = [
       (i) => i.productCode,
       (i) => i.productName,
+      (i) => formatDateFromISO(this.props.modulesManager, this.props.intl, i.effectiveDate),
       (i) => formatDateFromISO(this.props.modulesManager, this.props.intl, i.enrollDate),
       (i) => formatDateFromISO(this.props.modulesManager, this.props.intl, i.expiryDate),
       (i) => formatMessage(this.props.intl, "policy", `policies.status.${i.status}`),
+      (i) => <AmountInput value={i.policyValue} readOnly />,
       (i) => i.ded,
       (i) => i.dedInPatient,
       (i) => i.dedOutPatient,
@@ -346,6 +359,7 @@ class FamilyOrInsureePoliciesSummary extends PagedDataHandler {
       readOnly,
       className,
       hideAddPolicyButton = false,
+      disableSelection,
     } = this.props;
     if (((!family || !family.uuid) && (!insuree || !insuree.uuid) )|| (!!family.familyType && family.familyType.code == 'P')) {
       return null;
@@ -410,7 +424,7 @@ class FamilyOrInsureePoliciesSummary extends PagedDataHandler {
           items={policies}
           fetching={fetchingPolicies}
           error={errorPolicies}
-          withSelection={"single"}
+          withSelection={disableSelection ? false : "single"}
           onChangeSelection={this.onChangeSelection}
           onDoubleClick={this.onDoubleClick}
           withPagination={true}
