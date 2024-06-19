@@ -116,6 +116,18 @@ export function serviceEligibilityClear() {
     dispatch({ type: `POLICY_INSUREE_SERVICE_ELIGIBILITY_CLEAR` });
   };
 }
+export function print(id) {
+  return async (dispatch) => {
+    try {
+      const url = '../../api/report/carte_amg/pdf/?insureeids=' + id;
+      const response = window.open(url, "_blank");
+      return response;
+    } catch (err) {
+      console.error(err);
+    }
+  }
+}
+
 
 export function fetchPolicySummaries(mm, filters) {
   let projections = [
