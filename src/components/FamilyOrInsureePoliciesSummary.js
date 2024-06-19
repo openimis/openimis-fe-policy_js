@@ -361,7 +361,7 @@ class FamilyOrInsureePoliciesSummary extends PagedDataHandler {
       hideAddPolicyButton = false,
       disableSelection,
     } = this.props;
-    if ((!family || !family.uuid) && (!insuree || !insuree.uuid)) {
+    if (((!family || !family.uuid) && (!insuree || !insuree.uuid) )|| (!!family.familyType && family.familyType.code == 'P')) {
       return null;
     }
 

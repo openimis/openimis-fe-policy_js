@@ -9,9 +9,7 @@ import {
 } from "@openimis/fe-core";
 import _ from "lodash";
 
-const FAMILY_HEAD_PROJECTION =
-  "headInsuree{id,uuid,chfId,lastName,otherNames,email,phone,dob,gender{code}}";
-
+const FAMILY_HEAD_PROJECTION = "headInsuree{id,uuid,chfId,marital,lastName,otherNames,email,phone,dob,gender{code}}";
 const POLICY_BY_FAMILY_OR_INSUREE_PROJECTION = [
   "policyUuid",
   "productCode",
@@ -118,6 +116,18 @@ export function serviceEligibilityClear() {
     dispatch({ type: `POLICY_INSUREE_SERVICE_ELIGIBILITY_CLEAR` });
   };
 }
+export function print(id) {
+  return async (dispatch) => {
+    try {
+      const url = '../../api/report/carte_amg/pdf/?insureeids=' + id;
+      const response = window.open(url, "_blank");
+      return response;
+    } catch (err) {
+      console.error(err);
+    }
+  }
+}
+
 
 export function fetchPolicySummaries(mm, filters) {
   let projections = [
