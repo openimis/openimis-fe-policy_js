@@ -25,7 +25,7 @@ import {
   AmountInput,
 } from "@openimis/fe-core";
 import { fetchFamilyOrInsureePolicies, selectPolicy, deletePolicy, suspendPolicy } from "../actions";
-import { RIGHT_POLICY_ADD } from "../constants";
+import { RIGHT_POLICY_ADD, FAMILY_TYPE_POLYGAMY_CODE } from "../constants";
 import { policyLabel, canDeletePolicy, canSuspendPolicy, canRenewPolicy } from "../utils/utils";
 
 const styles = (theme) => ({
@@ -357,11 +357,12 @@ class FamilyOrInsureePoliciesSummary extends PagedDataHandler {
       family,
       insuree,
       readOnly,
+      edited,
       className,
       hideAddPolicyButton = false,
       disableSelection,
     } = this.props;
-    if (((!family || !family.uuid) && (!insuree || !insuree.uuid) )|| (!!family.familyType && family.familyType.code == 'P')) {
+    if (((!family || !family.uuid) && (!insuree || !insuree.uuid) )|| (!!family.familyType && family.familyType.code == FAMILY_TYPE_POLYGAMY_CODE) || (!!edited && !!edited.familyType && edited.familyType.code == FAMILY_TYPE_POLYGAMY_CODE )) {
       return null;
     }
 
