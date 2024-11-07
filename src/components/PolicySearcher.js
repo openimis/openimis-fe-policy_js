@@ -22,7 +22,7 @@ import {
   Searcher,
   PublishedComponent,
   AmountInput,
-  decodeId,
+
 } from "@openimis/fe-core";
 import { fetchPolicySummaries, deletePolicy, suspendPolicy } from "../actions";
 import {
@@ -50,11 +50,7 @@ class PolicySearcher extends Component {
       "policyFilter.defaultPageSize",
       10
     );
-    this.locationLevels = this.props.modulesManager.getConf(
-      "fe-location",
-      "location.Location.MaxLevels",
-      4
-    );
+   
   }
 
   componentDidUpdate(prevProps, prevState, snapshot) {
