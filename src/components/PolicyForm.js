@@ -54,6 +54,7 @@ class PolicyForm extends Component {
     policy.enrollDate = toISODate(moment().toDate());
     policy.jsonExt = {};
     policy.isPaid = false;
+    policy.periodicity = "M"
     if (
       !!this.props.family &&
       this.props.family.uuid === this.props.family_uuid
@@ -83,6 +84,7 @@ class PolicyForm extends Component {
     policy.family = from_policy.family;
     policy.product = from_policy.product;
     policy.contributionPlan= from_policy.contributionPlan
+    policy.periodicity = "M"
     return policy;
   }
 
