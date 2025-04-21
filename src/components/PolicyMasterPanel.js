@@ -68,7 +68,7 @@ class PolicyMasterPanel extends FormPanel {
     this.canShowSignatureDate = this.props.modulesManager.getConf(
       "fe-policy",
       "canShowSignatureDate",
-      true
+      false
     );
   }
 
