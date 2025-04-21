@@ -149,6 +149,10 @@
   "policy.Periodicity.Q": "Quarterly",
   "policy.Periodicity.Y": "Yearly",
   "policy.Periodicity.S": "Semester",
-  "policy.Policy.signatureDate": "Signature Date"
-
+  "policy.Policy.signatureDate": "Signature Date",
+  "policy.PaymentDay": "Payment Day",
+  "policy.PaymentDay.5": "5",
+  "policy.PaymentDay.10": "10",
+  "policy.PaymentDay.15": "15",
+  "policy.PaymentDay.20": "20"
 }

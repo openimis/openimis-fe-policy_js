@@ -32,7 +32,8 @@ const POLICY_BY_FAMILY_OR_INSUREE_PROJECTION = [
   "ceilingInPatient",
   "ceilingOutPatient",
   "periodicity",
-  "signatureDate"
+  "signatureDate",
+  "paymentDay"
 ];
 const CONTRIBUTIONPLAN_FULL_PROJECTION = (modulesManager) => [
   "id",
@@ -170,7 +171,8 @@ export function fetchPolicySummaries(mm, filters) {
     "validityFrom",
     "validityTo",
     "periodicity",
-    "signatureDate"
+    "signatureDate",
+    "paymentDay"
   ];
   const payload = formatPageQueryWithCount("policies", filters, projections);
   return graphql(payload, "POLICY_POLICIES");
@@ -199,7 +201,8 @@ export function fetchPolicyFull(mm, policy_uuid) {
     "validityFrom",
     "validityTo",
     "periodicity",
-    "signatureDate"
+    "signatureDate",
+    "paymentDay"
   ];
   const payload = formatPageQuery(
     "policies",
@@ -262,6 +265,7 @@ function formatPolicyGQL(mm, policy) {
   officerId: ${decodeId(policy.officer.id)}
   ${policy.periodicity? `periodicity: "${policy.periodicity}"` : ""}
   ${policy.signatureDate? `signatureDate: "${policy.signatureDate}"` : ""}
+  ${policy.paymentDay? `paymentDay: "${policy.paymentDay}"` : ""}
 `;
 }
 

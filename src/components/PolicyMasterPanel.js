@@ -68,7 +68,7 @@ class PolicyMasterPanel extends FormPanel {
     this.canShowSignatureDate = this.props.modulesManager.getConf(
       "fe-policy",
       "canShowSignatureDate",
-      false
+      true
     );
   }
 
@@ -398,6 +398,17 @@ class PolicyMasterPanel extends FormPanel {
                   withNull={false}
                   required={!!edited.signatureDate ? true : false}
                   onChange={(v) => this.updateAttribute("periodicity", v)}
+                />
+              </Grid>
+              <Grid item xs={3} className={classes.item}>
+                <PublishedComponent
+                  pubRef="policy.PolicyPaymentDayPicker"
+                  value={!!edited && edited.paymentDay}
+                  module="policy"
+                  readOnly={readOnly}
+                  withNull={false}
+                  required={!!edited.signatureDate ? true : false}
+                  onChange={(v) => this.updateAttribute("paymentDay", v)}
                 />
               </Grid>
               {!edited_id && (
