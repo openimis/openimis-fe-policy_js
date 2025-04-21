@@ -400,6 +400,17 @@ class PolicyMasterPanel extends FormPanel {
                   onChange={(v) => this.updateAttribute("periodicity", v)}
                 />
               </Grid>
+              <Grid item xs={3} className={classes.item}>
+                <PublishedComponent
+                  pubRef="policy.PolicyPaymentDayPicker"
+                  value={!!edited && edited.paymentDay}
+                  module="policy"
+                  readOnly={readOnly}
+                  withNull={false}
+                  required={!!edited.signatureDate ? true : false}
+                  onChange={(v) => this.updateAttribute("paymentDay", v)}
+                />
+              </Grid>
               {!edited_id && (
                 <Grid xs={12}>
                   <Grid item xs={3} className={classes.item}>

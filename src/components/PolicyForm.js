@@ -55,6 +55,7 @@ class PolicyForm extends Component {
     policy.jsonExt = {};
     policy.isPaid = false;
     policy.periodicity = "M"
+    policy.paymentDay = 5
     if (
       !!this.props.family &&
       this.props.family.uuid === this.props.family_uuid
@@ -85,6 +86,7 @@ class PolicyForm extends Component {
     policy.product = from_policy.product;
     policy.contributionPlan= from_policy.contributionPlan
     policy.periodicity = "M"
+    policy.paymentDay = 5
     return policy;
   }
 
@@ -227,6 +229,7 @@ class PolicyForm extends Component {
     if (!this.state.policy.value) return false;
     if (!this.state.policy.officer) return false;
     if (!!this.state.policy.signatureDate && !this.state.policy.periodicity) return false;
+    if (!!this.state.policy.signatureDate && !this.state.policy.paymentDay) return false;
     return true;
   };
 
