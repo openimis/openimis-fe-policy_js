@@ -226,6 +226,7 @@ class PolicyForm extends Component {
     if (!this.state.policy.expiryDate) return false;
     if (!this.state.policy.value) return false;
     if (!this.state.policy.officer) return false;
+    if (!!this.state.policy.signatureDate && !this.state.policy.periodicity) return false;
     return true;
   };
 

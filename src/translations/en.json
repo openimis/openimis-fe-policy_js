@@ -148,5 +148,7 @@
   "policy.Periodicity.M": "Monthly",
   "policy.Periodicity.Q": "Quarterly",
   "policy.Periodicity.Y": "Yearly",
-  "policy.Periodicity.S": "Semester"
+  "policy.Periodicity.S": "Semester",
+  "policy.Policy.signatureDate": "Signature Date"
+
 }

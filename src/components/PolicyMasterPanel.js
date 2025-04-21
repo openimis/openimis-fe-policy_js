@@ -65,6 +65,11 @@ class PolicyMasterPanel extends FormPanel {
       "defaultPaymentTypeOfContribution",
       "C"
     );
+    this.canShowSignatureDate = this.props.modulesManager.getConf(
+      "fe-policy",
+      "canShowSignatureDate",
+      false
+    );
   }
 
   componentDidUpdate(prevProps, prevState, snapshot) {
@@ -80,10 +85,10 @@ class PolicyMasterPanel extends FormPanel {
     !contributionPlan
       ? this.updateAttributes({
         contributionPlan: null,
-          startDate: null,
-          expiryDate: null,
-          value: null,
-        })
+        startDate: null,
+        expiryDate: null,
+        value: null,
+      })
       : this.updateAttribute("contributionPlan", contributionPlan);
   };
 
@@ -259,8 +264,8 @@ class PolicyMasterPanel extends FormPanel {
                   minDate={
                     !!this.minimumPolicyEffectiveDate
                       ? new Date().setDate(
-                          new Date().getDate() - this.minimumPolicyEffectiveDate
-                        )
+                        new Date().getDate() - this.minimumPolicyEffectiveDate
+                      )
                       : undefined
                   }
                   maxDate={new Date()}
@@ -371,13 +376,27 @@ class PolicyMasterPanel extends FormPanel {
                   onChange={(v) => this.updateAttribute("status", v)}
                 />
               </Grid>
+              {this.canShowSignatureDate && (<Grid item xs={3} className={classes.item}>
+                <PublishedComponent
+                  pubRef="core.DatePicker"
+                  value={!!edited ? edited.signatureDate : null}
+                  module="policy"
+                  label="Policy.signatureDate"
+                  readOnly={readOnly}
+                  required={false}
+                  onChange={(v) => this.updateAttribute("signatureDate", v)}
+                />
+              </Grid>
+              )}
+
               <Grid item xs={3} className={classes.item}>
                 <PublishedComponent
                   pubRef="policy.PolicyPeriodicityPicker"
                   value={!!edited && edited.periodicity}
                   module="policy"
-                  readOnly={false}
+                  readOnly={readOnly}
                   withNull={false}
+                  required={!!edited.signatureDate ? true : false}
                   onChange={(v) => this.updateAttribute("periodicity", v)}
                 />
               </Grid>
