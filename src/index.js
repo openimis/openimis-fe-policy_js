@@ -4,6 +4,7 @@ import PolicyOfficerPicker from "./pickers/PolicyOfficerPicker";
 import PolicyStagePicker from "./pickers/PolicyStagePicker";
 import PolicyContributionPlanPicker from"./pickers/policyContributionPicker"
 import PolicyStatusPicker from "./pickers/PolicyStatusPicker";
+import PolicyPeriodicityPicker from "./pickers/PolicyPeriodicityPicker";
 import PoliciesPage from "./pages/PoliciesPage";
 import PolicyPage from "./pages/PolicyPage";
 import PolicyValuesPanel from "./components/PolicyValuesPanel";
@@ -104,7 +105,7 @@ const DEFAULT_CONFIG = {
     { key: "policy.FamilyOrInsureePoliciesSummary", ref: FamilyOrInsureePoliciesSummary },
     { key: "policy.PolicyContributionPlanPicker", ref: PolicyContributionPlanPicker },
     { key: "policy.InsureeEligibilitySummary", ref: InsureeEligibilitySummary },
-
+    { key: "policy.PolicyPeriodicityPicker", ref: PolicyPeriodicityPicker },
     { key: "policy.InsureeEligibilityEnquiry", ref: InsureeEligibilityEnquiry },
     { key: "policy.InsureePolicyEligibilitySummary", ref: InsureePolicyEligibilitySummary },
     { key: "policy.route.policies", ref: ROUTE_POLICY_POLICIES },
