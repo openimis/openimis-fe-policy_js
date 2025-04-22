@@ -241,7 +241,7 @@ export function fetchPolicyValues(policy) {
   if (!!policy.prevPolicy) {
     params.push(`prevUuid: "${policy.prevPolicy.uuid}"`);
   }
-  let projections = ["policy{startDate expiryDate value paymentDay signatureDate periodicity }", "warnings"];
+  let projections = ["policy{startDate expiryDate value }", "warnings"];
   const payload = formatQuery("policyValues", params, projections);
   return graphql(payload, "POLICY_FETCH_POLICY_VALUES");
 }
