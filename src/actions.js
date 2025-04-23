@@ -266,7 +266,7 @@ function formatPolicyGQL(mm, policy) {
   officerId: ${decodeId(policy.officer.id)}
   ${policy.periodicity? `periodicity: "${policy.periodicity}"` : ""}
   ${policy.signatureDate? `signatureDate: "${policy.signatureDate}"` : ""}
-  ${policy.paymentDay? `paymentDay: "${policy.paymentDay}"` : ""}
+  ${policy.paymentDay? `paymentDay: ${policy.paymentDay}` : ""}
 `;
 }
 
