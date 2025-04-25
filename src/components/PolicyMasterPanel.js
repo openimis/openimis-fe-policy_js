@@ -384,6 +384,7 @@ class PolicyMasterPanel extends FormPanel {
                   label="Policy.signatureDate"
                   readOnly={readOnly}
                   required={false}
+                  minDate={ edited.enrollDate }
                   onChange={(v) => this.updateAttribute("signatureDate", v)}
                 />
               </Grid>
