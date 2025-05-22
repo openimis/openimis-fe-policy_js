@@ -1,3 +1,15 @@
 {
-    "policy.printSelected":"Imprimer la carte AMG "
+    "policy.printSelected": "Imprimer la carte AMG ",
+    "policy.PaymentDay": "Date de paiement",
+    "policy.PaymentDay.5": "5",
+    "policy.PaymentDay.10": "10",
+    "policy.PaymentDay.15": "15",
+    "policy.PaymentDay.20": "20",
+    "policy.Periodicity": "Périodicité",
+    "policy.Periodicity.null": "Tout",
+    "policy.Periodicity.M": "Mensuelle",
+    "policy.Periodicity.Q": "Trimestrielle",
+    "policy.Periodicity.Y": "Annuelle",
+    "policy.Periodicity.S": "Semestrielle",
+    "policy.Policy.signatureDate": "Date de signature"
 }
