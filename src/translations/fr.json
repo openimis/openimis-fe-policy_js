@@ -11,5 +11,7 @@
     "policy.Periodicity.Q": "Trimestrielle",
     "policy.Periodicity.Y": "Annuelle",
     "policy.Periodicity.S": "Semestrielle",
-    "policy.Policy.signatureDate": "Date de signature"
+    "policy.Policy.signatureDate": "Date de signature",
+    "policy.policies.contributionPlanCode": "Code plan de contribution",
+    "policy.policies.contributionPlanName": "Nom"
 }
