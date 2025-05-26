@@ -456,7 +456,7 @@ class PolicySearcher extends Component {
           rowDisabled={this.rowDisabled}
           rowLocked={this.rowLocked}
           onDoubleClick={(i) => !i.clientMutationId && onDoubleClick(i)}
-          withSelection={"multiple"}
+          withSelection={"single"}
         />
       </Fragment>
     );
