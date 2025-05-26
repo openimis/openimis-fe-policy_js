@@ -13,5 +13,7 @@
     "policy.Periodicity.S": "Semestrielle",
     "policy.Policy.signatureDate": "Date de signature",
     "policy.policies.contributionPlanCode": "Code plan de contribution",
-    "policy.policies.contributionPlanName": "Nom"
+    "policy.policies.contributionPlanName": "Nom",
+    "policy.Policy.payInOneInstallment": "Payer en un seul versement",
+    "policy.policies.policyValue": "Policy Value"
 }
