@@ -44,7 +44,7 @@ const PolicyContributionPlanPicker = (props) => {
       onOpen={onOpen}
       filterOptions={filter}
       filterSelectedOptions={filterSelectedOptions}
-      onInputChange={(search) => setFilters({ first: 15, search, applyDefaultValidityFilter: true })}
+      onInputChange={(search) => setFilters({ first: 15, search, applyDefaultValidityFilter: true, isDeleted: false })}
     />
   );
 };
