@@ -191,25 +191,28 @@ class PolicyForm extends Component {
       );
     }
     if (prevState.policy.contributionPlan?.code !== this.state.policy.contributionPlan?.code) {
-      const currentPeriodicity = this.state.policy.periodicity;
       const newCode = this.state.policy.contributionPlan?.code;
-
+      const prevCode = prevState.policy.contributionPlan?.code;
+      const currentPeriodicity = this.state.policy.periodicity;
+      // Cas 1: Passage à AMS → force Y
       if (newCode === "AMS") {
         this.setState({
-          policy: { ...this.state.policy, periodicity: "Y" },
+          policy: {...this.state.policy, periodicity: "Y"},
           isPeriodicityModified: false
         });
       }
-      else if (currentPeriodicity === "Y" &&
-        (!newCode || !["AMOS1", "AMOS2", "AMOS3", "AMOS4"].includes(newCode))) {
+      // Cas 2: Retour de AMS vers AMOSx → conserve Y
+      else if (prevCode === "AMS" && ["AMOS1","AMOS2","AMOS3","AMOS4"].includes(newCode) && currentPeriodicity === "Y") {
       }
-      else if (!this.state.isPeriodicityModified) {
-        const newPeriodicity = this.getDefaultPeriodicity(newCode);
+      // Cas 3: Nouvel AMOSx → met Q par défaut (sauf si déjà modifié)
+      else if (["AMOS1","AMOS2","AMOS3","AMOS4"].includes(newCode) && !this.state.isPeriodicityModified) {
         this.setState({
-          policy: { ...this.state.policy, periodicity: newPeriodicity }
+          policy: {...this.state.policy, periodicity: "Q"},
+          isPeriodicityModified: false
         });
       }
     }
+  
   }
 
   back = (e) => {
