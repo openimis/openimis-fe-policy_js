@@ -292,7 +292,6 @@ class PolicyForm extends Component {
       (!!policy.status && policy.status !== POLICY_STATUS_IDLE) ||
       !!policy.validityTo;
     let pol = this._newPolicy()
-    console.log("new policy ", pol)
     return (
       <Fragment>
         <Helmet
