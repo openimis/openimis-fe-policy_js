@@ -246,23 +246,8 @@ class PolicyForm extends Component {
   canSave = () => {
     if (!this.state.policy.family) return false;
     if (!this.state.policy.product) return false;
-    if (!this.state.policy.enrollDate) return false;
-    if (!this.state.policy.startDate) return false;
-    if (!this.state.policy.expiryDate) return false;
-    if (this.state.policy.product.ageMaximal != null && this.state.policy.product.ageMinimal != null) {
-      const age = this.verifyAge(this.state.dob)
-      const { ageMinimal, ageMaximal } = this.state.policy.product;
-      if (!(ageMinimal === 0 && ageMaximal === 0) && 
-          (age < ageMinimal || age > ageMaximal)) {
-        return false;
-      }
-    } else if (this.state.policy.product.ageMinimal == null && this.state.policy.product.ageMaximal != null && Age >= this.state.policy.product.ageMaximal) {
-      return false;
-    } else if (this.state.policy.product.ageMaximal == null && this.state.policy.product.ageMinimal != null && Age <= this.state.policy.product.ageMinimal) {
-      return false;
-    }
-    if (!this.state.policy.value) return false;
     if (!this.state.policy.officer) return false;
+    if (!this.state.policy.membershipTypeId) return false;
     return true;
   };
 

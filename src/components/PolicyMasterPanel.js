@@ -176,6 +176,7 @@ class PolicyMasterPanel extends FormPanel {
       fetchingPolicyValues,
       errorPolicyValues,
       title = "Policy.details.title",
+      product
     } = this.props;
 
     let actions = [];
@@ -364,6 +365,38 @@ class PolicyMasterPanel extends FormPanel {
               </Grid>
               <Grid item xs={3} className={classes.item}>
                 <PublishedComponent
+                  pubRef="policy.PaymentTypePicker"
+                  value={!!edited && (edited.membershipType? product?.membershipTypes.filter(x => {console.log(x.id , edited.membershipType.id , x.id == edited.membershipType.id ,x); return x.id == edited.membershipType.id}) :  edited.membershipTypeId)}
+                  module="policy"
+                  readOnly={readOnly}
+                  withPlaceholder={true}
+                  withLabel={true}
+                  types={product?.membershipTypes}
+                  label={formatMessage(
+                    intl,
+                    "policy",
+                    "PaymentTypePicker.label"
+                  )}
+                  placeholder={formatMessage(
+                    intl,
+                    "policy",
+                    "PaymentTypePicker.placeholder"
+                  )}
+                  withNull={true}
+                  nullLabel={formatMessage(
+                    intl,
+                    "policy",
+                    "PaymentTypePicker.none"
+                  )}
+                  onChange={(v) => this.updateAttribute("membershipTypeId", v)}
+                  required={true}
+                  villageId={
+                    !!edited.family ? decodeId(edited.family?.location?.id) : 0
+                  }
+                />
+              </Grid>
+              <Grid item xs={3} className={classes.item}>
+                <PublishedComponent
                   pubRef="policy.PolicyStatusPicker"
                   value={!!edited && edited.status}
                   module="policy"
@@ -489,7 +522,7 @@ const mapStateToProps = (state) => ({
   confirmed: state.core.confirmed,
   submittingMutation: state.policy.submittingMutation,
   mutation: state.policy.mutation,
-});
+product: !!state.core && !!state.core.userProduct ? state.core.userProduct[0] : null,});
 
 const mapDispatchToProps = (dispatch) => {
   return bindActionCreators(

@@ -17,6 +17,7 @@ import { RIGHT_POLICY } from "./constants";
 import { policyMutation } from "./utils/utils";
 import PolicyRenewalsReport from "./reports/PolicyRenewalsReport";
 import PolicyPrimaryOperationalIndicatorsReport from "./reports/PolicyPrimaryOperationalIndicatorsReport";
+import PaymentTypePicker from "./pickers/PaymentTypePicker";
 const ROUTE_POLICY_POLICIES = "policy/policies";
 const ROUTE_POLICY_POLICY = "policy/policy";
 
@@ -65,6 +66,7 @@ const DEFAULT_CONFIG = {
   ],
   "refs": [
     { key: "policy.PolicyOfficerPicker", ref: PolicyOfficerPicker },
+    { key: "policy.PaymentTypePicker", ref: PaymentTypePicker },
     {
       key: "policy.PolicyOfficerPicker.projection",
       ref: ["id", "uuid", "code", "lastName", "otherNames"],
@@ -75,7 +77,7 @@ const DEFAULT_CONFIG = {
         "id",
         "uuid",
         "startDate",
-        "product{name, code, maxInstallments}",
+        "product{name, code}",
         "expiryDate",
         "value",
         "sumPremiums",
@@ -87,7 +89,7 @@ const DEFAULT_CONFIG = {
         "id",
         "uuid",
         "startDate",
-        "product{name, code, maxInstallments}",
+        "product{name, code}",
         "expiryDate",
         "value",
         "sumPremiums",

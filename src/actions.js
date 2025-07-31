@@ -20,8 +20,6 @@ const POLICY_BY_FAMILY_OR_INSUREE_PROJECTION = [
   "officerName",
   "enrollDate",
   "effectiveDate",
-  "startDate",
-  "expiryDate",
   "status",
   "policyValue",
   "balance",
@@ -31,6 +29,7 @@ const POLICY_BY_FAMILY_OR_INSUREE_PROJECTION = [
   "ceiling",
   "ceilingInPatient",
   "ceilingOutPatient",
+  "membershipType"
 ];
 
 const FAMILY_FULL_PROJECTION = (mm) => [
@@ -131,14 +130,13 @@ export function fetchPolicySummaries(mm, filters) {
       ])}}`,
     "enrollDate",
     "effectiveDate",
-    "startDate",
-    "expiryDate",
     "stage",
     "status",
     "value",
     "sumPremiums",
     "validityFrom",
     "validityTo",
+    "membershipType"
   ];
   const payload = formatPageQueryWithCount("policies", filters, projections);
   return graphql(payload, "POLICY_POLICIES");
@@ -165,6 +163,7 @@ export function fetchPolicyFull(mm, policy_uuid) {
     "claimDedRems{edges { node {dedG dedIp dedOp remG remIp remOp} } }",
     "validityFrom",
     "validityTo",
+    "membershipType",
   ];
   const payload = formatPageQuery(
     "policies",
@@ -209,13 +208,14 @@ function formatPolicyGQL(mm, policy) {
   ${policy.receipt ? `receipt: "${policy.receipt}"` : ""}
   ${policy.payer ? `payerUuid: "${policy.payer.uuid}"` : ""}
   enrollDate: "${policy.enrollDate}"
-  startDate: "${policy.startDate}"
-  expiryDate: "${policy.expiryDate}"
-  value: "${_.round(policy.value, 2).toFixed(2)}"
   productId: ${decodeId(policy.product.id)}
   familyId: ${decodeId(policy.family.id)}
   officerId: ${decodeId(policy.officer.id)}
-`;
+  membershipTypeId: ${decodeId(policy.membershipTypeId.id)}
+  `;
+  // startDate: "${policy.startDate}"
+  // expiryDate: "${policy.expiryDate}"
+  // value: "${_.round(policy.value, 2).toFixed(2)}"
 }
 
 export function createPolicy(mm, policy, clientMutationLabel) {
