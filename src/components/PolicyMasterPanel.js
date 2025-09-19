@@ -21,7 +21,6 @@ import {
   formatMessage,
   formatMessageWithValues,
   withTooltip,
-  withModulesManager,
   historyPush,
   coreConfirm,
   journalize,
@@ -33,6 +32,7 @@ import {
   decodeId,
   AmountInput,
   TextInput,
+  withModulesManager,
 } from "@openimis/fe-core";
 import {
   policyLabel,
@@ -54,7 +54,11 @@ const POLICY_POLICY_PANELS_CONTRIBUTION_KEY = "policy.Policy.panels";
 class PolicyMasterPanel extends FormPanel {
   constructor(props) {
     super(props);
-
+    this.productsOrContributions = this.props.modulesManager.getConf(
+      "fe-policy",
+      "productsOrContributions",
+      "contributions"
+    );
     this.minimumPolicyEffectiveDate = this.props.modulesManager.getConf(
       "fe-policy",
       "minimumPolicyEffectiveDate",
@@ -306,30 +310,57 @@ class PolicyMasterPanel extends FormPanel {
                   </Grid>
                 ))}
               <Grid item xs={3} className={classes.item}>
-                <PublishedComponent
-                  pubRef="product.ProductPicker"
-                  value={!!edited && edited.product}
-                  module="policy"
-                  readOnly={!!edited_id || readOnly}
-                  withNull={true}
-                  label={formatMessage(intl, "product", "Product")}
-                  withLabel={true}
-                  nullLabel={formatMessage(intl, "product", "Product.none")}
-                  withPlaceholder={true}
-                  placeholder={formatMessage(
-                    intl,
-                    "product",
-                    "ProductPicker.placeholder"
-                  )}
-                  onChange={this._onProductChange}
-                  required={true}
-                  locationId={
-                    !!edited.family
-                      ? decodeId(edited.family?.location?.parent?.parent?.id)
-                      : 0
-                  }
+                {this.productsOrContributions === "products" ? (
+                  <PublishedComponent
+                    pubRef="product.ProductPicker"
+                    value={!!edited && edited.product}
+                    module="policy"
+                    readOnly={!!edited_id || readOnly}
+                    withNull={true}
+                    label={formatMessage(intl, "product", "Product")}
+                    withLabel={true}
+                    nullLabel={formatMessage(intl, "product", "Product.none")}
+                    withPlaceholder={true}
+                    placeholder={formatMessage(
+                      intl,
+                      "product",
+                      "ProductPicker.placeholder"
+                    )}
+                    onChange={this._onProductChange}
+                    required={true}
+                    locationId={
+                      !!edited.family
+                        ? decodeId(edited.family?.location?.parent?.parent?.id)
+                        : 0
+                    }
                   enrollmentDate={edited?.enrollDate ?? null}
-                />
+                  />
+                ) : (
+                  <PublishedComponent
+                    pubRef="contribution.PremiumCategoryPicker"
+                    value={!!edited && edited.contribution}
+                    module="policy"
+                    readOnly={!!edited_id || readOnly}
+                    withNull={true}
+                    label={formatMessage(intl, "contribution", "Contribution")}
+                    withLabel={true}
+                    nullLabel={formatMessage(intl, "contribution", "Contribution.none")}
+                    withPlaceholder={true}
+                    placeholder={formatMessage(
+                      intl,
+                      "contribution",
+                      "ContributionPicker.placeholder"
+                    )}
+                    onChange={this._onContributionChange}
+                    required={true}
+                    locationId={
+                      !!edited.family
+                        ? decodeId(edited.family?.location?.parent?.parent?.id)
+                        : 0
+                    }
+                    enrollmentDate={edited?.enrollDate ?? null}
+                  />
+                )}
               </Grid>
               <Grid item xs={3} className={classes.item}>
                 <PublishedComponent
