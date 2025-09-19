@@ -337,21 +337,21 @@ class PolicyMasterPanel extends FormPanel {
                   />
                 ) : (
                   <PublishedComponent
-                    pubRef="contribution.PremiumCategoryPicker"
-                    value={!!edited && edited.contribution}
+                    pubRef="policy.PolicyContributionPlanPicker"
+                    value={!!edited && edited.contributionPlan}
                     module="policy"
                     readOnly={!!edited_id || readOnly}
                     withNull={true}
-                    label={formatMessage(intl, "contribution", "Contribution")}
+                    label={formatMessage(intl, "contributionPlan", "ContributionPlan")}
                     withLabel={true}
-                    nullLabel={formatMessage(intl, "contribution", "Contribution.none")}
+                    nullLabel={formatMessage(intl, "product", "Product.none")}
                     withPlaceholder={true}
                     placeholder={formatMessage(
                       intl,
-                      "contribution",
-                      "ContributionPicker.placeholder"
+                      "product",
+                      "ProductPicker.placeholder"
                     )}
-                    onChange={this._onContributionChange}
+                    onChange={this._onContributionPlanChange}
                     required={true}
                     locationId={
                       !!edited.family

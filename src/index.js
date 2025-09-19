@@ -1,6 +1,7 @@
 import React from "react";
 import { ListAlt } from "@material-ui/icons";
 import PolicyOfficerPicker from "./pickers/PolicyOfficerPicker";
+import PolicyContributionPlanPicker from "./pickers/ContributionPlanPicker";
 import PolicyStagePicker from "./pickers/PolicyStagePicker";
 import PolicyStatusPicker from "./pickers/PolicyStatusPicker";
 import PoliciesPage from "./pages/PoliciesPage";
@@ -95,6 +96,8 @@ const DEFAULT_CONFIG = {
       ],
     },
     { key: "policy.PolicyOfficerPicker.sort", ref: 'officer__code' },
+    { key: "policy.PolicyContributionPlanPicker", ref: PolicyContributionPlanPicker },
+    { key: "policy.PolicyContributionPlanPicker.projection", ref: null },
     { key: "policy.PolicyStatusPicker", ref: PolicyStatusPicker },
     { key: "policy.PolicyStatusPicker.projection", ref: null },
     { key: "policy.PolicyStagePicker", ref: PolicyStagePicker },
