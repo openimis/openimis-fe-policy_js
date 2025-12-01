@@ -332,6 +332,7 @@ class PolicyMasterPanel extends FormPanel {
                       ? decodeId(edited.family?.location?.parent?.parent?.id)
                       : 0
                   }
+                  family_uuid={edited?.family?.uuid}
                   enrollmentDate={edited?.enrollDate ?? null}
                 />
               </Grid>
