@@ -134,11 +134,13 @@ class PolicyForm extends Component {
       !!this.props.fetchedPolicy
     ) {
       var policy = this.props.policy || {};
+      const fetchedPeriodicity = policy?.periodicity;
       if (!!this.state.renew) {
         policy.startDate = policy.expiryDate;
         policy = this._renewPolicy(policy);
       }
       policy.ext = !!policy.jsonExt ? JSON.parse(policy.jsonExt) : {};
+      fetchedPeriodicity ? policy.periodicity = fetchedPeriodicity : null;
       this.setState(
         {
           policy,
