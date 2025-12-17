@@ -11,9 +11,7 @@
     "npm": ">=5"
   },
   "scripts": {
-    "test": "concurrently --names dev,jest --kill-others --success command-jest \"craco start\" \"jest --config jest.config.js\"",
-    "test:watch": "jest --watch",
-    "test:coverage": "jest --coverage",
+    "test:ci": "jest --coverage --ci",
     "build": "rollup -c",
     "start": "rollup -c -w",
     "prepare":"npm run build"
