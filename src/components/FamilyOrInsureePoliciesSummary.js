@@ -25,7 +25,7 @@ import {
   AmountInput,
 } from "@openimis/fe-core";
 import { fetchFamilyOrInsureePolicies, selectPolicy, deletePolicy, suspendPolicy } from "../actions";
-import { RIGHT_POLICY_ADD } from "../constants";
+import { RIGHT_POLICY_ADD, FAMILY_TYPE_POLYGAMY_CODE } from "../constants";
 import { policyLabel, canDeletePolicy, canSuspendPolicy, canRenewPolicy } from "../utils/utils";
 
 const styles = (theme) => ({
@@ -222,8 +222,8 @@ class FamilyOrInsureePoliciesSummary extends PagedDataHandler {
 
   headers = () => {
     let h = [
-      "policies.productCode",
-      "policies.productName",
+      "policies.contributionPlanCode",
+      "policies.contributionPlanName",
       "policies.effectiveDate",
       "policies.enrolmentDate",
       "policies.expiryDate",
@@ -254,8 +254,8 @@ class FamilyOrInsureePoliciesSummary extends PagedDataHandler {
 
   headerActions = () => {
     let a = [
-      this.sorter("productCode"),
-      this.sorter("productName"),
+      this.sorter("contributionPlanCode"),
+      this.sorter("contributionPlanName"),
       this.sorter("effectiveDate"),
       this.sorter("enrolmentDate"),
       this.sorter("expiryDate"),
@@ -281,8 +281,8 @@ class FamilyOrInsureePoliciesSummary extends PagedDataHandler {
 
   itemFormatters = () => {
     let f = [
-      (i) => i.productCode,
-      (i) => i.productName,
+      (i) => i.contributionPlanCode,
+      (i) => i.contributionPlanName,
       (i) => formatDateFromISO(this.props.modulesManager, this.props.intl, i.effectiveDate),
       (i) => formatDateFromISO(this.props.modulesManager, this.props.intl, i.enrollDate),
       (i) => formatDateFromISO(this.props.modulesManager, this.props.intl, i.expiryDate),
@@ -298,16 +298,16 @@ class FamilyOrInsureePoliciesSummary extends PagedDataHandler {
     if (this.showBalance) {
       f.push((i) => i.balance);
     }
-    f.push((i) =>
-      !this.props.readOnly && this.canRenew(i)
-        ? withTooltip(
-            <IconButton onClick={(e) => this.renewPolicy(i)}>
-              <RenewIcon />
-            </IconButton>,
-            formatMessage(this.props.intl, "policy", "action.RenewPolicy.tooltip")
-          )
-        : null
-    );
+    // f.push((i) =>
+    //   !this.props.readOnly && this.canRenew(i)
+    //     ? withTooltip(
+    //         <IconButton onClick={(e) => this.renewPolicy(i)}>
+    //           <RenewIcon />
+    //         </IconButton>,
+    //         formatMessage(this.props.intl, "policy", "action.RenewPolicy.tooltip")
+    //       )
+    //     : null
+    // );
     f.push((i) =>
       !this.props.readOnly && this.canSuspend(i)
         ? withTooltip(
@@ -357,11 +357,12 @@ class FamilyOrInsureePoliciesSummary extends PagedDataHandler {
       family,
       insuree,
       readOnly,
+      edited,
       className,
       hideAddPolicyButton = false,
       disableSelection,
     } = this.props;
-    if ((!family || !family.uuid) && (!insuree || !insuree.uuid)) {
+    if (((!family || !family.uuid) && (!insuree || !insuree.uuid) )|| (!!family.familyType && family.familyType.code == FAMILY_TYPE_POLYGAMY_CODE) || (!!edited && !!edited.familyType && edited.familyType.code == FAMILY_TYPE_POLYGAMY_CODE )) {
       return null;
     }
 

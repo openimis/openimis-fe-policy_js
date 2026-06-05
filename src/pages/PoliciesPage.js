@@ -8,9 +8,11 @@ import {
   withModulesManager,
   withHistory,
   clearCurrentPaginationPage,
+  decodeId
 } from "@openimis/fe-core";
 import PolicySearcher from "../components/PolicySearcher";
-
+import PrintIcon from "@material-ui/icons/ListAlt";
+import { print, printVerso } from "../actions";
 const styles = (theme) => ({
   page: theme.page,
 });
@@ -25,6 +27,11 @@ class PoliciesPage extends Component {
       newTab
     );
   };
+  constructor(props) {
+    super(props);
+    this.printRectoSelected = this.printRectoSelected.bind(this);
+    this.printVersoSelected = this.printVersoSelected.bind(this);
+  }
 
   componentDidMount = () => {
     const moduleName = "policy";
@@ -32,13 +39,56 @@ class PoliciesPage extends Component {
     if (module !== moduleName) this.props.clearCurrentPaginationPage();
   };
 
+  printRectoSelected(selection) {
+    let idList = [];
+    selection.forEach((selected) => {
+      let id = selected.family.headInsuree.id;
+      if (id != null) {
+        idList.push(id)
+      }
+    });
+    idList.forEach(id => {
+      this.props.print(decodeId(id))
+    });
+  }
+
+  printVersoSelected(selection) {
+    let idList = [];
+    selection.forEach((selected) => {
+      let id = selected.family.headInsuree.id;
+      if (id != null) {
+        idList.push(id)
+      }
+    });
+    idList.forEach(id => {
+      this.props.printVerso(decodeId(id))
+    });
+  }
+
+  canPrintSelected = (selection) =>
+  !!selection && selection.length;
+
   render() {
     const { classes } = this.props;
+    var actions = [];
+    actions.push({
+      label: "policy.printRectoSelected",
+      action: this.printRectoSelected,
+      enabled: this.canPrintSelected,
+      icon: <PrintIcon />,
+    });
+    actions.push({
+      label: "policy.printVersoSelected",
+      action: this.printVersoSelected,
+      enabled: this.canPrintSelected,
+      icon: <PrintIcon />,
+    });
     return (
       <div className={classes.page}>
         <PolicySearcher
           cacheFiltersKey="policyPoliciesPageFiltersCache"
           onDoubleClick={this.onDoubleClick}
+          actions={actions}
         />
       </div>
     );
@@ -53,7 +103,7 @@ const mapStateToProps = (state) => ({
   module: state.core?.savedPagination?.module,
 });
 
-const mapDispatchToProps = (dispatch) => bindActionCreators({ clearCurrentPaginationPage }, dispatch);
+const mapDispatchToProps = (dispatch) => bindActionCreators({ clearCurrentPaginationPage, print, printVerso }, dispatch);
 
 export default injectIntl(
   withModulesManager(
