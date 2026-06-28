@@ -1,17 +1,6 @@
 import React from "react";
-import { withStyles } from "@material-ui/core/styles";
-import { Collapse, Paper } from "@material-ui/core";
+import { Collapse, Paper } from "@mui/material";
 import { withModulesManager, formatMessage, Table } from "@openimis/fe-core";
-
-const styles = (theme) => ({
-  root: {
-    marginTop: theme.spacing(1),
-    marginBottom: theme.spacing(1),
-  },
-  tableContainer: {
-    margin: theme.spacing(1),
-  },
-});
 
 class PolicyDetailsCollapse extends React.Component {
   getHeaders = () => {
@@ -46,13 +35,13 @@ class PolicyDetailsCollapse extends React.Component {
   };
 
   render() {
-    const { classes, open, policy, intl } = this.props;
+    const { open, policy, intl } = this.props;
     
     if (!policy) return null;
 
     return (
-      <Collapse in={open} timeout="auto" unmountOnExit className={classes.root}>
-        <Paper className={classes.tableContainer} elevation={1}>
+      <Collapse in={open} timeout="auto" unmountOnExit sx={{ mt: 1, mb: 1 }}>
+        <Paper sx={{ m: 1 }} elevation={1}>
           <Table
             module="policy"
             headers={this.getHeaders()}
@@ -67,4 +56,4 @@ class PolicyDetailsCollapse extends React.Component {
   }
 }
 
-export default withModulesManager(withStyles(styles)(PolicyDetailsCollapse));
+export default withModulesManager(PolicyDetailsCollapse);
