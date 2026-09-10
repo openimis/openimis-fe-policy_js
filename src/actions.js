@@ -8,6 +8,10 @@ import {
   decodeId,
 } from "@openimis/fe-core";
 import _ from "lodash";
+import {
+  POLICY_CONTRIBUTION_PLAN_MODE,
+  getProductsOrContributions,
+} from "./constants";
 
 const FAMILY_HEAD_PROJECTION =
   "headInsuree{id,uuid,chfId,lastName,otherNames,email,phone,dob,gender{code}}";
@@ -148,6 +152,7 @@ export function fetchPolicyFull(mm, policy_uuid) {
   let projections = [
     "uuid",
     `product{${mm.getRef("product.ProductPicker.projection")}}`,
+    "contributionPlan{id code name benefitPlanId}",
     `officer{${mm.getRef("policy.PolicyOfficerPicker.projection")}}`,
     `family{${mm
       .getRef("insuree.FamilyPicker.projection")
@@ -174,7 +179,8 @@ export function fetchPolicyFull(mm, policy_uuid) {
   return graphql(payload, "POLICY_POLICY");
 }
 
-export function fetchPolicyValues(policy) {
+export function fetchPolicyValues(mm, policy) {
+  if (!mm || !policy) return;
   var exp_date = new Date(
     policy.prevPolicy == undefined
       ? policy.enrollDate
@@ -182,12 +188,17 @@ export function fetchPolicyValues(policy) {
   );
   exp_date.setDate(exp_date.getDate() + 1);
 
+  const contributionPlanMode =
+    getProductsOrContributions(mm) === POLICY_CONTRIBUTION_PLAN_MODE;
+
   let params = [
     `stage: "${policy.stage}"`,
     `enrollDate: "${
       policy.stage == "R" ? toISODate(exp_date) : policy.enrollDate
     }T00:00:00"`,
-    `productId: ${decodeId(policy.product.id)}`,
+    contributionPlanMode
+      ? `contributionPlanUuid: "${decodeId(policy.contributionPlan.id)}"`
+      : `productId: ${decodeId(policy.product.id)}`,
     `familyId: ${decodeId(policy.family.id)}`,
   ];
   if (!!policy.prevPolicy) {
@@ -213,6 +224,12 @@ function formatPolicyGQL(mm, policy) {
   expiryDate: "${policy.expiryDate}"
   value: "${_.round(policy.value, 2).toFixed(2)}"
   productId: ${decodeId(policy.product.id)}
+  ${
+    getProductsOrContributions(mm) === POLICY_CONTRIBUTION_PLAN_MODE &&
+    !!policy.contributionPlan
+      ? `contributionPlanId: "${decodeId(policy.contributionPlan.id)}"`
+      : ""
+  }
   familyId: ${decodeId(policy.family.id)}
   officerId: ${decodeId(policy.officer.id)}
 `;

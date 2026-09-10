@@ -41,6 +41,10 @@ import {
   canRenewPolicy,
 } from "../utils/utils";
 import { deletePolicy, suspendPolicy } from "../actions";
+import {
+  POLICY_CONTRIBUTION_PLAN_MODE,
+  getProductsOrContributions,
+} from "../constants";
 
 const StyledPaper = styled(Paper)(({ theme }) => ({
   ...theme?.paper?.paper ?? {},
@@ -58,11 +62,12 @@ const POLICY_POLICY_CONTRIBUTION_KEY = "policy.Policy";
 const POLICY_POLICY_PANELS_CONTRIBUTION_KEY = "policy.Policy.panels";
 
 /**
- * Wrapper component that conditionally renders either ProductPicker or ContributionPicker
- * based on the mode configuration
+ * Wrapper component that renders either the product picker ("products" mode, historical
+ * behavior) or the contribution plan picker ("contributions" mode) according to the
+ * `fe-policy.productsOrContributions` configuration.
  */
-const ProductOrContributionPicker = ({ 
-  mode, 
+const ProductOrContributionPicker = ({
+  mode,
   intl,
   value,
   readOnly,
@@ -72,44 +77,38 @@ const ProductOrContributionPicker = ({
   onProductChange,
   onContributionChange,
   required = true,
-  ...otherProps 
 }) => {
-  const commonProps = {
-    module: "policy",
-    value,
-    readOnly,
-    withNull: true,
-    withLabel: true,
-    required,
-    locationId,
-    enrollmentDate,
-    ...otherProps,
-  };
-
-  if (mode === "products") {
+  if (mode === POLICY_CONTRIBUTION_PLAN_MODE) {
     return (
       <PublishedComponent
-        pubRef="product.ProductPicker"
-        {...commonProps}
+        pubRef="contributionPlan.ContributionPlanPicker"
+        value={value}
         readOnly={!!editedId || readOnly}
-        label={formatMessage(intl, "product", "Product")}
-        nullLabel={formatMessage(intl, "product", "Product.none")}
-        placeholder={formatMessage(intl, "product", "ProductPicker.placeholder")}
-        onChange={onProductChange}
+        withLabel={true}
+        withNull={true}
+        required={required}
+        benefitPlanTypeModel="product"
+        onChange={onContributionChange}
       />
     );
   }
 
-  // Default: contributions mode
   return (
     <PublishedComponent
-      pubRef="contribution.PremiumCategoryPicker"
-      {...commonProps}
+      pubRef="product.ProductPicker"
+      module="policy"
+      value={value}
       readOnly={!!editedId || readOnly}
-      label={formatMessage(intl, "contribution", "Contribution")}
-      nullLabel={formatMessage(intl, "contribution", "Contribution.none")}
-      placeholder={formatMessage(intl, "contribution", "ContributionPicker.placeholder")}
-      onChange={onContributionChange}
+      withNull={true}
+      withLabel={true}
+      required={required}
+      label={formatMessage(intl, "product", "Product")}
+      nullLabel={formatMessage(intl, "product", "Product.none")}
+      withPlaceholder={true}
+      placeholder={formatMessage(intl, "product", "ProductPicker.placeholder")}
+      locationId={locationId}
+      enrollmentDate={enrollmentDate}
+      onChange={onProductChange}
     />
   );
 };
@@ -117,10 +116,8 @@ const ProductOrContributionPicker = ({
 class PolicyMasterPanel extends FormPanel {
   constructor(props) {
     super(props);
-    this.productsOrContributions = this.props.modulesManager.getConf(
-      "fe-policy",
-      "productsOrContributions",
-      "contributions"
+    this.productsOrContributions = getProductsOrContributions(
+      this.props.modulesManager
     );
     this.minimumPolicyEffectiveDate = this.props.modulesManager.getConf(
       "fe-policy",
@@ -154,15 +151,19 @@ class PolicyMasterPanel extends FormPanel {
       : this.updateAttribute("product", product);
   };
 
-  _onContributionChange = (contribution) => {
-    !contribution
-      ? this.updateAttributes({
-          contribution: null,
-          startDate: null,
-          expiryDate: null,
-          value: null,
-        })
-      : this.updateAttribute("contribution", contribution);
+  _onContributionChange = (contributionPlan) => {
+    // `productId` is mandatory in the policy mutation: the product attached to the selected
+    // contribution plan (its `benefitPlanId`) is kept on the policy to that end.
+    const product = !!contributionPlan?.benefitPlanId
+      ? { id: contributionPlan.benefitPlanId }
+      : null;
+    this.updateAttributes({
+      contributionPlan,
+      product,
+      startDate: null,
+      expiryDate: null,
+      value: null,
+    });
   };
 
   renewPolicy = () =>
@@ -386,7 +387,12 @@ class PolicyMasterPanel extends FormPanel {
                 <ProductOrContributionPicker
                   mode={this.productsOrContributions}
                   intl={intl}
-                  value={!!edited && (this.productsOrContributions === "products" ? edited.product : edited.contribution)}
+                  value={
+                    !!edited &&
+                    (this.productsOrContributions === POLICY_CONTRIBUTION_PLAN_MODE
+                      ? edited.contributionPlan
+                      : edited.product)
+                  }
                   readOnly={readOnly}
                   editedId={edited_id}
                   locationId={
