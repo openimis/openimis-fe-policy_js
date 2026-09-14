@@ -100,15 +100,15 @@ const ProductOrContributionPicker = ({
     );
   }
 
-  // Default: contributions mode
+  // contributions mode: pick a contribution plan
   return (
     <PublishedComponent
-      pubRef="contribution.PremiumCategoryPicker"
+      pubRef="policy.PolicyContributionPlanPicker"
       {...commonProps}
       readOnly={!!editedId || readOnly}
-      label={formatMessage(intl, "contribution", "Contribution")}
-      nullLabel={formatMessage(intl, "contribution", "Contribution.none")}
-      placeholder={formatMessage(intl, "contribution", "ContributionPicker.placeholder")}
+      label={formatMessage(intl, "policy", "ContributionPlan")}
+      nullLabel={formatMessage(intl, "policy", "ContributionPlan.none")}
+      placeholder={formatMessage(intl, "policy", "ContributionPlanPicker.placeholder")}
       onChange={onContributionChange}
     />
   );
@@ -120,7 +120,7 @@ class PolicyMasterPanel extends FormPanel {
     this.productsOrContributions = this.props.modulesManager.getConf(
       "fe-policy",
       "productsOrContributions",
-      "contributions"
+      "products"
     );
     this.minimumPolicyEffectiveDate = this.props.modulesManager.getConf(
       "fe-policy",
