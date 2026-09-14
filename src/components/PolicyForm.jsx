@@ -275,16 +275,15 @@ class PolicyForm extends Component {
     this.dispatchExpiryDate(policy)
   };
 
-  dispatchExpiryDate = (policy) =>{
-    this.props.coreAlert(
-      formatMessage(this.props.intl, "policy", "policy.dispatchExpiryDate.title"),
-      formatMessageWithValues(this.props.intl, "policy", "dispatchExpiryDate.message",
-      {
+  dispatchExpiryDate = (policy) => {
+    this.props.coreAlert({
+      type: "info",
+      title: formatMessage(this.props.intl, "policy", "dispatchExpiryDate.title"),
+      message: formatMessageWithValues(this.props.intl, "policy", "dispatchExpiryDate.message", {
         label: policy.expiryDate,
-      })
-      )
-
-  }
+      }),
+    });
+  };
 
   render() {
     const {
