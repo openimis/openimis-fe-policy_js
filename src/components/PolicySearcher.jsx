@@ -134,7 +134,7 @@ class PolicySearcher extends Component {
       this.props.modulesManager,
       this.props.history,
       "policy.route.policy",
-      [policy.uuid, policy.family.uuid, true]
+      [policy.uuid, policy.family?.uuid, true]
     );
 
   confirmSuspend = (policy) => {
@@ -264,7 +264,10 @@ class PolicySearcher extends Component {
           this.props.intl,
           policy.enrollDate
         ),
-      (policy) => `${policy.family.headInsuree.lastName} ${policy.family.headInsuree.otherNames}`,
+      (policy) =>
+        [policy.family?.headInsuree?.lastName, policy.family?.headInsuree?.otherNames]
+          .filter(Boolean)
+          .join(" "),
       (policy) =>
         formatDateFromISO(
           this.props.modulesManager,
@@ -283,8 +286,8 @@ class PolicySearcher extends Component {
           this.props.intl,
           policy.expiryDate
         ),
-      (policy) => `${policy.product.code}`,
-      (policy) => `${policy.officer?.code}`,
+      (policy) => policy.product?.code ?? "",
+      (policy) => policy.officer?.code ?? "",
       (policy) => formatMessage(this.props.intl, "policy", `PolicyStage.${policy.stage}`),
       (policy) => formatMessage(this.props.intl, "policy", `PolicyStatus.${policy.status}`),
       (policy) => formatAmount(this.props.modulesManager, this.props.intl, policy.value),
