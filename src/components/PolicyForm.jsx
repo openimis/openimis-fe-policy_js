@@ -28,6 +28,8 @@ import {
   POLICY_STAGE_NEW,
   POLICY_STAGE_RENEW,
   POLICY_STATUS_IDLE,
+  POLICY_CONTRIBUTION_PLAN_MODE,
+  getProductsOrContributions,
 } from "../constants";
 import { policyLabel } from "../utils/utils";
 
@@ -82,6 +84,7 @@ class PolicyForm extends Component {
     policy.enrollDate = toISODate(moment().toDate());
     policy.family = from_policy.family;
     policy.product = from_policy.product;
+    policy.contributionPlan = from_policy.contributionPlan;
     return policy;
   }
 
@@ -136,7 +139,7 @@ class PolicyForm extends Component {
             newPolicy: !this.props.renew, 
             renew: false 
           },
-          e => { if (policy.stage === POLICY_STAGE_RENEW) { this.props.fetchPolicyValues(policy, years) } }
+          e => { if (policy.stage === POLICY_STAGE_RENEW) { this.props.fetchPolicyValues(this.props.modulesManager, policy, years) } }
         );
       }else{
         this.setState(
@@ -147,20 +150,27 @@ class PolicyForm extends Component {
             newPolicy: !this.props.renew,
             renew: false,
           },
-          e => { if (policy.stage === POLICY_STAGE_RENEW) { this.props.fetchPolicyValues(policy) } }
+          e => { if (policy.stage === POLICY_STAGE_RENEW) { this.props.fetchPolicyValues(this.props.modulesManager, policy) } }
          
         );
       }
     } else if (
-      !_.isEqual(prevState.policy.product, this.state.policy.product) ||
+      (this.isContributionPlanMode()
+        ? !_.isEqual(prevState.policy.contributionPlan, this.state.policy.contributionPlan)
+        : !_.isEqual(prevState.policy.product, this.state.policy.product)) ||
       !_.isEqual(prevState.policy.enrollDate, this.state.policy.enrollDate)
     ) {
-      if (!this.props.readOnly && !!this.state.policy.product) {
+      // In contribution plan mode the product is derived from the selected plan and filled
+      // by the backend: only the plan and the enrolment date drive new computations.
+      const hasPolicySelectorValue = this.isContributionPlanMode()
+        ? !!this.state.policy.contributionPlan
+        : !!this.state.policy.product;
+      if (!this.props.readOnly && hasPolicySelectorValue) {
         if (this.state.policy && this.state.policy.product && this.state.policy.product.ageMaximal != undefined) {
           let years = Math.abs(this.state.policy.product.ageMaximal - this.verifyAge(this.state.dob))
-          this.props.fetchPolicyValues(this.state?.policy, years)
+          this.props.fetchPolicyValues(this.props.modulesManager, this.state.policy, years)
         }else{
-          this.props.fetchPolicyValues(this.state?.policy)
+          this.props.fetchPolicyValues(this.props.modulesManager, this.state.policy)
         }
       }
     } else if (
@@ -188,13 +198,15 @@ class PolicyForm extends Component {
       this.props.journalize(this.props.mutation);
       this.setState({ reset: this.state.reset + 1 });
     } else if (!prevProps.renew && !!this.props.renew) {
-      let years = Math.abs(this.state.policy.product.ageMaximal - this.verifyAge(this.state.dob))
+      const years = !!this.state.policy.product?.ageMaximal
+        ? Math.abs(this.state.policy.product.ageMaximal - this.verifyAge(this.state.dob))
+        : undefined;
       this.setState(
         (state, props) => ({
           renew: this.props.renew,
           policy: this._renewPolicy(state.policy),
         }),
-        (e) => this.props.fetchPolicyValues(this.state.policy, years)
+        (e) => this.props.fetchPolicyValues(this.props.modulesManager, this.state.policy, years)
       );
     }
   }
@@ -228,6 +240,7 @@ class PolicyForm extends Component {
       policy: {
         ...state.policy,
         product: null,
+        ...(this.isContributionPlanMode() ? { contributionPlan: null } : null),
         startDate: null,
         expiryDate: null,
         value: null,
@@ -243,6 +256,10 @@ class PolicyForm extends Component {
     let Age = Math.round(days/365,25)
     return Age
   }
+
+  isContributionPlanMode = () =>
+    getProductsOrContributions(this.props.modulesManager) ===
+    POLICY_CONTRIBUTION_PLAN_MODE;
 
   canSave = () => {
     if (!this.state.policy.family) return false;

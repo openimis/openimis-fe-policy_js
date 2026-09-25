@@ -8,6 +8,10 @@ import {
   decodeId,
 } from "@openimis/fe-core";
 import _ from "lodash";
+import {
+  POLICY_CONTRIBUTION_PLAN_MODE,
+  getProductsOrContributions,
+} from "./constants";
 
 const FAMILY_HEAD_PROJECTION =
   "headInsuree{id,uuid,chfId,lastName,otherNames,email,phone,dob,gender{code}}";
@@ -148,6 +152,8 @@ export function fetchPolicyFull(mm, policy_uuid) {
   let projections = [
     "uuid",
     `product{${mm.getRef("product.ProductPicker.projection")}}`,
+    "contributionPlan" +
+      mm.getProjection("contributionPlan.ContributionPlanPicker.projection"),
     `officer{${mm.getRef("policy.PolicyOfficerPicker.projection")}}`,
     `family{${mm
       .getRef("insuree.FamilyPicker.projection")
@@ -174,7 +180,21 @@ export function fetchPolicyFull(mm, policy_uuid) {
   return graphql(payload, "POLICY_POLICY");
 }
 
-export function fetchPolicyValues(policy) {
+export function fetchPolicyValues(mm, policy) {
+  // Backward compatibility: this action used to be called as `fetchPolicyValues(policy)`. The
+  // modules manager (now the first argument) is recognised through the modules manager API; a
+  // legacy call receives the policy object, which implements none of these methods, so the
+  // arguments are shifted and the call falls back on the product mode.
+  const modulesManagerApi =
+    typeof mm?.getConf === "function" || typeof mm?.getProjection === "function";
+  if (!modulesManagerApi) {
+    policy = mm;
+    mm = undefined;
+  }
+  if (!policy) return;
+  // The third argument still passed by PolicyForm (`years`) is intentionally ignored, as it
+  // always was: the query does not use it, the policy value and its expiry date are computed by
+  // the backend (product insurance period / contribution plan calculation rules).
   var exp_date = new Date(
     policy.prevPolicy == undefined
       ? policy.enrollDate
@@ -182,12 +202,20 @@ export function fetchPolicyValues(policy) {
   );
   exp_date.setDate(exp_date.getDate() + 1);
 
+  const contributionPlanMode =
+    !!mm &&
+    getProductsOrContributions(mm) === POLICY_CONTRIBUTION_PLAN_MODE;
+  // in contribution plan mode the plan is mandatory: without it there is nothing to compute
+  if (contributionPlanMode && !policy.contributionPlan) return;
+
   let params = [
     `stage: "${policy.stage}"`,
     `enrollDate: "${
       policy.stage == "R" ? toISODate(exp_date) : policy.enrollDate
     }T00:00:00"`,
-    `productId: ${decodeId(policy.product.id)}`,
+    contributionPlanMode
+      ? `contributionPlanUuid: "${decodeId(policy.contributionPlan.id)}"`
+      : `productId: ${decodeId(policy.product.id)}`,
     `familyId: ${decodeId(policy.family.id)}`,
   ];
   if (!!policy.prevPolicy) {
@@ -213,6 +241,12 @@ function formatPolicyGQL(mm, policy) {
   expiryDate: "${policy.expiryDate}"
   value: "${_.round(policy.value, 2).toFixed(2)}"
   productId: ${decodeId(policy.product.id)}
+  ${
+    getProductsOrContributions(mm) === POLICY_CONTRIBUTION_PLAN_MODE &&
+    !!policy.contributionPlan
+      ? `contributionPlanId: "${decodeId(policy.contributionPlan.id)}"`
+      : ""
+  }
   familyId: ${decodeId(policy.family.id)}
   officerId: ${decodeId(policy.officer.id)}
 `;
