@@ -10,6 +10,8 @@ import {
   toISODate,
   formatMessageWithValues, formatMessage,
   ProgressOrError, Form, Helmet, coreConfirm,
+  selectUserRights,
+  hasPermsAnywhere,
 } from "@openimis/fe-core";
 import PolicyMasterPanel from "./PolicyMasterPanel";
 import { 
@@ -23,6 +25,7 @@ import {
   forcePolicyExpiration
 } from "../actions";
 import { policyLabel } from "../utils/utils";
+import { canOnPolicy } from "../utils/rights";
 import { HIV_EMAIL, POLICY_STAGE_NEW, POLICY_STAGE_RENEW, POLICY_STATUS_IDLE, RIGHT_POLICY, RIGHT_POLICY_EDIT } from "../constants";
 
 const styles = theme => ({
@@ -424,11 +427,13 @@ class PolicyForm extends Component {
       policies
     } = this.props;
     const { policy, lockNew } = this.state;
-    if (!rights.includes(RIGHT_POLICY)) return null;
+    // navigation level gate: the edition is checked against the policy's family below
+    if (!hasPermsAnywhere(RIGHT_POLICY, { rights })) return null;
     let ro = policy.clientMutationId ||
       lockNew ||
       (!!readOnly && !renew) ||
-      !rights.includes(RIGHT_POLICY_EDIT) ||
+      // globally, or through an ENROLMENT link on the village of the policy's family
+      !canOnPolicy(RIGHT_POLICY_EDIT, policy, family, { rights }) ||
       (!!policy.status && policy.status !== POLICY_STATUS_IDLE) ||
       !!policy.validityTo
     return (
@@ -477,7 +482,8 @@ class PolicyForm extends Component {
 }
 
 const mapStateToProps = state => ({
-  rights: !!state.core && !!state.core.user && !!state.core.user.i_user ? state.core.user.i_user.rights : [],
+  rights: selectUserRights(state),
+  userBusinessAccesses: state.core?.userBusinessAccesses,
   fetchingPolicy: state.policy.fetchingPolicy,
   errorPolicy: state.policy.errorPolicy,
   fetchedPolicy: state.policy.fetchedPolicy,

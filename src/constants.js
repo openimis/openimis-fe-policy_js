@@ -18,6 +18,14 @@ export const RIGHT_POLICY_RENEW = 101205
 export const RIGHT_POLICY_SUSPEND = 101203
 export const RIGHT_POLICY_EXPIRE = 101208
 
+// The User Business Access credential of an enrolment officer, held on a village
+// (`location.location`) and registered by the location module in the backend registry
+// (`core.uba_link_types`). A policy belongs to a family, and a family to a village: the
+// policy rights an enrolment officer holds in their UBA bag apply to the policies of the
+// families of their villages. See `docs/rights.md` in the core module, and `utils/rights.js`.
+export const UBA_LINK_TYPE_ENROLMENT = "ENROLMENT"
+export const UBA_MODEL_LOCATION = "location.location"
+
 export const POLICY_RENEWALS_REPORT_SORTING_CRITERION_DATE = "D"
 export const POLICY_RENEWALS_REPORT_SORTING_CRITERION_RECEIPT = "R"
 export const POLICY_RENEWALS_REPORT_SORTING_CRITERION_OFFICER = "O"

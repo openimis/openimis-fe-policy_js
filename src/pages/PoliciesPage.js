@@ -8,6 +8,7 @@ import {
   withModulesManager,
   withHistory,
   clearCurrentPaginationPage,
+  selectUserRights,
 } from "@openimis/fe-core";
 import PolicySearcher from "../components/PolicySearcher";
 
@@ -55,10 +56,8 @@ class PoliciesPage extends Component {
 }
 
 const mapStateToProps = (state) => ({
-  rights:
-    !!state.core && !!state.core.user && !!state.core.user.i_user
-      ? state.core.user.i_user.rights
-      : [],
+  rights: selectUserRights(state),
+  userBusinessAccesses: state.core?.userBusinessAccesses,
   module: state.core?.savedPagination?.module,
 });
 

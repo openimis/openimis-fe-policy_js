@@ -23,6 +23,7 @@ import {
   Searcher,
   PublishedComponent,
   AmountInput,
+  selectUserRights,
 } from "@openimis/fe-core";
 import { fetchPolicySummaries, deletePolicy, suspendPolicy, forcePolicyExpiration } from "../actions";
 import {
@@ -557,10 +558,8 @@ class PolicySearcher extends Component {
 }
 
 const mapStateToProps = (state) => ({
-  rights:
-    !!state.core && !!state.core.user && !!state.core.user.i_user
-      ? state.core.user.i_user.rights
-      : [],
+  rights: selectUserRights(state),
+  userBusinessAccesses: state.core?.userBusinessAccesses,
   confirmed: state.core.confirmed,
   policies: state.policy.policies,
   policiesPageInfo: state.policy.policiesPageInfo,

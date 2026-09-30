@@ -34,6 +34,7 @@ import {
   decodeId,
   AmountInput,
   TextInput,
+  selectUserRights,
 } from "@openimis/fe-core";
 import {
   policyLabel,
@@ -383,9 +384,12 @@ class PolicyMasterPanel extends FormPanel {
                   onChange={this._onProductChange}
                   required={true}
                   canFetch={this.props.edited.family ? true : false}
+                  // the family's village: the backend widens it to its ancestors and adds the
+                  // national products (no location). The district (`parent.parent`) used to be
+                  // passed, which dropped the products of the village and of its ward.
                   locationId={
-                    !!edited.family
-                      ? decodeId(edited.family?.location?.parent?.parent?.id)
+                    !!edited.family?.location?.id
+                      ? decodeId(edited.family.location.id)
                       : 0
                   }
                   enrollmentDate={edited?.enrollDate ?? null}
@@ -566,10 +570,8 @@ class PolicyMasterPanel extends FormPanel {
 }
 
 const mapStateToProps = (state) => ({
-  rights:
-    !!state.core && !!state.core.user && !!state.core.user.i_user
-      ? state.core.user.i_user.rights
-      : [],
+  rights: selectUserRights(state),
+  userBusinessAccesses: state.core?.userBusinessAccesses,
   fetchingPolicyValues: state.policy.fetchingPolicyValues,
   errorPolicyValues: state.policy.errorPolicyValues,
   confirmed: state.core.confirmed,

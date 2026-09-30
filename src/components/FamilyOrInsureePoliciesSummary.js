@@ -23,10 +23,12 @@ import {
   coreConfirm,
   journalize,
   AmountInput,
+  selectUserRights,
 } from "@openimis/fe-core";
 import { fetchFamilyOrInsureePolicies, selectPolicy, deletePolicy, suspendPolicy, forcePolicyExpiration } from "../actions";
 import { RIGHT_POLICY_ADD } from "../constants";
 import { policyLabel, canDeletePolicy, canSuspendPolicy, canRenewPolicy, canForcePolicyExpiration } from "../utils/utils";
+import { canOnFamily } from "../utils/rights";
 
 const styles = (theme) => ({
   paper: {
@@ -284,10 +286,23 @@ class FamilyOrInsureePoliciesSummary extends PagedDataHandler {
   };
 
   rowLocked = (policy) => !!policy.clientMutationId;
-  canDelete = (policy) => !this.props.readOnly && canDeletePolicy(this.props.rights, policy);
-  canSuspend = (policy) => !this.props.readOnly && canSuspendPolicy(this.props.rights, policy);
-  canRenew = (policy) => !this.props.readOnly && canRenewPolicy(this.props.rights, policy);
-  canForceExpiration = (policy) => !this.props.readOnly && canForcePolicyExpiration(this.props.rights, policy);
+  /**
+   * The family the policies belong to, for its village: the one of the overview, or the
+   * one of the insuree of the enquiry. The policy rows do not carry it.
+   */
+  policiesFamily = () => {
+    const { family, insuree } = this.props;
+    if (!!family?.uuid) return family;
+    if (!!insuree?.family) return insuree.family;
+    return !!insuree?.currentVillage ? { location: insuree.currentVillage } : null;
+  };
+
+  // object level: globally, or through an ENROLMENT link on the family's village
+  canDelete = (policy) => !this.props.readOnly && canDeletePolicy(this.props.rights, policy, this.policiesFamily());
+  canSuspend = (policy) => !this.props.readOnly && canSuspendPolicy(this.props.rights, policy, this.policiesFamily());
+  canRenew = (policy) => !this.props.readOnly && canRenewPolicy(this.props.rights, policy, this.policiesFamily());
+  canForceExpiration = (policy) =>
+    !this.props.readOnly && canForcePolicyExpiration(this.props.rights, policy, this.policiesFamily());
 
   itemFormatters = () => {
     let f = [
@@ -384,7 +399,7 @@ class FamilyOrInsureePoliciesSummary extends PagedDataHandler {
     }
 
     let actions =
-      !!readOnly || !rights.includes(RIGHT_POLICY_ADD) ? []
+      !!readOnly || !canOnFamily(RIGHT_POLICY_ADD, this.policiesFamily(), { rights }) ? []
         : [
           {
             button: (
@@ -460,7 +475,8 @@ class FamilyOrInsureePoliciesSummary extends PagedDataHandler {
 }
 
 const mapStateToProps = (state) => ({
-  rights: !!state.core && !!state.core.user && !!state.core.user.i_user ? state.core.user.i_user.rights : [],
+  rights: selectUserRights(state),
+  userBusinessAccesses: state.core?.userBusinessAccesses,
   fetchingPolicies: state.policy.fetchingPolicies,
   fetchedPolicies: state.policy.fetchedPolicies,
   policies: state.policy.policies,
