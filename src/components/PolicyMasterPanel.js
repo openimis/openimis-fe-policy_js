@@ -65,6 +65,11 @@ class PolicyMasterPanel extends FormPanel {
       "defaultPaymentTypeOfContribution",
       "C"
     );
+    this.canShowSignatureDate = this.props.modulesManager.getConf(
+      "fe-policy",
+      "canShowSignatureDate",
+      false
+    );
   }
 
   componentDidUpdate(prevProps, prevState, snapshot) {
@@ -76,15 +81,15 @@ class PolicyMasterPanel extends FormPanel {
     }
   }
 
-  _onProductChange = (product) => {
-    !product
+  _onContributionPlanChange = (contributionPlan) => {
+    !contributionPlan
       ? this.updateAttributes({
-          product: null,
-          startDate: null,
-          expiryDate: null,
-          value: null,
-        })
-      : this.updateAttribute("product", product);
+        contributionPlan: null,
+        startDate: null,
+        expiryDate: null,
+        value: null,
+      })
+      : this.updateAttribute("contributionPlan", contributionPlan);
   };
 
   renewPolicy = () =>
@@ -177,22 +182,21 @@ class PolicyMasterPanel extends FormPanel {
       errorPolicyValues,
       title = "Policy.details.title",
     } = this.props;
-
     let actions = [];
-    if (this.canRenew(edited)) {
-      actions.push({
-        button: (
-          <IconButton onClick={(e) => this.renewPolicy()}>
-            <RenewIcon />
-          </IconButton>
-        ),
-        tooltip: formatMessage(
-          this.props.intl,
-          "policy",
-          "action.RenewPolicy.tooltip"
-        ),
-      });
-    }
+    // if (this.canRenew(edited)) {
+    //   actions.push({
+    //     button: (
+    //       <IconButton onClick={(e) => this.renewPolicy()}>
+    //         <RenewIcon />
+    //       </IconButton>
+    //     ),
+    //     tooltip: formatMessage(
+    //       this.props.intl,
+    //       "policy",
+    //       "action.RenewPolicy.tooltip"
+    //     ),
+    //   });
+    // }
     if (this.canSuspend(edited)) {
       actions.push({
         button: (
@@ -260,8 +264,8 @@ class PolicyMasterPanel extends FormPanel {
                   minDate={
                     !!this.minimumPolicyEffectiveDate
                       ? new Date().setDate(
-                          new Date().getDate() - this.minimumPolicyEffectiveDate
-                        )
+                        new Date().getDate() - this.minimumPolicyEffectiveDate
+                      )
                       : undefined
                   }
                   maxDate={new Date()}
@@ -307,12 +311,12 @@ class PolicyMasterPanel extends FormPanel {
                 ))}
               <Grid item xs={3} className={classes.item}>
                 <PublishedComponent
-                  pubRef="product.ProductPicker"
-                  value={!!edited && edited.product}
+                  pubRef="policy.PolicyContributionPlanPicker"
+                  value={!!edited && edited.contributionPlan}
                   module="policy"
                   readOnly={!!edited_id || readOnly}
                   withNull={true}
-                  label={formatMessage(intl, "product", "Product")}
+                  label={formatMessage(intl, "contributionPlan", "ContributionPlan")}
                   withLabel={true}
                   nullLabel={formatMessage(intl, "product", "Product.none")}
                   withPlaceholder={true}
@@ -321,13 +325,14 @@ class PolicyMasterPanel extends FormPanel {
                     "product",
                     "ProductPicker.placeholder"
                   )}
-                  onChange={this._onProductChange}
+                  onChange={this._onContributionPlanChange}
                   required={true}
                   locationId={
                     !!edited.family
                       ? decodeId(edited.family?.location?.parent?.parent?.id)
                       : 0
                   }
+                  family_uuid={edited?.family?.uuid}
                   enrollmentDate={edited?.enrollDate ?? null}
                 />
               </Grid>
@@ -370,6 +375,43 @@ class PolicyMasterPanel extends FormPanel {
                   readOnly={true}
                   withNull={false}
                   onChange={(v) => this.updateAttribute("status", v)}
+                />
+              </Grid>
+              {this.canShowSignatureDate && (<Grid item xs={3} className={classes.item}>
+                <PublishedComponent
+                  pubRef="core.DatePicker"
+                  value={!!edited ? edited.signatureDate : null}
+                  module="policy"
+                  label="Policy.signatureDate"
+                  readOnly={readOnly}
+                  required={false}
+                  minDate={ edited.enrollDate }
+                  onChange={(v) => this.updateAttribute("signatureDate", v)}
+                />
+              </Grid>
+              )}
+
+              <Grid item xs={3} className={classes.item}>
+                <PublishedComponent
+                  pubRef="policy.PolicyPeriodicityPicker"
+                  value={!!edited && edited.periodicity}
+                  module="policy"
+                  readOnly={readOnly}
+                  withNull={false}
+                  required={!!edited.signatureDate ? true : false}
+                  contributionPlan={edited?.contributionPlan}
+                  onChange={(v) => this.updateAttribute("periodicity", v)}
+                />
+              </Grid>
+              <Grid item xs={3} className={classes.item}>
+                <PublishedComponent
+                  pubRef="policy.PolicyPaymentDayPicker"
+                  value={!!edited && edited.paymentDay}
+                  module="policy"
+                  readOnly={readOnly}
+                  withNull={false}
+                  required={!!edited.signatureDate ? true : false}
+                  onChange={(v) => this.updateAttribute("paymentDay", v)}
                 />
               </Grid>
               {!edited_id && (

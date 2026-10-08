@@ -2,7 +2,10 @@ import React from "react";
 import { ListAlt } from "@material-ui/icons";
 import PolicyOfficerPicker from "./pickers/PolicyOfficerPicker";
 import PolicyStagePicker from "./pickers/PolicyStagePicker";
+import PolicyContributionPlanPicker from"./pickers/policyContributionPicker"
 import PolicyStatusPicker from "./pickers/PolicyStatusPicker";
+import PolicyPeriodicityPicker from "./pickers/PolicyPeriodicityPicker";
+import PolicyPaymentDayPicker from "./pickers/PolicyPaymentDayPicker";
 import PoliciesPage from "./pages/PoliciesPage";
 import PolicyPage from "./pages/PolicyPage";
 import PolicyValuesPanel from "./components/PolicyValuesPanel";
@@ -11,19 +14,34 @@ import InsureeEligibilitySummary from "./components/InsureeEligibilitySummary";
 import InsureeEligibilityEnquiry from "./components/InsureeEligibilityEnquiry";
 import InsureePolicyEligibilitySummary from "./components/InsureePolicyEligibilitySummary";
 import messages_en from "./translations/en.json";
+import messages_fr from "./translations/fr.json";
 import { FormattedMessage, decodeId } from "@openimis/fe-core";
 import { reducer } from "./reducer";
 import { RIGHT_POLICY } from "./constants";
 import { policyMutation } from "./utils/utils";
 import PolicyRenewalsReport from "./reports/PolicyRenewalsReport";
 import PolicyPrimaryOperationalIndicatorsReport from "./reports/PolicyPrimaryOperationalIndicatorsReport";
+import CotisationReport from "./components/CotisationReport";
 const ROUTE_POLICY_POLICIES = "policy/policies";
 const ROUTE_POLICY_POLICY = "policy/policy";
 
 const DEFAULT_CONFIG = {
-  "translations": [{ key: 'en', messages: messages_en }],
+  "translations": [{ key: 'en', messages: messages_en },{ key: 'fr', messages: messages_fr } ],
   "reducers": [{ key: 'policy', reducer }],
   "reports": [
+    {
+      key: "cotisation_report",
+      component: CotisationReport,
+      isValid: (values) => 
+        values.dateStart && 
+        values.dateEnd ,
+      getParams: (values) => {
+        const params = {}
+        params.date_start = values.dateStart;
+        params.date_end = values.dateEnd;  
+        return params;
+      },
+    },
     {
       key: "policy_renewals",
       component: PolicyRenewalsReport,
@@ -100,11 +118,16 @@ const DEFAULT_CONFIG = {
     { key: "policy.PolicyStagePicker", ref: PolicyStagePicker },
     { key: "policy.PolicyStagePicker.projection", ref: null },
     { key: "policy.FamilyOrInsureePoliciesSummary", ref: FamilyOrInsureePoliciesSummary },
+    { key: "policy.PolicyContributionPlanPicker", ref: PolicyContributionPlanPicker },
     { key: "policy.InsureeEligibilitySummary", ref: InsureeEligibilitySummary },
+    { key: "policy.PolicyPeriodicityPicker", ref: PolicyPeriodicityPicker },
+    { key: "policy.PolicyPaymentDayPicker", ref: PolicyPaymentDayPicker },
     { key: "policy.InsureeEligibilityEnquiry", ref: InsureeEligibilityEnquiry },
     { key: "policy.InsureePolicyEligibilitySummary", ref: InsureePolicyEligibilitySummary },
     { key: "policy.route.policies", ref: ROUTE_POLICY_POLICIES },
     { key: "policy.route.policy", ref: ROUTE_POLICY_POLICY },
+    { key: "policy.PolicyContributionPlanPicker.sort", ref: "contributionPlan__code" },
+
   ],
   "core.Router": [
     { path: ROUTE_POLICY_POLICIES, component: PoliciesPage },

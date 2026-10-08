@@ -25,7 +25,7 @@ import {
   AmountInput,
 } from "@openimis/fe-core";
 import { fetchFamilyOrInsureePolicies, selectPolicy, deletePolicy, suspendPolicy } from "../actions";
-import { RIGHT_POLICY_ADD } from "../constants";
+import { RIGHT_POLICY_ADD, FAMILY_TYPE_POLYGAMY_CODE } from "../constants";
 import { policyLabel, canDeletePolicy, canSuspendPolicy, canRenewPolicy } from "../utils/utils";
 
 const styles = (theme) => ({
@@ -88,13 +88,35 @@ class FamilyOrInsureePoliciesSummary extends PagedDataHandler {
       "familyOrInsureePoliciesSummary.orderByExpiryDate",
       "expiryDate"
     );
+    this.columns = this.props.modulesManager.getConf("fe-policy", "columns", {
+      deduction: "H",
+      hospitalDeduction: "H",
+      nonHospitalDeduction: "H",
+      ceiling: "H",
+      hospitalCeiling: "H",
+      nonHospitalCeiling: "H",
+    });
   }
+
+  isColumnVisible = (key) => !!this.columns?.[key] && this.columns[key] !== "H";
+
+  configurableColumns = [
+    { key: "deduction", header: "policies.deduction", sorter: "deduction", format: (i) => i.ded },
+    { key: "hospitalDeduction", header: "policies.hospitalDeduction", sorter: "hospitalDeduction", format: (i) => i.dedInPatient },
+    { key: "nonHospitalDeduction", header: "policies.nonHospitalDeduction", sorter: "nonHospitalDeduction", format: (i) => i.dedOutPatient },
+    { key: "ceiling", header: "policies.ceiling", sorter: "ceiling", format: (i) => i.ceiling },
+    { key: "hospitalCeiling", header: "policies.hospitalCeiling", sorter: "hospitalCeiling", format: (i) => i.ceilingInPatient },
+    { key: "nonHospitalCeiling", header: "policies.nonHospitalCeiling", sorter: "nonHospitalCeiling", format: (i) => i.ceilingOutPatient },
+  ];
+
+  visibleConfigurableColumns = () => this.configurableColumns.filter((c) => this.isColumnVisible(c.key));
 
   componentDidMount() {
     this.setState(
       {
         confirmedAction: null,
         onlyActiveOrLastExpired: this.onlyActiveOrLastExpired,
+        showDeletedPolicies: false,
         orderBy: this.orderByExpiryDate,
       },
       (e) => this.query()
@@ -191,7 +213,13 @@ class FamilyOrInsureePoliciesSummary extends PagedDataHandler {
       (prevProps.family.uuid == null || prevProps.family.uuid !== this.props.family.uuid));
 
   queryPrms() {
-    let prms = [`orderBy: "${this.state.orderBy}"`, `activeOrLastExpiredOnly: ${!!this.state.onlyActiveOrLastExpired}`];
+    let prms = [
+      `orderBy: "${this.state.orderBy}"`,
+      `activeOrLastExpiredOnly: ${this.state.showDeletedPolicies ? false : !!this.state.onlyActiveOrLastExpired}`,
+    ];
+    if (this.state.showDeletedPolicies) {
+      prms.push("showDeleted: true");
+    }
     if (!!this.props.insuree && !!this.props.insuree.chfId) {
       prms.push(`chfId:"${this.props.insuree.chfId}"`);
       return prms;
@@ -222,20 +250,15 @@ class FamilyOrInsureePoliciesSummary extends PagedDataHandler {
 
   headers = () => {
     let h = [
-      "policies.productCode",
-      "policies.productName",
+      "policies.contributionPlanCode",
+      "policies.contributionPlanName",
       "policies.effectiveDate",
       "policies.enrolmentDate",
       "policies.expiryDate",
       "policies.status",
       "policies.policyValue",
-      "policies.deduction",
-      "policies.hospitalDeduction",
-      "policies.nonHospitalDeduction",
-      "policies.ceiling",
-      "policies.hospitalCeiling",
-      "policies.nonHospitalCeiling",
     ];
+    this.visibleConfigurableColumns().forEach((c) => h.push(c.header));
     if (this.showBalance) {
       h.push("policies.balance");
     }
@@ -254,20 +277,15 @@ class FamilyOrInsureePoliciesSummary extends PagedDataHandler {
 
   headerActions = () => {
     let a = [
-      this.sorter("productCode"),
-      this.sorter("productName"),
+      this.sorter("contributionPlanCode"),
+      this.sorter("contributionPlanName"),
       this.sorter("effectiveDate"),
       this.sorter("enrolmentDate"),
       this.sorter("expiryDate"),
       this.sorter("status"),
       this.sorter("policyValue"),
-      this.sorter("deduction"),
-      this.sorter("hospitalDeduction"),
-      this.sorter("nonHospitalDeduction"),
-      this.sorter("ceiling"),
-      this.sorter("hospitalCeiling"),
-      this.sorter("nonHospitalCeiling"),
     ];
+    this.visibleConfigurableColumns().forEach((c) => a.push(this.sorter(c.sorter)));
     if (this.showBalance) {
       a.push(this.sorter("balance"));
     }
@@ -281,33 +299,28 @@ class FamilyOrInsureePoliciesSummary extends PagedDataHandler {
 
   itemFormatters = () => {
     let f = [
-      (i) => i.productCode,
-      (i) => i.productName,
+      (i) => i.contributionPlanCode,
+      (i) => i.contributionPlanName,
       (i) => formatDateFromISO(this.props.modulesManager, this.props.intl, i.effectiveDate),
       (i) => formatDateFromISO(this.props.modulesManager, this.props.intl, i.enrollDate),
       (i) => formatDateFromISO(this.props.modulesManager, this.props.intl, i.expiryDate),
       (i) => formatMessage(this.props.intl, "policy", `policies.status.${i.status}`),
       (i) => <AmountInput value={i.policyValue} readOnly />,
-      (i) => i.ded,
-      (i) => i.dedInPatient,
-      (i) => i.dedOutPatient,
-      (i) => i.ceiling,
-      (i) => i.ceilingInPatient,
-      (i) => i.ceilingOutPatient,
     ];
+    this.visibleConfigurableColumns().forEach((c) => f.push(c.format));
     if (this.showBalance) {
       f.push((i) => i.balance);
     }
-    f.push((i) =>
-      !this.props.readOnly && this.canRenew(i)
-        ? withTooltip(
-            <IconButton onClick={(e) => this.renewPolicy(i)}>
-              <RenewIcon />
-            </IconButton>,
-            formatMessage(this.props.intl, "policy", "action.RenewPolicy.tooltip")
-          )
-        : null
-    );
+    // f.push((i) =>
+    //   !this.props.readOnly && this.canRenew(i)
+    //     ? withTooltip(
+    //         <IconButton onClick={(e) => this.renewPolicy(i)}>
+    //           <RenewIcon />
+    //         </IconButton>,
+    //         formatMessage(this.props.intl, "policy", "action.RenewPolicy.tooltip")
+    //       )
+    //     : null
+    // );
     f.push((i) =>
       !this.props.readOnly && this.canSuspend(i)
         ? withTooltip(
@@ -357,11 +370,12 @@ class FamilyOrInsureePoliciesSummary extends PagedDataHandler {
       family,
       insuree,
       readOnly,
+      edited,
       className,
       hideAddPolicyButton = false,
       disableSelection,
     } = this.props;
-    if ((!family || !family.uuid) && (!insuree || !insuree.uuid)) {
+    if (((!family || !family.uuid) && (!insuree || !insuree.uuid) )|| (!!family.familyType && family.familyType.code == FAMILY_TYPE_POLYGAMY_CODE) || (!!edited && !!edited.familyType && edited.familyType.code == FAMILY_TYPE_POLYGAMY_CODE )) {
       return null;
     }
 
@@ -402,6 +416,18 @@ class FamilyOrInsureePoliciesSummary extends PagedDataHandler {
                     />
                   }
                   label={formatMessage(intl, "policy", "policies.onlyActiveOrLastExpired")}
+                />
+              </Grid>
+              <Grid item>
+                <FormControlLabel
+                  control={
+                    <Checkbox
+                      color="primary"
+                      checked={!!this.state.showDeletedPolicies}
+                      onChange={(e) => this.toggleCheckbox("showDeletedPolicies")}
+                    />
+                  }
+                  label={formatMessage(intl, null, "showDeleted")}
                 />
               </Grid>
               {actions.map((a, idx) => {
