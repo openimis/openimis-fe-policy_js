@@ -26,6 +26,7 @@
   "policy.policies.nonHospitalCeiling": "Non Hospital Ceiling",
   "policy.policies.balance": "Balance",
   "policy.policies.onlyActiveOrLastExpired": "Show only not yet active, and last active or last suspended/expired",
+  "policy.policies.showDeleted": "Show deleted policies",
   "policy.policies.noActivePolicy": "No active Policy",
   "policy.insureeEligibility.service": "Service Eligibility",
   "policy.insureeEligibility.service.search": "Search service…",
