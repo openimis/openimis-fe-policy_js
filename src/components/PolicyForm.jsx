@@ -250,16 +250,16 @@ class PolicyForm extends Component {
     if (!this.state.policy.enrollDate) return false;
     if (!this.state.policy.startDate) return false;
     if (!this.state.policy.expiryDate) return false;
+    const age = this.verifyAge(this.state.dob)
     if (this.state.policy.product.ageMaximal != null && this.state.policy.product.ageMinimal != null) {
-      const age = this.verifyAge(this.state.dob)
       const { ageMinimal, ageMaximal } = this.state.policy.product;
       if (!(ageMinimal === 0 && ageMaximal === 0) && 
           (age < ageMinimal || age > ageMaximal)) {
         return false;
       }
-    } else if (this.state.policy.product.ageMinimal == null && this.state.policy.product.ageMaximal != null && Age >= this.state.policy.product.ageMaximal) {
+    } else if (this.state.policy.product.ageMinimal == null && this.state.policy.product.ageMaximal != null && age >= this.state.policy.product.ageMaximal) {
       return false;
-    } else if (this.state.policy.product.ageMaximal == null && this.state.policy.product.ageMinimal != null && Age <= this.state.policy.product.ageMinimal) {
+    } else if (this.state.policy.product.ageMaximal == null && this.state.policy.product.ageMinimal != null && age <= this.state.policy.product.ageMinimal) {
       return false;
     }
     if (!this.state.policy.value) return false;
