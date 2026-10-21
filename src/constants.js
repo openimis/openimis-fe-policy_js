@@ -8,6 +8,17 @@ export const POLICY_STAGE_NEW = 'N';
 export const POLICY_STAGE_RENEW = 'R';
 export const POLICY_STAGE = [POLICY_STAGE_NEW, POLICY_STAGE_RENEW]
 
+// Selector shown in the policy form: either the historical product picker ("products")
+// or the contribution plan picker ("contributions"). Configured through
+// `fe-policy.productsOrContributions`, defaults to "products" for backward compatibility.
+export const PRODUCTS_OR_CONTRIBUTIONS_CONFIG = "productsOrContributions"
+export const POLICY_PRODUCT_MODE = "products"
+export const POLICY_CONTRIBUTION_PLAN_MODE = "contributions"
+
+export const getProductsOrContributions = (modulesManager) =>
+    modulesManager?.getConf("fe-policy", PRODUCTS_OR_CONTRIBUTIONS_CONFIG, POLICY_PRODUCT_MODE)
+    ?? POLICY_PRODUCT_MODE
+
 export const RIGHT_POLICY = 101201 // supposed to be 101200 ... but in practice
 export const RIGHT_POLICY_SEARCH = 101201
 export const RIGHT_POLICY_ADD = 101202
