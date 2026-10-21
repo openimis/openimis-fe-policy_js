@@ -534,7 +534,6 @@ const mapStateToProps = (state) => ({
   family: state.insuree.family || {},
   insureeEnquiry: state?.insuree?.insureeEnquiry,
   insuree: state.insuree.insuree,
-  confirmed: state.core.confirmed,
   submittingMutation: state.policy.submittingMutation,
   mutation: state.policy.mutation,
 });

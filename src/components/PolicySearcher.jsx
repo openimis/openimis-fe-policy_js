@@ -466,7 +466,6 @@ const mapStateToProps = (state) => ({
     !!state.core && !!state.core.user && !!state.core.user.i_user
       ? state.core.user.i_user.rights
       : [],
-  confirmed: state.core.confirmed,
   policies: state.policy.policies,
   policiesPageInfo: state.policy.policiesPageInfo,
   fetchingPolicies: state.policy.fetchingPolicies,

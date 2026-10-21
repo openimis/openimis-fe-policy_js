@@ -549,7 +549,6 @@ const mapStateToProps = (state) => ({
       : [],
   fetchingPolicyValues: state.policy.fetchingPolicyValues,
   errorPolicyValues: state.policy.errorPolicyValues,
-  confirmed: state.core.confirmed,
   submittingMutation: state.policy.submittingMutation,
   mutation: state.policy.mutation,
 });
