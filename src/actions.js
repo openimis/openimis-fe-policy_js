@@ -146,6 +146,7 @@ export function fetchPolicySummaries(mm, filters) {
 
 export function fetchPolicyFull(mm, policy_uuid) {
   let projections = [
+    "id",
     "uuid",
     `product{${mm.getRef("product.ProductPicker.projection")}}`,
     `officer{${mm.getRef("policy.PolicyOfficerPicker.projection")}}`,

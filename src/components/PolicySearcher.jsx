@@ -72,9 +72,7 @@ class PolicySearcher extends Component {
   }
 
   componentDidUpdate(prevProps, prevState, snapshot) {
-    if (!prevProps.confirmed && this.props.confirmed) {
-      this.state.confirmedAction();
-    } else if (prevProps.submittingMutation && !this.props.submittingMutation) {
+    if (prevProps.submittingMutation && !this.props.submittingMutation) {
       this.props.journalize(this.props.mutation);
       this.setState({ reset: this.state.reset + 1 });
     }
@@ -134,71 +132,67 @@ class PolicySearcher extends Component {
       this.props.modulesManager,
       this.props.history,
       "policy.route.policy",
-      [policy.uuid, policy.family.uuid, true]
+      [policy.uuid, policy.family?.uuid, true]
     );
 
   confirmSuspend = (policy) => {
-    let confirmedAction = () =>
-      this.props.suspendPolicy(
-        this.props.modulesManager,
-        policy,
-        formatMessageWithValues(
-          this.props.intl,
-          "policy",
-          "SuspendPolicy.mutationLabel",
-          { policy: policyLabel(this.props.modulesManager, policy) }
-        )
-      );
-    let confirm = (e) =>
-      this.props.coreConfirm(
-        formatMessageWithValues(
-          this.props.intl,
-          "policy",
-          "suspendPolicyDialog.title",
-          { label: policyLabel(this.props.modulesManager, policy) }
-        ),
-        formatMessageWithValues(
-          this.props.intl,
-          "policy",
-          "suspendPolicyDialog.message",
-          {
-            label: policyLabel(this.props.modulesManager, policy),
-          }
-        )
-      );
-    this.setState({ confirmedAction }, confirm);
+    this.props.coreConfirm(
+      formatMessageWithValues(
+        this.props.intl,
+        "policy",
+        "suspendPolicyDialog.title",
+        { label: policyLabel(this.props.modulesManager, policy) }
+      ),
+      formatMessageWithValues(
+        this.props.intl,
+        "policy",
+        "suspendPolicyDialog.message",
+        {
+          label: policyLabel(this.props.modulesManager, policy),
+        }
+      ),
+      { onConfirm: () =>
+    this.props.suspendPolicy(
+      this.props.modulesManager,
+      policy,
+      formatMessageWithValues(
+        this.props.intl,
+        "policy",
+        "SuspendPolicy.mutationLabel",
+        { policy: policyLabel(this.props.modulesManager, policy) }
+      )
+    ) },
+    );
   };
 
   confirmDelete = (policy) => {
-    let confirmedAction = () =>
-      this.props.deletePolicy(
-        this.props.modulesManager,
-        policy,
-        formatMessageWithValues(
-          this.props.intl,
-          "policy",
-          "DeletePolicy.mutationLabel",
-          { policy: policyLabel(this.props.modulesManager, policy) }
-        )
-      );
-    let confirm = (e) =>
-      this.props.coreConfirm(
-        formatMessageWithValues(
-          this.props.intl,
-          "policy",
-          "deletePolicyDialog.title",
-          { label: policyLabel(this.props.modulesManager, policy) }
-        ),
-        formatMessageWithValues(
-          this.props.intl,
-          "policy",
-          "deletePolicyDialog.message",
-          {
-            label: policyLabel(this.props.modulesManager, policy),
-          }
-        )
-      );
-    this.setState({ confirmedAction }, confirm);
+    this.props.coreConfirm(
+      formatMessageWithValues(
+        this.props.intl,
+        "policy",
+        "deletePolicyDialog.title",
+        { label: policyLabel(this.props.modulesManager, policy) }
+      ),
+      formatMessageWithValues(
+        this.props.intl,
+        "policy",
+        "deletePolicyDialog.message",
+        {
+          label: policyLabel(this.props.modulesManager, policy),
+        }
+      ),
+      { onConfirm: () =>
+    this.props.deletePolicy(
+      this.props.modulesManager,
+      policy,
+      formatMessageWithValues(
+        this.props.intl,
+        "policy",
+        "DeletePolicy.mutationLabel",
+        { policy: policyLabel(this.props.modulesManager, policy) }
+      )
+    ) },
+    );
   };
 
   canDelete = (policy) => canDeletePolicy(this.props.rights, policy);
@@ -264,7 +258,10 @@ class PolicySearcher extends Component {
           this.props.intl,
           policy.enrollDate
         ),
-      (policy) => `${policy.family.headInsuree.lastName} ${policy.family.headInsuree.otherNames}`,
+      (policy) =>
+        [policy.family?.headInsuree?.lastName, policy.family?.headInsuree?.otherNames]
+          .filter(Boolean)
+          .join(" "),
       (policy) =>
         formatDateFromISO(
           this.props.modulesManager,
@@ -283,8 +280,8 @@ class PolicySearcher extends Component {
           this.props.intl,
           policy.expiryDate
         ),
-      (policy) => `${policy.product.code}`,
-      (policy) => `${policy.officer.code}`,
+      (policy) => policy.product?.code ?? "",
+      (policy) => policy.officer?.code ?? "",
       (policy) => formatMessage(this.props.intl, "policy", `PolicyStage.${policy.stage}`),
       (policy) => formatMessage(this.props.intl, "policy", `PolicyStatus.${policy.status}`),
       (policy) => formatAmount(this.props.modulesManager, this.props.intl, policy.value),
@@ -469,7 +466,6 @@ const mapStateToProps = (state) => ({
     !!state.core && !!state.core.user && !!state.core.user.i_user
       ? state.core.user.i_user.rights
       : [],
-  confirmed: state.core.confirmed,
   policies: state.policy.policies,
   policiesPageInfo: state.policy.policiesPageInfo,
   fetchingPolicies: state.policy.fetchingPolicies,

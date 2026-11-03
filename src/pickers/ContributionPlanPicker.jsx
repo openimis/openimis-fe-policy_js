@@ -1,8 +1,15 @@
-import React, { useState, useMemo, useEffect } from "react";
+import React, { useState } from "react";
 import { Autocomplete, useModulesManager, useTranslations } from "@openimis/fe-core";
+import { CONTRIBUTION_PLAN_QUANTITY_LIMIT } from "../constants";
 import { useContributionPlanQuery } from "../hooks";
-import _debounce from "lodash/debounce";
-import _ from "lodash";
+
+const DEFAULT_FILTERS = {
+  first: CONTRIBUTION_PLAN_QUANTITY_LIMIT,
+  applyDefaultValidityFilter: true,
+  isDeleted: false,
+};
+
+const contributionPlanLabel = (option) => `${option?.code ?? ""} ${option?.name ?? ""}`.trim();
 
 const PolicyContributionPlanPicker = (props) => {
   const {
@@ -22,66 +29,33 @@ const PolicyContributionPlanPicker = (props) => {
   const modulesManager = useModulesManager();
   const { formatMessage } = useTranslations("policy", modulesManager);
 
+  // The options are only fetched once the picker is opened: `Autocomplete` calls
+  // `onInputChange` on open, which sets the filters and triggers the query.
   const [filters, setFilters] = useState({ applyDefaultValidityFilter: true });
-  const [open, setOpen] = useState(false);
-
-  const { isLoading, error, data } = useContributionPlanQuery(
-    { filters },
-    { skip: !open }
-  );
-
-  const onOpen = () => {
-    setOpen(true);
-    setFilters({ first: 15, applyDefaultValidityFilter: true });
-  };
-
-  const onClose = () => {
-    setOpen(false);
-  };
-
-  const debouncedSetFilters = useMemo(
-    () =>
-      _debounce((search) => {
-        setFilters({
-          first: 15,
-          search,
-          applyDefaultValidityFilter: true,
-          isDeleted: false,
-        });
-      }, 300),
-    []
-  );
-
-  useEffect(() => {
-    return () => {
-      debouncedSetFilters.cancel();
-    };
-  }, [debouncedSetFilters]);
-
-  const options = _.map(data?.contributionPlan?.edges ?? [], "node");
+  const {
+    isLoading,
+    error,
+    data: { contributionPlan },
+  } = useContributionPlanQuery({ filters }, { skip: true });
 
   return (
     <Autocomplete
       multiple={multiple}
       required={required}
       error={error}
-      placeholder={placeholder ?? formatMessage("ProductPicker.placeholder")}
+      placeholder={placeholder ?? formatMessage("ContributionPlanPicker.placeholder")}
       label={label ?? formatMessage("ContributionPlan")}
       withLabel={withLabel}
       withPlaceholder={withPlaceholder}
       readOnly={readOnly}
-      options={options}
+      options={contributionPlan ?? []}
       isLoading={isLoading}
       value={value}
-      getOptionLabel={(option) => `${option?.code ?? ""} ${option?.name ?? ""}`}
-      onChange={(value) =>
-        onChange(value, value ? `${option?.code ?? ""} ${option?.name ?? ""}` : null)
-      }
-      onOpen={onOpen}
-      onClose={onClose}
+      getOptionLabel={contributionPlanLabel}
+      onChange={(selected) => onChange(selected, selected ? contributionPlanLabel(selected) : null)}
       filterOptions={filter}
       filterSelectedOptions={filterSelectedOptions}
-      onInputChange={(search) => debouncedSetFilters(search)}
+      onInputChange={() => setFilters(DEFAULT_FILTERS)}
     />
   );
 };
