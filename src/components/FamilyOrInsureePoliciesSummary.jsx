@@ -1,18 +1,16 @@
 import React from "react";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
-import { injectIntl } from "react-intl";
 import clsx from "clsx";
 import { styled } from "@mui/material/styles";
 import { Divider, Grid, Paper, Typography, FormControlLabel, Checkbox, IconButton, Button } from "@mui/material";
-import { GetIconComponent } from "@openimis/fe-core";
+import { GetIconComponent, injectIntl } from "@openimis/fe-core";
 import PolicyDetailsCollapse from "./PolicyDetailsCollapse";
 
 const AddIcon = GetIconComponent("Add")
 const RenewIcon = GetIconComponent("Autorenew")
 const DeleteIcon = GetIconComponent("Delete")
 const SuspendIcon = GetIconComponent("Pause")
-
 
 import {
   Table,
@@ -35,24 +33,24 @@ import { RIGHT_POLICY_ADD } from "../constants";
 import { policyLabel, canDeletePolicy, canSuspendPolicy, canRenewPolicy } from "../utils/utils";
 
 const StyledPaper = styled(Paper)(({ theme }) => ({
-  ...theme?.paper?.paper ?? {},
+  ...(theme?.paper?.paper ?? {}),
 }));
 
 const StyledPaperHeader = styled('div')(({ theme }) => ({
-  ...theme?.paper?.header ?? {},
+  ...(theme?.paper?.header ?? {}),
 }));
 
 const StyledTableTitle = styled('div')(({ theme }) => ({
-  ...theme?.table?.title ?? {},
+  ...(theme?.table?.title ?? {}),
 }));
 
 const StyledTitle = styled('div')(({ theme }) => ({
-  ...theme?.table?.title ?? {},
+  ...(theme?.table?.title ?? {}),
   padding: 0,
 }));
 
 const StyledFab = styled('div')(({ theme }) => ({
-  ...theme?.fab ?? {},
+  ...(theme?.fab ?? {}),
 }));
 
 const StyledButton = styled('div')(({ theme }) => ({
@@ -453,15 +451,18 @@ class FamilyOrInsureePoliciesSummary extends PagedDataHandler {
       <StyledPaper className={className}>
         <Grid
           container
-          justifyContent="space-between"
-          alignItems="center"
           className={clsx("paperHeader", "tableTitle")}
-        >
+          sx={{
+            justifyContent: "space-between",
+            alignItems: "center"
+          }}>
           <Grid>
             <StyledTitle>{this.header()}</StyledTitle>
           </Grid>
           <Grid>
-            <Grid container alignItems="center" spacing={3}>
+            <Grid container spacing={3} sx={{
+              alignItems: "center"
+            }}>
               <Grid>
                 <FormControlLabel
                   control={

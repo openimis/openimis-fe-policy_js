@@ -2,7 +2,6 @@ import React from "react";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 import { styled } from "@mui/material/styles";
-import { injectIntl } from "react-intl";
 import {
   Paper,
   Grid,
@@ -12,7 +11,7 @@ import {
   FormControlLabel,
   Checkbox,
 } from "@mui/material";
-import { GetIconComponent, withModulesManager } from "@openimis/fe-core";
+import { GetIconComponent, withModulesManager, injectIntl } from "@openimis/fe-core";
 const RenewIcon = GetIconComponent("Autorenew")
 const DeleteIcon = GetIconComponent("Delete")
 const SuspendIcon = GetIconComponent("Pause")
@@ -43,15 +42,15 @@ import {
 import { deletePolicy, suspendPolicy } from "../actions";
 
 const StyledPaper = styled(Paper)(({ theme }) => ({
-  ...theme?.paper?.paper ?? {},
+  ...(theme?.paper?.paper ?? {}),
 }));
 
 const StyledTableTitle = styled('div')(({ theme }) => ({
-  ...theme?.table?.title ?? {},
+  ...(theme?.table?.title ?? {}),
 }));
 
 const StyledItem = styled('div')(({ theme }) => ({
-  ...theme?.paper?.item ?? {},
+  ...(theme?.paper?.item ?? {}),
 }));
 
 const POLICY_POLICY_CONTRIBUTION_KEY = "policy.Policy";
@@ -304,7 +303,9 @@ class PolicyMasterPanel extends FormPanel {
                 </Typography>
               </Grid>
               <Grid size={9}>
-                <Grid container justifyContent="flex-end">
+                <Grid container sx={{
+                  justifyContent: "flex-end"
+                }}>
                   {!!actions &&
                     actions.map((a, idx) => {
                       return (

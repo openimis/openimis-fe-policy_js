@@ -1,12 +1,12 @@
 import React, { Component } from "react";
-import { injectIntl } from "react-intl";
+import { injectIntl } from "@openimis/fe-core";
 import { styled } from "@mui/material/styles";
 import { Paper } from "@mui/material";
 import InsureeServiceEligibility from "./InsureeServiceEligibility";
 import InsureeItemEligibility from "./InsureeItemEligibility";
 
 const StyledPaper = styled(Paper)(({ theme }) => ({
-  ...theme?.paper?.paper ?? {},
+  ...(theme?.paper?.paper ?? {}),
 }));
 
 class InsureeEligibilityEnquiry extends Component {

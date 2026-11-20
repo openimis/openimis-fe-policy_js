@@ -1,7 +1,6 @@
 import React, { Component, Fragment } from "react";
 import { bindActionCreators } from "redux";
 import { connect } from "react-redux";
-import { injectIntl } from "react-intl";
 
 import {
   withModulesManager,
@@ -18,6 +17,7 @@ import {
   AmountInput,
   GetIconComponent,
   ActionMenu,
+  injectIntl,
 } from "@openimis/fe-core";
 import { fetchPolicySummaries, deletePolicy, suspendPolicy } from "../actions";
 import {

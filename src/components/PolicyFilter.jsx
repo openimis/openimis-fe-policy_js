@@ -1,7 +1,6 @@
 import React, { Component } from "react";
 import _debounce from "lodash/debounce";
 import { styled } from "@mui/material/styles";
-import { injectIntl } from "react-intl";
 import { Checkbox, FormControlLabel, Grid } from "@mui/material";
 import {
   withModulesManager,
@@ -14,6 +13,7 @@ import {
   GRID_RESPONSIVE_STANDARD,
   GRID_RESPONSIVE_FULL,
   TextInput,
+  injectIntl,
 } from "@openimis/fe-core";
 
 const StyledDialogTitle = styled("div")(({ theme }) => ({
