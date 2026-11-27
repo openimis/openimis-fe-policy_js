@@ -11,11 +11,10 @@ import {
   FormControlLabel,
   Checkbox,
 } from "@mui/material";
-import { GetIconComponent, withModulesManager, injectIntl } from "@openimis/fe-core";
-const RenewIcon = GetIconComponent("Autorenew")
-const DeleteIcon = GetIconComponent("Delete")
-const SuspendIcon = GetIconComponent("Pause")
 import {
+  GetIconComponent,
+  withModulesManager,
+  injectIntl,
   formatMessage,
   formatMessageWithValues,
   withTooltip,
@@ -41,16 +40,20 @@ import {
 } from "../utils/utils";
 import { deletePolicy, suspendPolicy } from "../actions";
 
+const RenewIcon = GetIconComponent("Autorenew")
+const DeleteIcon = GetIconComponent("Delete")
+const SuspendIcon = GetIconComponent("Pause")
+
 const StyledPaper = styled(Paper)(({ theme }) => ({
-  ...(theme?.paper?.paper ?? {}),
+  ...theme?.paper?.paper,
 }));
 
 const StyledTableTitle = styled('div')(({ theme }) => ({
-  ...(theme?.table?.title ?? {}),
+  ...theme?.table?.title,
 }));
 
 const StyledItem = styled('div')(({ theme }) => ({
-  ...(theme?.paper?.item ?? {}),
+  ...theme?.paper?.item,
 }));
 
 const POLICY_POLICY_CONTRIBUTION_KEY = "policy.Policy";

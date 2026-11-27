@@ -10,7 +10,7 @@ import {
 import { fetchFamilyOrInsureePolicies } from "../actions";
 
 const StyledItem = styled('div')(({ theme }) => ({
-  ...(theme?.paper?.item ?? {}),
+  ...theme?.paper?.item,
 }));
 
 class InsureePolicyEligibilitySummary extends Component {
