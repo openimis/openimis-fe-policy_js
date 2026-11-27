@@ -12,19 +12,19 @@ import {
 } from "@openimis/fe-core";
 
 const StyledPaper = styled(Paper)(({ theme }) => ({
-  ...theme?.paper?.paper ?? {},
+  ...(theme?.paper?.paper ?? {}),
 }));
 
 const StyledTableTitle = styled('div')(({ theme }) => ({
-  ...theme?.table?.title ?? {},
+  ...(theme?.table?.title ?? {}),
 }));
 
 const StyledItem = styled('div')(({ theme }) => ({
-  ...theme?.paper?.item ?? {},
+  ...(theme?.paper?.item ?? {}),
 }));
 
 const StyledItemCenter = styled('div')(({ theme }) => ({
-  ...theme?.paper?.item ?? {},
+  ...(theme?.paper?.item ?? {}),
   textAlign: "center",
 }));
 
@@ -55,7 +55,13 @@ class PolicyValuesPanel extends Component {
           </Grid>
           <Divider />
           <Grid container component={StyledItem} spacing={2}>
-            <Grid container alignItems="center" justifyContent="flex-start" spacing={1}>
+            <Grid
+              container
+              spacing={1}
+              sx={{
+                alignItems: "center",
+                justifyContent: "flex-start"
+              }}>
               <Grid size={GRID_RESPONSIVE_STANDARD} component={StyledItem}>
                 <ProgressOrError
                   progress={fetchingPolicyValues}
@@ -89,7 +95,9 @@ class PolicyValuesPanel extends Component {
                 />
               </Grid>
             </Grid>
-            <Grid container alignItems="center" spacing={1}>
+            <Grid container spacing={1} sx={{
+              alignItems: "center"
+            }}>
               <Grid size={GRID_RESPONSIVE_FULL}>
                 <Divider style={{ margin: "10px 0" }} />
               </Grid>

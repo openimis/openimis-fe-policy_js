@@ -1,7 +1,6 @@
 import React, { Component, Fragment } from "react";
 import _ from "lodash";
 import { connect } from "react-redux";
-import { injectIntl } from "react-intl";
 import moment from "moment";
 
 import { styled } from "@mui/material/styles";
@@ -19,6 +18,7 @@ import {
   toISODate,
   withHistory,
   withModulesManager,
+  injectIntl,
 } from "@openimis/fe-core";
 import PolicyMasterPanel from "./PolicyMasterPanel";
 import { fetchPolicyFull, fetchPolicyValues, fetchFamily } from "../actions";
@@ -32,7 +32,7 @@ import {
 import { policyLabel } from "../utils/utils";
 
 const StyledPage = styled('div')(({ theme }) => ({
-  ...theme?.page ?? {},
+  ...(theme?.page ?? {}),
 }));
 
 const POLICY_HEAD_PANEL_CONTRIBUTION_KEY = "policy.Policy.headPanel";

@@ -1,10 +1,9 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
-import { injectIntl } from 'react-intl';
 import { styled } from "@mui/material/styles";
 import { Grid, Paper } from "@mui/material";
-import { Table, FormattedMessage } from "@openimis/fe-core";
+import { Table, FormattedMessage, injectIntl } from "@openimis/fe-core";
 import { fetchEligibility } from "../actions";
 
 const StyledPaper = styled(Paper)(({ theme }) => ({

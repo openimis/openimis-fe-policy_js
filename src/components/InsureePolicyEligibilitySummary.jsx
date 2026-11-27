@@ -1,17 +1,16 @@
 import React, { Component, Fragment } from "react";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
-import { injectIntl } from 'react-intl';
 import { styled } from "@mui/material/styles";
 import { Grid } from "@mui/material";
 import {
     withModulesManager,
-    ProgressOrError, PublishedComponent, FormattedMessage, AmountInput, TextInput
+    ProgressOrError, PublishedComponent, FormattedMessage, AmountInput, TextInput, injectIntl
 } from "@openimis/fe-core";
 import { fetchFamilyOrInsureePolicies } from "../actions";
 
 const StyledItem = styled('div')(({ theme }) => ({
-  ...theme?.paper?.item ?? {},
+  ...theme?.paper?.item,
 }));
 
 class InsureePolicyEligibilitySummary extends Component {

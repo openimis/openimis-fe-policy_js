@@ -44,9 +44,13 @@ class InsureeServiceEligibility extends Component {
             <FormattedMessage module="policy" id="insureeEligibility.service" />
           </StyledHeader>
         </Box>
-        <Grid container component={StyledSection} alignItems="center">
+        <Grid container component={StyledSection} sx={{
+          alignItems: "center"
+        }}>
           <Grid size={6}>
-            <Box mr={3}>
+            <Box sx={{
+              mr: 3
+            }}>
               <PublishedComponent
                 pubRef="medical.ServicePicker"
                 onChange={this.onServiceSelected}
@@ -56,7 +60,9 @@ class InsureeServiceEligibility extends Component {
             </Box>
           </Grid>
           <ProgressOrError size={16} progress={isFetching} error={error} />
-          <Box flexGrow={1}>
+          <Box sx={{
+            flexGrow: 1
+          }}>
             {isFetched && !error &&  (
               <Eligibility
                 minDate={eligibility.minServiceDate}
