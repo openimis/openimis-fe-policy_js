@@ -1,18 +1,18 @@
 import React, { Component } from "react";
 import { bindActionCreators } from "redux";
 import { connect } from "react-redux";
-import { injectIntl } from "react-intl";
 import { styled } from "@mui/material/styles";
 import {
   historyPush,
   withModulesManager,
   withHistory,
   clearCurrentPaginationPage,
+  injectIntl,
 } from "@openimis/fe-core";
 import PolicySearcher from "../components/PolicySearcher";
 
 const StyledPage = styled('div')(({ theme }) => ({
-  ...theme?.page ?? {},
+  ...(theme?.page ?? {}),
 }));
 
 class PoliciesPage extends Component {

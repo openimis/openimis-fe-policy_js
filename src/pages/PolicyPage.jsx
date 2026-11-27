@@ -1,13 +1,13 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
-import { injectIntl } from "react-intl";
 import { styled } from "@mui/material/styles";
 import {
   historyPush,
   withModulesManager,
   withHistory,
   formatMessageWithValues,
+  injectIntl,
 } from "@openimis/fe-core";
 import PolicyForm from "../components/PolicyForm";
 import { policyLabel } from "../utils/utils";
@@ -15,7 +15,7 @@ import { createPolicy, renewPolicy, updatePolicy } from "../actions";
 import { POLICY_STAGE_NEW, POLICY_STAGE_RENEW } from "../constants";
 
 const StyledPage = styled('div')(({ theme }) => ({
-  ...theme?.page ?? {},
+  ...(theme?.page ?? {}),
 }));
 
 class PolicyPage extends Component {

@@ -16,7 +16,11 @@ const Thumb = (props) => {
 };
 
 const Info = (props) => {
-  return <Box mr={3}>{props.children}</Box>;
+  return (
+    <Box sx={{
+      mr: 3
+    }}>{props.children}</Box>
+  );
 };
 
 const Eligibility = (props) => {
